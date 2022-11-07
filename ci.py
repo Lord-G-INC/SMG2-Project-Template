@@ -55,7 +55,7 @@ with ZipFile(ZIP, "w", ZIP_LZMA) as w:
     files = glob("*.bin")
     for file in files:
         p = Path(file)
-        os.rename(p.absolute(), f"SMG2PTD\\CustomCode\\{p.name}")
+        w.write(p.absolute(), p.name)
     for entry,_,_ in os.walk("SMG2PTD"):
         if entry != "SMG2PTD":
             entry = Path(entry)
