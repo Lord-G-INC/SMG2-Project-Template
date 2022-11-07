@@ -1,4 +1,5 @@
 #include "pt/Extras/PowerStarColors.h"
+#include "pt/Util/ActorUtil.h"
 
 /*
 * Authors: Aurum
@@ -25,17 +26,20 @@ namespace pt {
 		GalaxyStatusAccessor gsa(MR::makeGalaxyStatusAccessor(pStage));
 		gsa.mScenarioData->getScenarioString("PowerStarType", scenarioId, &type);
 
-		if (MR::isEqualString(type, "Bronze")) {
+		if (MR::isEqualSubString(type, "Bronze")) {
 			return 1;
 		}
-		else if (MR::isEqualString(type, "Green") || MR::isEqualString(type, "LegacyGreen")) {
+		else if (MR::isEqualSubString(type, "Green") || MR::isEqualSubString(type, "LegacyGreen")) {
 			return 2;
 		}
-		else if (MR::isEqualString(type, "Red")) {
+		else if (MR::isEqualSubString(type, "Red")) {
 			return 3;
 		}
-		else if (MR::isEqualString(type, "Blue")) {
+		else if (MR::isEqualSubString(type, "Blue")) {
 			return 5;
+		}
+		else if (MR::isEqualSubString(type, "Silver")) { // Shh, you see nothing.
+			return 6;
 		}
 
 		return 0;
@@ -89,4 +93,167 @@ namespace pt {
 	kmCall(0x8035BAC0, getPowerStarColorCurrentStage); // redirection hook
 	kmWrite32(0x802DF02C, 0x7C7D1B78); // copy result from r3 to r29
 	kmWrite32(0x802DF030, 0x4800000C); // skip unnecessary instructions
+
+	kmWrite32(0x804CB8BC, 0x48169D65); // This uses strstr instead of MR::isEqualString in the isPowerStarTypeHidden__12ScenarioDataCFl function. Allows types like BlueHidden to work.
+
+	/*
+	* Power Star Font Icons
+	*
+	* On the World Map and Star List, the game displays star icons based on the Power Star type and Comet.
+	* However, we've changed this so that new and custom star types can be displayed.
+	*
+	* Here we load a custom BRFNT from PTSystemData.arc so we do not have to edit the font in all languages.
+    *
+	* When the game selects which icon to display, it calls MR::addPictureFontCode and r4 is used to deter-
+	* mine which icon from the BRFNT should be used. Here we use that to check which icon type to use, 
+	* then run a check for Power Star color. 
+	*/
+
+	void loadPTPictureFont() {
+		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
+	}
+
+	kmCall(0x804B8048, loadPTPictureFont);
+
+	void getStarIcon(wchar_t* txt, s32 type) {
+		const char *stage;
+		s32 scenarioId;
+		s32 icon;
+
+		asm("mr %0, r27" : "=r" (stage));
+		asm("mr %0, r31" : "=r" (scenarioId));
+
+		s32 getStarColor = getPowerStarColor(stage, scenarioId);
+
+		if (type == 0x37) // Normal Star icons
+		switch (getStarColor) {
+			default:
+			case 0:
+				icon = 0x37; // Normal
+			break;
+			case 1:
+				icon = 0x72; // Bronze
+			break;
+			case 2:
+				icon = 0x80; // LegacyGreen
+			break;
+			case 3:
+				icon = 0x7E; // Red
+			break;
+			case 5:
+				icon = 0x7F; // Blue
+			break;
+			case 6:
+				icon = 0x4A; // Silver
+			}
+
+		else if (type == 0x65) // Comet Star icons
+			switch (getStarColor) {
+			default:
+			case 0:
+				icon = 0x65; // Normal
+			break;
+			case 1:
+				icon = 0x7D; // Bronze
+			break;
+			case 2:
+				icon = 0x4F; // LegacyGreen
+			break;
+			case 3:
+				icon = 0x81; // Red
+			break;
+			case 5:
+				icon = 0x82; // Blue
+			break;
+			case 6:
+				icon = 0x83; // Silver
+			break;
+			}
+
+		else if (type == 0x71) // Uncollected Hidden Star icons
+		switch (getStarColor) {
+			default:
+			case 0:
+				icon = 0x71; // Normal
+			break;
+			case 1:
+				icon = 0x87; // Bronze
+			break;
+			case 2:
+				icon = 0x86; // LegacyGreen
+			break;
+			case 3:
+				icon = 0x84; // Red
+			break;
+			case 5:
+				icon = 0x85; // Blue
+			break;
+			case 6:
+				icon = 0x88; // Silver
+			break;
+			}
+
+		MR::addPictureFontCode(txt, icon);
+	}
+	
+	kmCall(0x80041E30, getStarIcon); // Normal Star icons
+	kmCall(0x80041F0C, getStarIcon); // Comet Star icons
+	kmCall(0x80041F94, getStarIcon); // Hidden Star icons
+	kmCall(0x80041F48, getStarIcon); // Collected Hidden Star icons
+
+	/*
+	*	Star Ball: Custom Ball and Star Colors
+	*
+	*	The Power Star inside the Star Ball is not a display model.
+	*	Here we set the Star and Ball's color by checking the color
+	*	of the Scenario specified by Obj_arg1.
+	*
+	*	Not really useful, but is neat.
+	*/
+
+	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
+		s32 argScenario = 0;
+		
+		// Check Obj_arg1. This will be the scenario ID to check the Power Star Color of.
+		MR::getJMapInfoArg1NoInit(iter, &argScenario);
+
+		// If the checked star is already collected, just set the star ball and the star inside to be clear.
+		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
+		s32 colorFrame = MR::hasPowerStarInCurrentStage(argScenario) ? 4 : pt::getPowerStarColorCurrentStage(argScenario);
+		
+		// BTP and BRK animations are started and set using colorFrame.
+		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);
+		MR::startBrkAndSetFrameAndStop(actor, "BallColor", colorFrame);
+	}
+	
+	kmWrite32(0x8044461C, 0x7F84E378);
+	kmCall(0x80444620, TamakoroCustomPowerStarColors);
+
+
+	// Define new particles.
+	// These will be picked using the Star Ball's current BTP frame.
+	const char* newparticles[] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
+	
+	void TamakoroCustomPowerStarColorsParticles(LiveActor* actor) {
+		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added.
+		MR::emitEffect(actor, newparticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
+	}
+
+	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
+
+	/*
+	*	Silver Star Colors
+	*	A suggestion from Alex SMG and others that turned out to be really fun to make.
+	*
+	*	This will be removed if people do not use it, since it's pointless.
+	*/
+	
+	void SilverStarColors(LiveActor* actor, const JMapInfoIter& iter) {
+		MR::initUseStageSwitchWriteA(actor, iter);
+		s32 frame = 6;
+		MR::getJMapInfoArg0NoInit(iter, &frame);
+		MR::startBtpAndSetFrameAndStop(actor, "Color", frame);
+	}
+
+	kmCall(0x8035F830, SilverStarColors);
 }

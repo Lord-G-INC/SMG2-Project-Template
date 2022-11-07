@@ -27,6 +27,9 @@
 #include "pt/MapObj/WatchTowerRotateStep.h"
 #include "pt/MapObj/WaterLeakPipe.h"
 
+#include "pt/AreaObj/WarpArea.h"
+#include "pt/MapObj/SwitchBox.h"
+
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
 * templated functions already exist so the linker will do the remaining work for us.
@@ -80,7 +83,7 @@ namespace pt {
     * Number of total new actor entries. This value has to adjusted everytime a creation function
     * is added or removed!
     */
-    #define NUM_ACTORS 43
+    #define NUM_ACTORS 45
 
     const CreateActorEntry cNewCreateNameObjTable[NUM_ACTORS] = {
         // AreaObj
@@ -130,7 +133,10 @@ namespace pt {
         { "WatchTowerRotateStep", createExtActor<WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<WaterLeakPipe>},
         // Ride
-        { "SwingRope", createExtActor<SwingRope> }
+        { "SwingRope", createExtActor<SwingRope> },
+        // PTD
+        { "WarpArea", createExtActor<WarpArea> },
+        { "SwitchBox", createExtActor<SwitchBox> }
     };
 
 

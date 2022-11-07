@@ -49,6 +49,7 @@ namespace pt {
 
 		if (clearStarPiece && mItem == 2) {
 			MR::addStarPiece(-999);
+			MR::forceSyncStarPieceCounter();
 		}
 
 		mStageSwitchCtrl = MR::createStageSwitchCtrl(this, rIter);
