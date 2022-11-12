@@ -1,4 +1,5 @@
 ﻿#include "pt/MapObj/BlueChip.h"
+#include "Game/MapObj/Coin.h"
 
 namespace pt {
 	/*

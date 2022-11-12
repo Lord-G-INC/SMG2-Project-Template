@@ -8,7 +8,7 @@ namespace pt {
     * all calls to MR::tryCreateDummyModel, but uses the original function to initialize the base game's items.
     */
 
-    #define NEW_DUMMY_MODEL_ITEMS 9
+    #define NEW_DUMMY_MODEL_ITEMS 10
 
     DummyDisplayModelInfo cNewDummyDisplayModels[NEW_DUMMY_MODEL_ITEMS] = {
         /* 15 */ { "PowerUpFire",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
@@ -20,6 +20,7 @@ namespace pt {
         /* 21 */ { "PowerUpCloud",      NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 22 */ { "PowerUpRock",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 23 */ { "PowerUpInvincible", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
+        /* 24 */ { "RedCoin", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
     };
 
     DummyDisplayModel* tryCreateNewDummyModel(LiveActor *pHost, const JMapInfoIter &rIter, s32 defaultId, int v4) {

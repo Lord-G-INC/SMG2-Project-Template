@@ -7,7 +7,7 @@ using namespace pt;
  SwitchBox's development was started by me after PTimerSwitch was finished.
  SwitchBox was originally scrapped due to the particle BTI images being removed from the game.
  I used PyJPC, a really old particle tool, to add the SMG1 JPA files into 2, which is easy.
- Though it could not add BTI images without destroying the game's existing particles.
+ Though, it could not add BTI images without destroying the game's existing particles.
  However, Aurum made pygapa, a tool which makes particle adding easy.
 
  And so, this is a rewrite of SMG1's SwitchBox added into 2 with even more options.
@@ -24,7 +24,7 @@ void SwitchBox::init(const JMapInfoIter& rIter) {
 	initHitSensor(1); // Initializes the HitSensor.
 
 	MR::addHitSensorMapObj(this, "SwitchBox", 1, 75.0f, TVec3f(0.0f, 150.0f, 0.0f));
-	HitSensor * SwitchBox = LiveActor::getSensor("SwitchBox");
+	HitSensor* SwitchBox = LiveActor::getSensor("SwitchBox");
 
     initSound(2, "SwitchBox", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
 

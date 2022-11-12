@@ -220,10 +220,7 @@ namespace pt {
 	* Adds the ability to create custom Yes/No MSBF dialogue options.
 	* 
 	* Be sure to add text entries to /SystemMessage.arc/Select.msbt.
-	* The format is "Select_Name_Yes", and the same thing for No.
-	* 
-	* Three new custom entries are added, so the source of PTD
-	* doesn't need to be edited for custom entries.
+	* The format is "Select_New#_Yes", and "Select_New#_No".
 	* 
 	* Knowledge of MSBF is required for this to be of any use in game.
 	*/

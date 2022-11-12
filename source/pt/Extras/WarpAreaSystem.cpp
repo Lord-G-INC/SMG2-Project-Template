@@ -27,7 +27,7 @@ using namespace pt;
 		mErrorLayout = new ErrorLayout();
 
 		if (init)
-		mErrorLayout->initWithoutIter();
+			mErrorLayout->initWithoutIter();
 	}
 
 	bool mWarpAreaUsed;
