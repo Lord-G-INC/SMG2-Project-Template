@@ -1,4 +1,4 @@
-*.bin
+CustomCode*.bin
 *.d
 /.vs
 /_workspace_
@@ -6,3 +6,4 @@
 /deps/CodeWarrior
 /deps/Kamek
 /deps/*.exe
+*.zip

@@ -3,6 +3,7 @@ name: C/C++ CI
 on:
   push:
     branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,9 +17,9 @@ jobs:
     - shell: pwsh
       working-directory: deps
       run: Invoke-WebRequest -Uri https://github.com/Lord-Giganticus/SyatiSetup/releases/download/Auto/syatisetup.exe -OutFile syatisetup.exe
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
     - run: python ci.py
-    - uses: actions/upload-artifact@v2.3.1
+    - uses: actions/upload-artifact@v3
       with:
         path: |
             *.zip

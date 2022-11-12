@@ -51,7 +51,14 @@ with ZipFile(ZIP, "w", ZIP_LZMA) as w:
         p = Path(file)
         w.write(p.absolute(), p.name)
     os.chdir(HOME_DIR)
+    for entry,_,_ in os.walk("SMG2PTD"):
+        if entry != "SMG2PTD":
+            entry = Path(entry)
+            for file in entry.glob("*.*"):
+                idx = str(file).index("\\")
+                name = str(file)[idx+1:]
+                w.write(file, name)
     files = glob("*.bin")
     for file in files:
         p = Path(file)
-        w.write(p.absolute(), p.name)
+        w.write(p.absolute(), f"CustomCode\\{p.name}")
