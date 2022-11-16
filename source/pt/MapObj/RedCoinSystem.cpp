@@ -1,6 +1,8 @@
 #include "pt/MapObj/RedCoinSystem.h"
 #include "Game/LiveActor/LiveActorGroup.h"
 #include "Game/System/Misc/GameSceneLayoutHolder.h"
+#include "Game/MapObj/CoinHolder.h"
+
 /*
 * These actors are exclusive to PT Debug.
 * RedCoin, RedCoinController, RedCoinAppearer
@@ -9,13 +11,19 @@
 * I got barely any help with this, but I finally did it.
 *
 * Credits:
-* Evanbowl, Kairos, Lord-Giganticus, Galaxy Master
+* Evanbowl, Kairos, Lord-Giganticus, Galaxy Master, and Aurum for helping me with crash fixes.
 */
 
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
     mIsSpawnedCoin = false;
+
+    if (!MR::isExistSceneObj(0x41))
+      MR::createCoinRotater();
+
+    MR::createCoinHolder();
+    MR::addToCoinHolder(this, this);
 }
 
 void RedCoin::init(const JMapInfoIter& rIter) {
