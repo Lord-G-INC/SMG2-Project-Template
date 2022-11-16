@@ -56,11 +56,6 @@ public:
 
 };
 
-namespace NrvRedCoinController {
-    NERVE(NrvAllRedCoinsCollected);
-}
-
-
 /* --- RED COIN --- */
 
 class RedCoin : public Coin {

@@ -12,18 +12,6 @@
 * Evanbowl, Kairos, Lord-Giganticus, Galaxy Master
 */
 
-
-/*
-To Do List
-CoinHostInfo crash fix
-TVec3f crash fix
-
-
-*/
-
-/* --- ACTORS --- */
-
-
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
@@ -167,9 +155,6 @@ void RedCoinController::movement() {
 
         if (mElapsed == 140)
             MR::onSwitchA(this);
-    
-    if (MR::isDemoActive())
-        mRedCoinCounter->kill();
 }
 
 void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
@@ -188,22 +173,8 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     pRedCoin->mCoinCounterPlayer->appear();
     MR::startAnim(pRedCoin->mCoinCounterPlayer, "Appear", 0);
 
-    if (mHasAllRedCoins) {
-        MR::startSound(this, "SE_SY_RED_COIN_COMPLETE", -1, -1);
-        MR::startPaneAnim(mRedCoinCounter, "Counter", "FlashLoop", 0);
-    }
-    else {
-        MR::startSound(this, "SE_SY_RED_COIN", -1, -1);
-        MR::startPaneAnim(mRedCoinCounter, "Counter", "Flash", 0);
-    }
-}
-
-namespace NrvRedCoinController {
-    void NrvAllRedCoinsCollected::execute(Spine* pSpine) const {
-		RedCoinController* pActor = (RedCoinController*)pSpine->mExecutor;
-	}
-
-    NrvAllRedCoinsCollected(NrvAllRedCoinsCollected::sInstance);
+    MR::startSound(this, getRedCoinController(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
+    MR::startPaneAnim(mRedCoinCounter, "Counter", mHasAllRedCoins ? "FlashLoop" : "Flash", 0);
 }
 
 /* --- LAYOUTS --- */
