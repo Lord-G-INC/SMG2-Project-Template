@@ -12,6 +12,15 @@
 * Evanbowl, Kairos, Lord-Giganticus, Galaxy Master
 */
 
+
+/*
+To Do List
+CoinHostInfo crash fix
+TVec3f crash fix
+
+
+*/
+
 /* --- ACTORS --- */
 
 
@@ -31,7 +40,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::calcGravity(this);
 
     initEffectKeeper(1, "RedCoin", false);
-    initNerve(&NrvRedCoin::NrvInit::sInstance, 0);
+    initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
     initHitSensor(1);
 
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
@@ -39,10 +48,12 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::addHitSensorMapObj(this, "RedCoin", 1, 25.0f, TVec3f(0.0f, 0.0f, 0.0f));
     initBinder(0, 0, 0);
 
-    makeActorAppeared();
+    mFlashingCtrl = new FlashingCtrl(this, 1);
 
     mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer", this);
     mCoinCounterPlayer->initWithoutIter();
+    
+    appear();
 }
 
 bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
@@ -53,14 +64,14 @@ bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) 
 
 void RedCoin::collect() {
 
-    if (!mIsSpawnedCoin) { // Only red coins that do NOT spawn trigger these functions.
+    if (!mIsSpawnedCoin)
         getRedCoinController(this)->incCountAndUpdateLayouts(this);
-    }
 
+    mIsCollected = true;
     MR::hideModel(this);
-    MR::incCoin(2, this);
     MR::invalidateHitSensors(this);
     MR::emitEffect(this, "RedCoinGet");
+    mFlashingCtrl->end();
     makeActorDead();
 }
 
@@ -87,6 +98,7 @@ void RedCoinAppearer::init(const JMapInfoIter& rIter) {
     MR::connectToSceneMapObjMovement(this);
     MR::useStageSwitchWriteA(this, rIter);
     MR::calcGravity(this);
+
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
 
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
@@ -94,28 +106,29 @@ void RedCoinAppearer::init(const JMapInfoIter& rIter) {
     initSound(1, "RedCoinA", &mTranslation, 0);
 
     mRedCoin->initWithoutIter();
-    mRedCoin->mTranslation.set(mTranslation);
 
     MR::invalidateHitSensors(mRedCoin);
     MR::hideModel(mRedCoin);
+    mRedCoin->mTranslation.set(mTranslation);
+    mRedCoin->mIsSpawnedCoin = true;
 }
 
 void RedCoinAppearer::movement() {
     if (MR::isOnSwitchA(this) && !mHasSpawned) {
+        MR::startSound(this, "SE_SY_RED_COIN_APPEAR", -1, -1);
+
         TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity, 0.0f);
         coinVelocity.scale(coinVelocity.y, -mGravity);
 
-        MR::startSound(this, "SE_SY_RED_COIN_APPEAR", -1, -1);
-
-        mRedCoin->mLifeTime = 0x7FFFFFFF;
         mRedCoin->appearMove(mTranslation, coinVelocity, 1, 0);
-        mRedCoin->mIsSpawnedCoin = true;
+        mRedCoin->mFlashingCtrl->end();
+        mRedCoin->mLifeTime = 0x7FFFFFFF;
         MR::validateHitSensors(mRedCoin);
         
         mHasSpawned = true;
     }
 
-    if (MR::isDead(mRedCoin)) { // Collection function for only spawned coins.
+    if (mRedCoin->mIsCollected) { // Collection function for only spawned coins.
         getRedCoinController(this)->incCountAndUpdateLayouts(mRedCoin);
         makeActorDead();
     }  
@@ -127,6 +140,9 @@ void RedCoinAppearer::movement() {
 
 RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
+    mElapsed = 0;
+    mHasAllRedCoins = false;
+    mCounterPlayerLayoutMode = false;
     mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
 }
 
@@ -135,17 +151,32 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+    MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode);
+    MR::useStageSwitchReadA(this, rIter);
     initSound(3, "RedCoin", &mTranslation, 0);
+    MR::tryRegisterDemoCast(this, rIter);
     mRedCoinCounter->initWithoutIter();
 }
 
 void RedCoinController::movement() {
-    if (mNumCoins == MR::getGroupFromArray(this)->mNumObjs - 1)
-        makeActorDead();
+    if (mHasAllRedCoins)
+        mElapsed++;
+
+        if (mElapsed == 120)
+            MR::startAnim(mRedCoinCounter, "End", 0);
+
+        if (mElapsed == 140)
+            MR::onSwitchA(this);
+    
+    if (MR::isDemoActive())
+        mRedCoinCounter->kill();
 }
 
 void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     mNumCoins += 1;
+    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
+
+    MR::incCoin(2, this);
 
     // Coin Counter update
     MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", mNumCoins);
@@ -153,17 +184,26 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
 
     // Coin Counter Player update
     MR::setTextBoxNumberRecursive(pRedCoin->mCoinCounterPlayer, "TxtText", getRedCoinController(this)->mNumCoins);
+    pRedCoin->mCoinCounterPlayer->mLytPos = mCounterPlayerLayoutMode;
     pRedCoin->mCoinCounterPlayer->appear();
-    MR::startAnim(pRedCoin->mCoinCounterPlayer, "End", 0);
+    MR::startAnim(pRedCoin->mCoinCounterPlayer, "Appear", 0);
 
-    if (mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1) {
+    if (mHasAllRedCoins) {
+        MR::startSound(this, "SE_SY_RED_COIN_COMPLETE", -1, -1);
+        MR::startPaneAnim(mRedCoinCounter, "Counter", "FlashLoop", 0);
+    }
+    else {
         MR::startSound(this, "SE_SY_RED_COIN", -1, -1);
         MR::startPaneAnim(mRedCoinCounter, "Counter", "Flash", 0);
     }
-    else {
-        MR::startSound(this, "SE_SY_RED_COIN_COMPLETE", -1, -1);
-        MR::startPaneAnim(mRedCoinCounter, "Counter", "Flash", 0);
-    }
+}
+
+namespace NrvRedCoinController {
+    void NrvAllRedCoinsCollected::execute(Spine* pSpine) const {
+		RedCoinController* pActor = (RedCoinController*)pSpine->mExecutor;
+	}
+
+    NrvAllRedCoinsCollected(NrvAllRedCoinsCollected::sInstance);
 }
 
 /* --- LAYOUTS --- */
@@ -176,34 +216,31 @@ RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 1) {
 void RedCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounter", 1);
     MR::createAndAddPaneCtrl(this, "Counter", 1);
+    initEffectKeeper(1, "RedCoinCounter", 0);
+    mCountUpPaneRumbler = new CountUpPaneRumbler(this, "Counter");
     MR::connectToSceneLayout(this);
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
     MR::startAnim(this, "Wait", 0);
-    initEffectKeeper(1, "RedCoinCounter", 0);
     appear();
 }
-
-void RedCoinCounter::control() {
-}
-
-
-
 /* --- RED COIN COUNTER PLAYER --- */
 
 RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName, RedCoin* pRedCoin) : LayoutActor(pName, 1) {
     mRedCoin = pRedCoin;
+    bool mLytPos;
 }
 
 void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounterPlayer", 1);
     MR::connectToSceneLayout(this);
     MR::setTextBoxNumberRecursive(this, "TxtText", 0);
-    MR::createAndAddPaneCtrl(this, "Text00", 0);
 }
 
 void RedCoinCounterPlayer::control() {
     TVec2f* screenPos = new TVec2f();
-    MR::calcScreenPosition(screenPos, mRedCoin->mTranslation);
+    TVec3f playerPos = *MR::getPlayerPos();
+    playerPos.y += 250;
+    MR::calcScreenPosition(screenPos, mLytPos ? playerPos : mRedCoin->mTranslation);
     setTrans(*screenPos);
 }
 
@@ -217,9 +254,12 @@ void RedCoinCounterPlayer::control() {
 RedCoinController* getRedCoinController(LiveActor* actor) {
     LiveActorGroup* group = MR::getGroupFromArray(actor);
 
-    for (s32 i = 0; i < group->mNumObjs; i++) {
-        if (!strcmp(group->getActor(i)->mName, "RedCoinController"))
-            return (RedCoinController*)group->getActor(i);
+    if (group) {
+        for (s32 i = 0; i < group->mNumObjs; i++) {
+            if (!strcmp(group->getActor(i)->mName, "RedCoinController"))
+                return (RedCoinController*)group->getActor(i);
+        }
     }
+
     return 0;
 }

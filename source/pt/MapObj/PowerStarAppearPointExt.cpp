@@ -16,7 +16,7 @@ using namespace pt;
 PowerStarAppearPointExt::PowerStarAppearPointExt(const char* pName) : LiveActor(pName) {
 	mCamInfo = NULL;
     mSpawnAtPlayer = false;
-    mYOffset = 300;
+    mYOffset = 275;
 }
 
 void PowerStarAppearPointExt::init(const JMapInfoIter& rIter) {
