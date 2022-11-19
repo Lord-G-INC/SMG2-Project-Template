@@ -30,7 +30,6 @@ public:
     bool mUseConnection; // Obj_arg1
     bool mIsCollected;
     bool mIsSpawnedCoin;
-    bool mIsSpawned;
 };
 
 /* --- RED COIN CONTROLLER --- */
@@ -60,6 +59,8 @@ public:
     
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
+    virtual void appear();
+    void updateCounter(s32 count, bool hasAllCoins);
 
     CountUpPaneRumbler* mPaneRumbler;
     TVec2f mPos;
