@@ -22,6 +22,7 @@ namespace pt {
 		bool mUseSE; // Obj_arg3
 		bool mFromMario; // Obj_arg4
 		s32 mDisplayStarMode; // Obj_arg5
+		s32 mFrame; // Obj_arg6
 		s32 mElapsed;
 		ModelObj* DisplayStar;
 		TVec3f upVec;

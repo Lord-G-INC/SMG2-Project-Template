@@ -7,7 +7,49 @@
 #include "Game/System/CountUpPaneRumbler.h"
 #include "Game/Screen/CounterLayoutAppearer.h"
 
-class RedCoin; // bruh
+class RedCoinCounter;
+class RedCoinCounterPlayer;
+class RedCoinController;
+
+
+/* --- RED COIN --- */
+
+class RedCoin : public Coin {
+public:
+    RedCoin(const char* pName);
+    void collect();
+    virtual void init(const JMapInfoIter& rIter);
+    virtual void control();
+    virtual void calcAndSetBaseMtx();
+    virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
+
+    RedCoinController* mCoinController;
+    RedCoinCounterPlayer* mCoinCounterPlayer;
+    LiveActorGroup* mGroup;
+    f32 mLaunchVelocity; // Obj_arg0
+    bool mUseConnection; // Obj_arg1
+    bool mIsCollected;
+    bool mIsSpawnedCoin;
+    bool mIsSpawned;
+};
+
+/* --- RED COIN CONTROLLER --- */
+
+class RedCoinController : public LiveActor {
+public:
+    RedCoinController(const char* pName);
+
+    virtual void init(const JMapInfoIter& rIter);
+    virtual void movement();
+    void incCountAndUpdateLayouts(RedCoin* rRedCoin);
+
+    RedCoinCounter* mRedCoinCounter;
+    s32 mNumCoins;
+    s32 mElapsed;
+    bool mHasAllRedCoins;
+    bool mCounterPlayerLayoutMode; // Obj_arg0
+    bool mShouldNotRewardCoins; // Obj_arg1
+};
 
 
 /* --- RED COIN COUNTER--- */
@@ -17,8 +59,10 @@ public:
     RedCoinCounter(const char* pName);
     
     virtual void init(const JMapInfoIter& rIter);
+    virtual void control();
 
-    CountUpPaneRumbler* mCountUpPaneRumbler;
+    CountUpPaneRumbler* mPaneRumbler;
+    TVec2f mPos;
 };
 
 
@@ -34,62 +78,6 @@ public:
 
     RedCoin* mRedCoin;
     bool mLytPos;
-};
-
-
-
-/* --- RED COIN CONTROLLER --- */
-
-class RedCoinController : public LiveActor {
-public:
-    RedCoinController(const char* pName);
-
-    virtual void init(const JMapInfoIter& rIter);
-    virtual void movement();
-    void incCountAndUpdateLayouts(RedCoin* rRedCoin);
-
-    s32 mNumCoins;
-    s32 mElapsed;
-    RedCoinCounter* mRedCoinCounter;
-    bool mHasAllRedCoins;
-    bool mCounterPlayerLayoutMode;
-
-};
-
-/* --- RED COIN --- */
-
-class RedCoin : public Coin {
-public:
-    RedCoin(const char* pName);
-    void collect();
-    virtual void init(const JMapInfoIter& rIter);
-    virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
-
-    RedCoinController* mCoinController;
-    RedCoinCounterPlayer* mCoinCounterPlayer;
-    LiveActorGroup* mGroup;
-    bool mIsCollected;
-    bool mIsSpawnedCoin;
-};
-
-namespace NrvRedCoin {
-    NERVE(NrvInit);
-}
-
-
-
-/* --- RED COIN APPEARER --- */
-
-class RedCoinAppearer : public LiveActor {
-public:
-    RedCoinAppearer(const char* pName);
-
-    virtual void init(const JMapInfoIter& rIter);
-    virtual void movement();
-
-    RedCoin* mRedCoin;
-    f32 mLaunchVelocity;
-    bool mHasSpawned;
 };
 
 RedCoinController* getRedCoinController(LiveActor* actor);

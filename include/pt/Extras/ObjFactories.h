@@ -84,7 +84,7 @@ namespace pt {
     * Number of total new actor entries. This value has to adjusted everytime a creation function
     * is added or removed!
     */
-    #define NUM_ACTORS 48
+    #define NUM_ACTORS 47
 
     const CreateActorEntry cNewCreateNameObjTable[NUM_ACTORS] = {
         // AreaObj
@@ -139,7 +139,7 @@ namespace pt {
         { "WarpArea", createExtActor<WarpArea> },
         { "SwitchBox", createExtActor<SwitchBox> },
         { "RedCoin", createExtActor<RedCoin> },
-        { "RedCoinAppearer", createExtActor<RedCoinAppearer> },
+        //{ "RedCoinAppearer", createExtActor<RedCoinAppearer> },
         { "RedCoinController", createExtActor<RedCoinController> }
     };
 

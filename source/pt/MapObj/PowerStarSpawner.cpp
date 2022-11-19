@@ -39,6 +39,7 @@ PowerStarSpawner::PowerStarSpawner(const char* pName) : LiveActor(pName) {
 	mDisplayStarMode = -1;
 	mElapsed = -1;
 	mCamInfo = 0;
+	mFrame = -1;
 }
 
 void PowerStarSpawner::init(JMapInfoIter const& rIter) {
@@ -59,6 +60,7 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::getJMapInfoArg3NoInit(rIter, &mUseSE); // Play a sound effect?
 	MR::getJMapInfoArg4NoInit(rIter, &mFromMario); // Should the Star start it's spawn path at Mario?
 	MR::getJMapInfoArg5NoInit(rIter, &mDisplayStarMode); // Show display model?
+	MR::getJMapInfoArg6NoInit(rIter, &mFrame);
 
 	initSound(1, "PowerStarSpawner", &mTranslation, 0);
 
@@ -140,15 +142,16 @@ void PowerStarSpawner::createDisplayStar() {
 
 		if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 			
-			s32 frame = pt::getPowerStarColor(MR::getCurrentStageName(), mScenario);
+			if (mFrame == -1)
+				s32 mFrame = pt::getPowerStarColorCurrentStage(mScenario);
 
 			MR::startBtp(DisplayStar, "PowerStarColor");
 			MR::startBrk(DisplayStar, "PowerStarColor");
 			MR::startBtk(DisplayStar, "PowerStarColor");
 
-			MR::setBtpFrameAndStop(DisplayStar, frame);
-			MR::setBrkFrameAndStop(DisplayStar, frame);
-			MR::setBtkFrameAndStop(DisplayStar, frame);
+			MR::setBtpFrameAndStop(DisplayStar, mFrame);
+			MR::setBrkFrameAndStop(DisplayStar, mFrame);
+			MR::setBtkFrameAndStop(DisplayStar, mFrame);
 			MR::setBvaFrameAndStop(DisplayStar, 0);
 		}
 
