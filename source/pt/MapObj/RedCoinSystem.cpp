@@ -153,17 +153,10 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     MR::incCoin(mShouldNotRewardCoins ? 0 : 2, this);
-
-    // Coin Counter update
-    mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
-
-    // Coin Counter Player update
-    MR::setTextBoxNumberRecursive(pRedCoin->mCoinCounterPlayer, "TxtText", getRedCoinController(this)->mNumCoins);
-    pRedCoin->mCoinCounterPlayer->mLytPos = mCounterPlayerLayoutMode;
-    MR::startAnim(pRedCoin->mCoinCounterPlayer, "Appear", 0);
-    pRedCoin->mCoinCounterPlayer->appear();
-
     MR::startSound(this, mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
+
+    mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
+    pRedCoin->mCoinCounterPlayer->updateCounter(mNumCoins, mCounterPlayerLayoutMode);
 }
 
 /* --- LAYOUTS --- */
@@ -224,7 +217,12 @@ void RedCoinCounterPlayer::control() {
     setTrans(*screenPos);
 }
 
-
+void RedCoinCounterPlayer::updateCounter(s32 count, bool layoutPos) {
+    MR::setTextBoxNumberRecursive(this, "TxtText", count);
+    mLytPos = layoutPos;
+    MR::startAnim(this, "Appear", 0);
+    appear();
+}
 
 /* --- RED COIN UTIL  --- */
 

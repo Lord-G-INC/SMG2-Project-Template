@@ -76,6 +76,7 @@ public:
     
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
+    void updateCounter(s32 count, bool layoutPos);
 
     RedCoin* mRedCoin;
     bool mLytPos;
