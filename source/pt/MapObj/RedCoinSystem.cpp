@@ -185,7 +185,7 @@ void RedCoinCounter::init(const JMapInfoIter& rIter) {
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
     MR::startAnim(this, "Wait", 0);
 
-    mPaneRumbler = new CountUpPaneRumbler(this, "ShaNumber");
+    mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
 
     appear();
     mPaneRumbler->reset();
