@@ -1,7 +1,4 @@
 #include "syati.h"
-#ifdef GLE
-#pragma message("GLE has been enabled, some functions/objects will be disabled.")
-#endif
 
 /*********************************************************************************************************************/
 /* Call static initializers                                                                                          */

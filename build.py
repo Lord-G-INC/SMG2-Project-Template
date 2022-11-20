@@ -62,6 +62,7 @@ compiler_flags = [
 ]
 
 if "--gle" in sys.argv:
+    print("GLE support has been enabled. Some functions/objeces will be disabled.")
     compiler_flags.append("-DGLE")
 
 assembler_flags = [
