@@ -131,15 +131,19 @@ def build(region: str):
 # ----------------------------------------------------------------------------------------------------------------------
 # Entry point
 # ----------------------------------------------------------------------------------------------------------------------
-if len(sys.argv) < 2:
+if not any([True for x in REGIONS if x in sys.argv]):
     print("Did not specify a target region, building all targets!")
+
+    if "--gle" in sys.argv:
+        compiler_flags.append("-DGLE")
 
     for region in REGIONS:
         build(region)
 else:
-    region = sys.argv[1]
+    regions = [x for x in REGIONS if x in sys.argv]
 
-    if region not in REGIONS:
-        err(f"Invalid build target found: {region}")
-
-    build(region)
+    if "--gle" in sys.argv:
+        compiler_flags.append("-DGLE")
+    
+    for region in regions:
+        build(region)
