@@ -21,6 +21,7 @@ namespace pt {
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
 	*/
+	#ifndef GLE // GLE has its own Star Color system, so we can disable ours.
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
 		const char* type;
 		GalaxyStatusAccessor gsa(MR::makeGalaxyStatusAccessor(pStage));
@@ -196,10 +197,11 @@ namespace pt {
 		MR::addPictureFontCode(txt, icon);
 	}
 	
-	kmCall(0x80041E30, getStarIcon); // Normal Star icons
-	kmCall(0x80041F0C, getStarIcon); // Comet Star icons
-	kmCall(0x80041F94, getStarIcon); // Hidden Star icons
-	kmCall(0x80041F48, getStarIcon); // Collected Hidden Star icons
+		kmCall(0x80041E30, getStarIcon); // Normal Star icons
+		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
+		kmCall(0x80041F94, getStarIcon); // Hidden Star icons
+		kmCall(0x80041F48, getStarIcon); // Collected Hidden Star icons
+	#endif
 
 	/*
 	*	Star Ball: Custom Ball and Star Colors
@@ -213,13 +215,23 @@ namespace pt {
 
 	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
+		s32 colorFrame = 0;
 		
 		// Check Obj_arg1. This will be the scenario ID to check the Power Star Color of.
 		MR::getJMapInfoArg1NoInit(iter, &argScenario);
 
 		// If the checked star is already collected, just set the star ball and the star inside to be clear.
 		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
-		s32 colorFrame = MR::hasPowerStarInCurrentStage(argScenario) ? 4 : pt::getPowerStarColorCurrentStage(argScenario);
+		
+		// In case of the GLE, we read from Obj_arg2 instead of the star's color in the current stage.
+		#ifdef GLE
+			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
+		#else
+			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
+		#endif
+
+		if (MR::hasPowerStarInCurrentStage(argScenario))
+			colorFrame = 4;
 		
 		// BTP and BRK animations are started and set using colorFrame.
 		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);

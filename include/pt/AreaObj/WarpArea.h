@@ -3,6 +3,7 @@
 #include "Game/AreaObj.h"
 #include "pt/Extras/WarpAreaSystem.h"
 
+#ifndef GLE 
 namespace pt {
 	class WarpArea : public AreaObj {
 	public:
@@ -27,3 +28,4 @@ namespace pt {
 		#define mPrintErrors mObjArg6
 	};
 };
+#endif

@@ -3,6 +3,8 @@
 #include "pt/Util/ActorUtil.h"
 #include "Game/System/GameSequenceInGame.h"
 #include "c_stdlib.h"
+
+#ifndef GLE
 using namespace pt;
 
 /*
@@ -15,7 +17,6 @@ using namespace pt;
 *
 * WarpAreaErrorLayout appears when specific parts of the WarpArea are set up incorrectly.
 */
-
 	WarpAreaStageTable::WarpAreaStageTable(bool init) {
 		mDestStageName; // Destination Stage Name
 		mDestScenarioNo = 0; // Destionation Scenario Number
@@ -153,7 +154,7 @@ using namespace pt;
 
 	}
 
-kmCall(0x804B44D0, setWipeOnStageLoad); //sub_804B4490 + 0x40
+	kmCall(0x804B44D0, setWipeOnStageLoad); //sub_804B4490 + 0x40
 	
 
 	// Error Layout Code
@@ -182,3 +183,4 @@ kmCall(0x804B44D0, setWipeOnStageLoad); //sub_804B4490 + 0x40
 			MR::setTextBoxFormatRecursive(this, "ShaText", L"%s", string);
 		}
 	}
+#endif

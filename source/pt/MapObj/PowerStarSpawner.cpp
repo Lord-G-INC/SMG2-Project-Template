@@ -142,8 +142,9 @@ void PowerStarSpawner::createDisplayStar() {
 
 		if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 			
-			if (mFrame == -1)
-				s32 mFrame = pt::getPowerStarColorCurrentStage(mScenario);
+			#ifndef GLE
+				mFrame = pt::getPowerStarColorCurrentStage(mScenario) ? 4 : pt::getPowerStarColorCurrentStage(mScenario);
+			#endif
 
 			MR::startBtp(DisplayStar, "PowerStarColor");
 			MR::startBrk(DisplayStar, "PowerStarColor");

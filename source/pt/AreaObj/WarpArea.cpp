@@ -1,6 +1,7 @@
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/Extras/WarpAreaSystem.h"
 #include "Game/Util.h"
+#ifndef GLE
 using namespace pt;
 
 /*
@@ -88,3 +89,4 @@ void WarpArea::movement() {
 const char* WarpArea::getManagerName() const {
 	return "BindEnd";
 }
+#endif

@@ -2,6 +2,7 @@
 
 #include "syati.h"
 
+#ifndef GLE
 namespace pt {
 	class ErrorLayout : public LayoutActor {
 	public:
@@ -31,3 +32,4 @@ namespace pt {
 		ErrorLayout* mErrorLayout;
 	};
 };
+#endif

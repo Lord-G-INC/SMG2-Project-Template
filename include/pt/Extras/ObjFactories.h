@@ -84,7 +84,12 @@ namespace pt {
     * Number of total new actor entries. This value has to adjusted everytime a creation function
     * is added or removed!
     */
-    #define NUM_ACTORS 47
+
+    #ifdef GLE 
+        #define NUM_ACTORS 46
+    #else
+        #define NUM_ACTORS 47
+    #endif
 
     const CreateActorEntry cNewCreateNameObjTable[NUM_ACTORS] = {
         // AreaObj
@@ -135,12 +140,14 @@ namespace pt {
         { "WaterLeakPipe", createExtActor<WaterLeakPipe>},
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
-        // PTD
-        { "WarpArea", createExtActor<WarpArea> },
         { "SwitchBox", createExtActor<SwitchBox> },
         { "RedCoin", createExtActor<RedCoin> },
         //{ "RedCoinAppearer", createExtActor<RedCoinAppearer> },
-        { "RedCoinController", createExtActor<RedCoinController> }
+        { "RedCoinController", createExtActor<RedCoinController> },
+        // Breaks GLE
+        #ifndef GLE
+            { "WarpArea", createExtActor<WarpArea> }
+        #endif
     };
 
 

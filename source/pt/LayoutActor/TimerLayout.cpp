@@ -4,6 +4,7 @@
 #include "Game/System.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
 
+#ifndef GLE
 using namespace pt;
 
 s32 numScenario = 1; // Checked scenario is 1 by default.
@@ -75,3 +76,4 @@ void initTimerLayout(LayoutActor* layout) {// This function keeps the layout ini
 }
 
 kmCall(0x804657A0, initTimerLayout);
+#endif

@@ -188,6 +188,7 @@ namespace pt {
 	* A fun but useless patch suggested by Alex SMG.
 	*/
 
+	#ifndef CA
 	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::needStageSwitchWriteA(actor, iter);
 
@@ -197,6 +198,7 @@ namespace pt {
 	}
 	
 	kmCall(0x802AF524, customHipDropSwitchColors);
+
 
 	/*
 	* Mini Patch: Ocean Sphere Texture Patch
@@ -213,7 +215,7 @@ namespace pt {
 
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
-
+	#endif
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
 	* 

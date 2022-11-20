@@ -6,6 +6,8 @@
 #include "Game/System/AllData/GameSequenceFunction.h"
 #include "Game/System.h"
 #include "Game/LiveActor.h"
+
+#ifndef GLE
 using namespace pt;
 
 /*
@@ -100,6 +102,7 @@ namespace StageEventDataTable {
 		return StageEventDataTable::readTableCurrentStage("StarPieceFollowGroupLimit");
 	}
 
+
 	kmBranch(0x800568F0, isStageScoreAttack);
 
 	kmBranch(0x80056B40, isStageDisablePauseMenu);
@@ -121,3 +124,4 @@ namespace StageEventDataTable {
 
 	kmBranch(0x800567D0, isStageStarPieceFollowGroupLimit);
 }
+#endif
