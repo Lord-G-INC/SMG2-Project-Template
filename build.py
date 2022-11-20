@@ -61,6 +61,9 @@ compiler_flags = [
     "-DMTX_USE_PS",
 ]
 
+if "--gle" in sys.argv:
+    compiler_flags.append("-DGLE")
+
 assembler_flags = [
     "-c",
     "-proc gekko",
@@ -134,16 +137,10 @@ def build(region: str):
 if not any([True for x in REGIONS if x in sys.argv]):
     print("Did not specify a target region, building all targets!")
 
-    if "--gle" in sys.argv:
-        compiler_flags.append("-DGLE")
-
     for region in REGIONS:
         build(region)
 else:
     regions = [x for x in REGIONS if x in sys.argv]
-
-    if "--gle" in sys.argv:
-        compiler_flags.append("-DGLE")
     
     for region in regions:
         build(region)
