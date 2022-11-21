@@ -260,6 +260,7 @@ namespace pt {
 	*	This will be removed if people do not use it, since it's pointless.
 	*/
 	
+	#ifdef ALL
 	void SilverStarColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::initUseStageSwitchWriteA(actor, iter);
 		s32 frame = 6;
@@ -268,4 +269,5 @@ namespace pt {
 	}
 
 	kmCall(0x8035F830, SilverStarColors);
+	#endif
 }

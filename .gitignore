@@ -7,3 +7,6 @@ CustomCode*.bin
 /deps/Kamek
 /deps/*.exe
 *.zip
+BuildPT.bat
+.vscode/tasks.json
+/deps/Syati

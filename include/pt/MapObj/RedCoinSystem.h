@@ -30,6 +30,7 @@ public:
     bool mUseConnection; // Obj_arg1
     bool mIsCollected;
     bool mIsSpawnedCoin;
+    bool mIsInAirBubble;
 };
 
 /* --- RED COIN CONTROLLER --- */

@@ -4,7 +4,7 @@
 #include "Game/System.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
 
-#ifndef GLE
+#ifdef ALL
 using namespace pt;
 
 s32 numScenario = 1; // Checked scenario is 1 by default.

@@ -61,9 +61,20 @@ compiler_flags = [
     "-DMTX_USE_PS",
 ]
 
+# Compiler flag for SuperHackio's project "GalaxyLevelEngine"
 if "--gle" in sys.argv:
-    print("GLE support has been enabled. Some functions/objeces will be disabled.")
+    print("Building with flag GLE true")
     compiler_flags.append("-DGLE")
+
+# Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
+if "--ca" in sys.argv:
+    print("Building with flag CA true")
+    compiler_flags.append("-DCA")
+
+# Compiler flag for the Starshine Team's project: "Super Mario Starshine"
+if "--all" in sys.argv:
+    print("Building with flag ALL true")
+    compiler_flags.append("-DALL")
 
 assembler_flags = [
     "-c",

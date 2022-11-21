@@ -3,6 +3,7 @@
 #include "Game/System/Misc/GameSceneLayoutHolder.h"
 #include "Game/MapObj/CoinHolder.h"
 #include "pt/Util/ActorUtil.h"
+#include "Game/System/AllData/GameSequenceFunction.h"
 
 /*
 * These actors are exclusive to PT Debug.
@@ -19,8 +20,9 @@
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
     mIsSpawnedCoin = false;
-    mUseConnection = false;
     mLaunchVelocity = 25.0f;
+    mUseConnection = false;
+    mIsInAirBubble = false;
 
     pt::setupCoin(this);
 }
@@ -30,11 +32,11 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::initDefaultPos(this, rIter);
     MR::connectToSceneItemStrongLight(this);
     MR::initShadowVolumeCylinder(this, 50);
-    MR::calcGravity(this);
     MR::setClippingFarMax(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
+    MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
 
     initEffectKeeper(1, "RedCoin", false);
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
@@ -43,8 +45,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
 
-    MR::addHitSensorMapObj(this, "RedCoin", 1, 25.0f, TVec3f(0.0f, 0.0f, 0.0f));
-    initBinder(0, 0, 0);
+    MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
+
+    initBinder(55.0f, 70.0f, 0);
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
@@ -62,6 +65,14 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     if (MR::isValidSwitchB(this)) {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);
+    }
+    
+    MR::setSensorRadius(this, "RedCoin", mIsInAirBubble ? 150.0f : 55.0f);
+
+    if (mIsInAirBubble && !mUseConnection && !MR::isValidSwitchB(this)) {
+        mAirBubble = MR::createPartsModelNoSilhouettedMapObj(this, "空気アワ", "AirBubble", 0);
+        mAirBubble->initFixedPosition(TVec3f(0.0f, 70.0f, 0.0f), TVec3f(0.0f, 0.0f, 0.0f), 0);
+        MR::startAction(mAirBubble, "Move");
     }
 }
 
@@ -81,6 +92,8 @@ bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) 
 }
 
 void RedCoin::control() {
+    MR::calcGravity(this);
+    
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this)) {
         MR::startSound(this, "SE_SY_RED_COIN_APPEAR", -1, -1);
 
@@ -102,6 +115,13 @@ void RedCoin::collect() {
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
     
+    if (mIsInAirBubble) {
+        MR::emitEffect(mAirBubble, "RecoveryBubbleBreak");
+        mAirBubble->kill();
+    }
+    
+    MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
+
     mIsCollected = true;
     MR::hideModel(this);
     MR::invalidateHitSensors(this);
@@ -135,6 +155,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     initSound(3, "RedCoin", &mTranslation, 0);
 
     mRedCoinCounter->initWithoutIter();
+    mRedCoinCounter->appear();
 }
 
 void RedCoinController::movement() {
@@ -152,7 +173,8 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     mNumCoins += 1;
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
-    MR::incCoin(mShouldNotRewardCoins ? 0 : 2, this);
+    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
+
     MR::startSound(this, mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
@@ -168,15 +190,14 @@ RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 1) {
 
 void RedCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounter", 1);
-    MR::createAndAddPaneCtrl(this, "Counter", 1);
     MR::createAndAddPaneCtrl(this, "PCoinCounter", 1);
 
     initEffectKeeper(1, "RedCoinCounter", 0);
-    mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
+
     MR::connectToSceneLayout(this);
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
     MR::startAnim(this, "Wait", 0);
-    appear();
+    mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
 }
 
 void RedCoinCounter::appear() {
