@@ -17,11 +17,14 @@ class RedCoinController;
 class RedCoin : public Coin {
 public:
     RedCoin(const char* pName);
-    void collect();
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
     virtual void calcAndSetBaseMtx();
     virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
+
+    void collect();
+    void appearAndMove();
+    void initAirBubble();
 
     RedCoinController* mCoinController;
     RedCoinCounterPlayer* mCoinCounterPlayer;
@@ -29,7 +32,6 @@ public:
     f32 mLaunchVelocity; // Obj_arg0
     bool mUseConnection; // Obj_arg1
     bool mIsCollected;
-    bool mIsSpawnedCoin;
     bool mIsInAirBubble;
 };
 
@@ -49,6 +51,7 @@ public:
     bool mHasAllRedCoins;
     bool mCounterPlayerLayoutMode; // Obj_arg0
     bool mShouldNotRewardCoins; // Obj_arg1
+    bool mLayoutAnim;
 };
 
 
@@ -64,7 +67,6 @@ public:
     void updateCounter(s32 count, bool hasAllCoins);
 
     CountUpPaneRumbler* mPaneRumbler;
-    TVec2f mPos;
 };
 
 
@@ -77,11 +79,11 @@ public:
     
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
-    void updateCounter(s32 count, bool layoutPos);
+    void updateCounter(s32 count, bool layoutPos, bool layoutAnim);
 
     RedCoin* mRedCoin;
     bool mLytPos;
 };
 
-RedCoinController* getRedCoinController(LiveActor* actor);
+RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);
 

@@ -7,7 +7,7 @@
 #include "Game/System.h"
 #include "Game/LiveActor.h"
 
-#ifndef GLE
+#ifdef ALL
 using namespace pt;
 
 /*
@@ -116,7 +116,7 @@ namespace StageEventDataTable {
 	kmBranch(0x80056BE0, isStageStoryBook);
 
 	kmCall(0x804477B4, isStageUseTamakoroBGM);
-	kmWrite32(0x800857EC, 0x38600001);	
+	kmWrite32(0x800857EC, 0x38600000);	
 
 	kmCall(0x80387F64, isStageDisableFallFailsafe);
 

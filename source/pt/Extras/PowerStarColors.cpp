@@ -1,5 +1,6 @@
 #include "pt/Extras/PowerStarColors.h"
 #include "pt/Util/ActorUtil.h"
+#include "Game/MapObj/Tamakoro.h"
 
 /*
 * Authors: Aurum
@@ -21,7 +22,7 @@ namespace pt {
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
 	*/
-	#ifndef GLE // GLE has its own Star Color system, so we can disable ours.
+	#ifdef ALL // GLE has its own Star Color system, so we can disable ours.
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
 		const char* type;
 		GalaxyStatusAccessor gsa(MR::makeGalaxyStatusAccessor(pStage));
@@ -213,7 +214,7 @@ namespace pt {
 	*	Not really useful, but is neat.
 	*/
 
-	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
+	void TamakoroCustomPowerStarColors(Tamakoro* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
 		s32 colorFrame = 0;
 		
@@ -223,9 +224,8 @@ namespace pt {
 		// If the checked star is already collected, just set the star ball and the star inside to be clear.
 		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
 		
-		// In case of the GLE, we read from Obj_arg2 instead of the star's color in the current stage.
 		#ifdef GLE
-			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
+			MR::getJMapInfoArg2NoInit(actor, &colorFrame);
 		#else
 			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
 		#endif
@@ -244,11 +244,11 @@ namespace pt {
 
 	// Define new particles.
 	// These will be picked using the Star Ball's current BTP frame.
-	const char* newparticles[] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
+	const char* cNewParticles[] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
 	
-	void TamakoroCustomPowerStarColorsParticles(LiveActor* actor) {
+	void TamakoroCustomPowerStarColorsParticles(Tamakoro* actor) {
 		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added.
-		MR::emitEffect(actor, newparticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
+		MR::emitEffect(actor, cNewParticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
 	}
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);

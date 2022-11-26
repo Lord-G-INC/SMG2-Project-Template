@@ -30,6 +30,7 @@
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/MapObj/SwitchBox.h"
 #include "pt/MapObj/RedCoinSystem.h"
+#include "pt/AreaObj/RestrictGameLayoutArea.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -85,8 +86,8 @@ namespace pt {
     * is added or removed!
     */
 
-    #ifdef GLE 
-        #define NUM_ACTORS 46
+    #ifdef ALL
+        #define NUM_ACTORS 48
     #else
         #define NUM_ACTORS 47
     #endif
@@ -145,8 +146,11 @@ namespace pt {
         //{ "RedCoinAppearer", createExtActor<RedCoinAppearer> },
         { "RedCoinController", createExtActor<RedCoinController> },
         // Breaks GLE
-        #ifndef GLE
-            { "WarpArea", createExtActor<WarpArea> }
+        #ifdef ALL
+            { "WarpArea", createExtActor<WarpArea> },
+        #endif
+        #if defined (ALL) || defined (SMG63)
+            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }
         #endif
     };
 

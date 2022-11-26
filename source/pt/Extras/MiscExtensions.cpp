@@ -188,7 +188,7 @@ namespace pt {
 	* A fun but useless patch suggested by Alex SMG.
 	*/
 
-	#ifdef ALL
+	#ifdef SMG63
 	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::needStageSwitchWriteA(actor, iter);
 
@@ -198,7 +198,7 @@ namespace pt {
 	}
 	
 	kmCall(0x802AF524, customHipDropSwitchColors);
-
+	#endif
 
 	/*
 	* Mini Patch: Ocean Sphere Texture Patch
@@ -207,6 +207,7 @@ namespace pt {
 	* Here we change it to read Obj_arg0, so the second texture can be used in custom galaxies.
 	*/
 
+	#ifdef ALL
 	s32 OceanSphereTexturePatch(const JMapInfoIter& iter) {
 		s32 arg = 0;
 		MR::getJMapInfoArg0NoInit(iter, &arg);
@@ -240,6 +241,15 @@ namespace pt {
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
+
+	#ifdef SMSS
+	 void SamboHead_DieIfInWater(LiveActor* pActor) {
+     if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
+         pActor->kill();
+    }
+
+    kmCall(0x801F8290, SamboHead_DieIfInWater);
+	#endif
 	//void sus(LiveActor* actor, const JMapInfoIter& iter) {
 	//	MR::useStageSwitchWriteA(actor, iter);
 	//	MR::declareStarPiece(actor, 0x18);

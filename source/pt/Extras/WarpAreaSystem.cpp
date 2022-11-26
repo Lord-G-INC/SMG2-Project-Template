@@ -4,7 +4,7 @@
 #include "Game/System/GameSequenceInGame.h"
 #include "c_stdlib.h"
 
-#ifndef GLE
+#ifdef ALL
 using namespace pt;
 
 /*

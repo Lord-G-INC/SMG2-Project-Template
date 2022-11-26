@@ -3,6 +3,7 @@
 #include "Game/Player.h"
 #include "Game/System.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
+#include "Game/Screen/CounterLayoutController.h"
 
 #ifdef ALL
 using namespace pt;
@@ -65,15 +66,29 @@ void TimerLayout::control() {
 	}
 }
 
-void initTimerLayout(LayoutActor* layout) {// This function keeps the layout initialized whenever possible.
+//void initTimerLayout(LayoutActor* layout) {// This function keeps the layout initialized whenever possible.
+//	MR::connectToSceneLayout(layout);
+//
+//	TimerLayout* TimerLayout = new pt::TimerLayout();
+//
+//	if (!MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
+//		TimerLayout->initWithoutIter();
+//		TimerLayout->mLayoutActorFlag.mIsHidden = true;
+//}
+//
+//kmCall(0x804657A0, initTimerLayout);
+
+void initTimerLayout(CounterLayoutController* layout) {
 	MR::connectToSceneLayout(layout);
 
-	TimerLayout* TimerLayout = new pt::TimerLayout();
+	layout->mTimerLayout = new TimerLayout();
 
 	if (!MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
-		TimerLayout->initWithoutIter();
-		TimerLayout->mLayoutActorFlag.mIsHidden = true;
+		layout->mTimerLayout->initWithoutIter();
 }
 
 kmCall(0x804657A0, initTimerLayout);
+
+kmWrite32(0x80471780, 0x38600050);
+
 #endif
