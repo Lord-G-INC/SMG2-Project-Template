@@ -188,7 +188,7 @@ namespace pt {
 	* A fun but useless patch suggested by Alex SMG.
 	*/
 
-	#ifdef SMG63
+	#if defined (ALL) || defined (SMG63)
 	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::needStageSwitchWriteA(actor, iter);
 

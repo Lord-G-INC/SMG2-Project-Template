@@ -22,7 +22,7 @@ namespace pt {
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
 	*/
-	#ifdef ALL // GLE has its own Star Color system, so we can disable ours.
+	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we can disable ours.
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
 		const char* type;
 		GalaxyStatusAccessor gsa(MR::makeGalaxyStatusAccessor(pStage));
@@ -225,7 +225,7 @@ namespace pt {
 		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
 		
 		#ifdef GLE
-			MR::getJMapInfoArg2NoInit(actor, &colorFrame);
+			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
 		#else
 			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
 		#endif

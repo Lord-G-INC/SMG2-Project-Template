@@ -47,12 +47,12 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 
 	MR::processInitFunction(this, "StarPiece", false);
 	MR::hideModel(this); // A model is specified then hidden since it is not necessary, or else the ModelObj will crash the game.
-
 	MR::connectToSceneMapObj(this);
 	MR::invalidateClipping(this); // This object will never unload when offscreen.
-
-	MR::useStageSwitchReadA(this, rIter); //Reads SW_A.
 	MR::calcGravity(this);
+
+	MR::useStageSwitchReadA(this, rIter); // Reads SW_A.
+	MR::useStageSwitchReadB(this, rIter); // Reads SW_B
 
 	MR::getJMapInfoArg0NoInit(rIter, &mScenario); // Star ID
 	MR::getJMapInfoArg1NoInit(rIter, &mSpawnMode); // Time Stop/Instant Appear/Squizzard Spawn
@@ -67,11 +67,26 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::declarePowerStar(this, mScenario); // Declares the star determined by mScenario.
 	makeActorAppeared();
 
-	if (mDisplayStarMode > -1)
+	if (mDisplayStarMode > -1) 
 		createDisplayStar(); // Creates the Power Star Display model
 }
 
 void PowerStarSpawner::movement() {
+
+	if (MR::isValidSwitchB(this)) {
+		OSReport("switch valid\n");
+		if (MR::isOnSwitchB(this)) {
+			OSReport("switch on\n");
+			MR::showModel(DisplayStar);
+			MR::tryEmitEffect(DisplayStar, "Light");
+		}
+		else {
+			OSReport("switch off\n");
+			MR::hideModel(DisplayStar);
+			MR::tryDeleteEffect(DisplayStar, "Light");
+		}
+	}
+
 	if (mDisplayStarMode == 1)
 		MR::rotateMtxLocalYDegree((MtxPtr)&DisplayStarMtx, 3.0f);
 
@@ -128,7 +143,6 @@ void PowerStarSpawner::createDisplayStar() {
 
 		MR::setMtxTrans((MtxPtr)DisplayStarMtx, mTranslation); // Set the mtx translation to the PowerStarSpawner's mTranslation.
 
-		MR::emitEffect(DisplayStar, "Light"); // Starts the PowerStar effect "Light" on the DisplayStar.
 		MR::invalidateShadowAll(DisplayStar); // Shadows are not needed so they are hidden.
 
 		if (mDisplayStarMode == 1) {
@@ -142,9 +156,8 @@ void PowerStarSpawner::createDisplayStar() {
 
 		if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 			
-			#ifndef GLE
-				mFrame = pt::getPowerStarColorCurrentStage(mScenario) ? 4 : pt::getPowerStarColorCurrentStage(mScenario);
-			#endif
+			if (mFrame == -1)
+				mFrame = pt::getPowerStarColorCurrentStage(mScenario);
 
 			MR::startBtp(DisplayStar, "PowerStarColor");
 			MR::startBrk(DisplayStar, "PowerStarColor");
@@ -157,4 +170,9 @@ void PowerStarSpawner::createDisplayStar() {
 		}
 
 		DisplayStar->appear();
+
+		if (MR::isValidSwitchB(this))
+			MR::hideModel(DisplayStar);
+		else
+			MR::emitEffect(DisplayStar, "Light"); // Starts the PowerStar effect "Light" on the DisplayStar.
 }

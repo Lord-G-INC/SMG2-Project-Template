@@ -51,7 +51,7 @@ public:
     bool mHasAllRedCoins;
     bool mCounterPlayerLayoutMode; // Obj_arg0
     bool mShouldNotRewardCoins; // Obj_arg1
-    bool mLayoutAnim;
+    bool mLayoutAnim;  /// Obj_arg2
 };
 
 

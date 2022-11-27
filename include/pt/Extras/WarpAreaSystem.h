@@ -2,7 +2,7 @@
 
 #include "syati.h"
 
-#ifndef GLE
+#if defined (ALL) || defined (NOGLE)
 namespace pt {
 	class ErrorLayout : public LayoutActor {
 	public:

@@ -3,7 +3,7 @@
 #include "Game/Screen/LayoutActor.h"
 #include "syati.h"
 
-#ifndef GLE
+//#ifdef ALL
 namespace pt {
     class TimerLayout : public LayoutActor {
     public:
@@ -20,4 +20,4 @@ namespace pt {
     	u32 frameDifference;
     };
 }
-#endif
+//#endif

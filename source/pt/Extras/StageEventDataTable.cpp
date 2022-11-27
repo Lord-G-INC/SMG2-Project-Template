@@ -7,7 +7,6 @@
 #include "Game/System.h"
 #include "Game/LiveActor.h"
 
-#ifdef ALL
 using namespace pt;
 
 /*
@@ -21,6 +20,7 @@ using namespace pt;
 * Chimp, Glider, Disable Pause, Play Star Chance, Purple Coin Over 100, and Story Book.
 */
 
+#if defined (ALL) || defined (NOGLE)
 namespace StageEventDataTable {
 
 	const char* flags;
@@ -116,7 +116,7 @@ namespace StageEventDataTable {
 	kmBranch(0x80056BE0, isStageStoryBook);
 
 	kmCall(0x804477B4, isStageUseTamakoroBGM);
-	kmWrite32(0x800857EC, 0x38600000);	
+	kmWrite32(0x800857EC, 0x38600001);	
 
 	kmCall(0x80387F64, isStageDisableFallFailsafe);
 

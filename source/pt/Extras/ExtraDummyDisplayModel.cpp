@@ -20,7 +20,7 @@ namespace pt {
         /* 21 */ { "PowerUpCloud",      NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 22 */ { "PowerUpRock",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 23 */ { "PowerUpInvincible", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 24 */ { "RedCoin", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
+        /* 24 */ { "RedCoin", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
     };
 
     DummyDisplayModel* tryCreateNewDummyModel(LiveActor *pHost, const JMapInfoIter &rIter, s32 defaultId, int v4) {

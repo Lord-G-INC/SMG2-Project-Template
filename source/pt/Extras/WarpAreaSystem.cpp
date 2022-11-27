@@ -4,7 +4,7 @@
 #include "Game/System/GameSequenceInGame.h"
 #include "c_stdlib.h"
 
-#ifdef ALL
+#if defined (ALL) || defined (NOGLE)
 using namespace pt;
 
 /*

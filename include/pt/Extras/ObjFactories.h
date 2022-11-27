@@ -88,35 +88,45 @@ namespace pt {
 
     #ifdef ALL
         #define NUM_ACTORS 48
-    #else
+    #endif 
+
+    #ifdef NOGLE
+        #define NUM_ACTORS 47
+    #endif 
+
+    #ifdef SMG63
         #define NUM_ACTORS 47
     #endif
 
+    #ifdef SMSS
+        #define NUM_ACTORS 46
+    #endif
+
     const CreateActorEntry cNewCreateNameObjTable[NUM_ACTORS] = {
-        // AreaObj
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
+        // AreaObj
         { "ForbidJumpArea", NameObjFactory::createNameObj<AreaObj> },
         { "ForbidWaterSearchArea", NameObjFactory::createNameObj<AreaObj> },
         { "JumpSwitchArea", createExtActor<JumpSwitchArea> },
         { "PipeModeCube", NameObjFactory::createBaseOriginCube<AreaObj> },
         { "PlaneCircularModeCube", NameObjFactory::createBaseOriginCube<AreaObj> },
         { "QuakeEffectArea", createQuakeEffectArea },
-        // Enemy
         { "Anagon", createExtActor<Anagon> },
+        // Enemy
         { "BallBeamer", createExtActor<BallBeamer> },
-        { "CocoSambo", createExtActor<CocoSambo> },
+        { "CocoSambo", createExtActor<CocoSambo> }, // 10
         { "DharmaSambo", createExtActor<DharmaSambo> },
         { "JumpGuarder", createExtActor<JumpGuarder> },
         { "Mogu", createExtActor<Mogu> },
         { "Poihana", createExtActor<Poihana> },
-        // Map
         { "CollectSwitchCtrl", createExtActor<CollectSwitchCtrl> },
+        // Map
         { "PlayerSwitchCtrl", createExtActor<PlayerSwitchCtrl> },
         { "SensorDetector", createExtActor<SensorDetector> },
-        // MapObj
         { "Banekiti", createExtActor<Banekiti> },
+        // MapObj
         { "BlueChip", createExtActor<BlueChip> },
-        { "BlueChipGroup", createExtActor<BlueChipGroup> },
+        { "BlueChipGroup", createExtActor<BlueChipGroup> }, // 20
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
         { "FirePressureRadiate", createExtActor<FirePressureRadiate> },
@@ -126,7 +136,7 @@ namespace pt {
         { "MorphItemCollectionFoo", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemCollectionIce", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemNeoFoo", createExtActor<MorphItemNeoFoo> },
-        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> },
+        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> }, // 30
         { "MultipleChoiceDice", createExtActor<MultipleChoiceDice> },
         { "Pompon2Plant", createExtActor<PomponPlant> },
         { "PowerStarSpawner", createExtActor<PowerStarSpawner> },
@@ -136,21 +146,21 @@ namespace pt {
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
         { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
-        { "ValveSwitch", createExtActor<ValveSwitch> },
+        { "ValveSwitch", createExtActor<ValveSwitch> }, // 40
         { "WatchTowerRotateStep", createExtActor<WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<WaterLeakPipe>},
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
         { "SwitchBox", createExtActor<SwitchBox> },
         { "RedCoin", createExtActor<RedCoin> },
-        //{ "RedCoinAppearer", createExtActor<RedCoinAppearer> },
-        { "RedCoinController", createExtActor<RedCoinController> },
-        // Breaks GLE
-        #ifdef ALL
-            { "WarpArea", createExtActor<WarpArea> },
+        { "RedCoinController", createExtActor<RedCoinController> }, // 46 (SMSS)
+
+        #if defined (ALL) || defined (NOGLE)
+        { "WarpArea", createExtActor<WarpArea> }, // 48 (ALL), 47 (NOGLE)
         #endif
+
         #if defined (ALL) || defined (SMG63)
-            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }
+        { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 47 SMG63
         #endif
     };
 

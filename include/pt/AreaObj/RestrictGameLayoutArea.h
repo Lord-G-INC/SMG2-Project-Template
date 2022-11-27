@@ -3,6 +3,7 @@
 #include "syati.h"
 #include "Game/System/Misc/GameSceneLayoutHolder.h"
 
+#if defined (ALL) || defined (SMG63)
 class RestrictGameLayoutArea : public AreaObj {
 public:
     RestrictGameLayoutArea(const char* pName);
@@ -10,3 +11,4 @@ public:
     virtual void movement();
     virtual const char* getManagerName() const;
 };
+#endif

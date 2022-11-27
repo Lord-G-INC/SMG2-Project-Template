@@ -3,9 +3,9 @@
 #include "Game/Player.h"
 #include "Game/System.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
-#include "Game/Screen/CounterLayoutController.h"
+#include "Game/System/Misc/GameSceneLayoutHolder.h"
 
-#ifdef ALL
+//#ifdef ALL
 using namespace pt;
 
 s32 numScenario = 1; // Checked scenario is 1 by default.
@@ -78,17 +78,18 @@ void TimerLayout::control() {
 //
 //kmCall(0x804657A0, initTimerLayout);
 
-void initTimerLayout(CounterLayoutController* layout) {
-	MR::connectToSceneLayout(layout);
+void initTimerLayout(GameSceneLayoutHolder* holder, const char* pStr) {
+	MR::joinToNameObjGroup(holder, pStr);
 
-	layout->mTimerLayout = new TimerLayout();
-
+	holder->mTimerLayout = new TimerLayout();
+	OSReport("init\n");
 	if (!MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
-		layout->mTimerLayout->initWithoutIter();
+		holder->mTimerLayout->initWithoutIter();
 }
 
-kmCall(0x804657A0, initTimerLayout);
+kmCall(0x80471650, initTimerLayout);
 
-kmWrite32(0x80471780, 0x38600050);
 
-#endif
+kmWrite32(0x8045A0A4, 0x38600048); // li r3, 0x48
+
+//#endif

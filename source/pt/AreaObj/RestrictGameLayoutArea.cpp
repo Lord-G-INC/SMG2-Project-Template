@@ -1,5 +1,6 @@
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
 
+#if defined (ALL) || defined (SMG63)
 RestrictGameLayoutArea::RestrictGameLayoutArea(const char* pName) : AreaObj(pName) {
 }
 
@@ -29,3 +30,4 @@ void RestrictGameLayoutArea::movement() {
 const char* RestrictGameLayoutArea::getManagerName() const {
     return "ForbidWaterSearch";
 }
+#endif

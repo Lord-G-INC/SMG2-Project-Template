@@ -61,20 +61,35 @@ compiler_flags = [
     "-DMTX_USE_PS",
 ]
 
-# Compiler flag for SuperHackio's project "GalaxyLevelEngine"
+# Compiler flag for building everything in this workspace
+if "--all" in sys.argv:
+    print("Building with flag ALL true")
+    compiler_flags.append("-DALL")
+
+# Compiler flag for NOT having SuperHackio's project "GalaxyLevelEngine" in your workspace
+if "--nogle" in sys.argv:
+    print("Building with flag NOGLE true")
+    compiler_flags.append("-DNOGLE")
+
+# Compiler flag for having SuperHackio's project "GalaxyLevelEngine" in your workspace
 if "--gle" in sys.argv:
     print("Building with flag GLE true")
     compiler_flags.append("-DGLE")
 
+# Compiler flag for the Starshine Team's project "Super Mario Starshine"
+if "--smss" in sys.argv:
+    print("Building with flags SMSS and GLE true")
+    compiler_flags.append("-DSMSS -DGLE")
+
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
 if "--ca" in sys.argv:
-    print("Building with flag CA true")
-    compiler_flags.append("-DCA")
+    print("Building with flags CA and GLE true")
+    compiler_flags.append("-DCA -DGLE")
 
-# Compiler flag for the Starshine Team's project: "Super Mario Starshine"
-if "--all" in sys.argv:
-    print("Building with flag ALL true")
-    compiler_flags.append("-DALL")
+# Compiler flag for the Alex SMG's project: "Super Mario Galaxy 63"
+if "--smg63" in sys.argv:
+    print("Building with flags SMG63 and GLE true")
+    compiler_flags.append("-DSMG63 -DGLE")
 
 assembler_flags = [
     "-c",
