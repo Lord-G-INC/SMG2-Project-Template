@@ -1,7 +1,6 @@
 #include "pt/MapObj/PowerStarAppearPointExt.h"
 #include "Game/Util.h"
 #include "Game/Player/MarioAccess.h"
-using namespace pt;
 
 /*
 * PowerStarAppearPoint Extensions
@@ -12,6 +11,7 @@ using namespace pt;
 * A reimplementation of the PowerStarAppearPoint.
 * Adds the ability to spawn a Power Star above the player's position.
 */
+namespace pt {
 
 PowerStarAppearPointExt::PowerStarAppearPointExt(const char* pName) : LiveActor(pName) {
 	mCamInfo = NULL;
@@ -47,3 +47,5 @@ NameObj* createPowerStarAppearPointExt(const char* pName) {
 }
 
 kmCall(0x8033FB98, createPowerStarAppearPointExt);
+
+}

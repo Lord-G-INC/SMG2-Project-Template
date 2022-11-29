@@ -5,7 +5,7 @@
 #include "c_stdlib.h"
 
 #if defined (ALL) || defined (NOGLE)
-using namespace pt;
+namespace pt {
 
 /*
 * Authors: Evanbowl
@@ -183,4 +183,5 @@ using namespace pt;
 			MR::setTextBoxFormatRecursive(this, "ShaText", L"%s", string);
 		}
 	}
+}
 #endif

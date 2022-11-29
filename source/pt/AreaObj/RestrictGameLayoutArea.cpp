@@ -7,7 +7,6 @@ RestrictGameLayoutArea::RestrictGameLayoutArea(const char* pName) : AreaObj(pNam
 void RestrictGameLayoutArea::init(const JMapInfoIter& rIter) {
     AreaObj::init(rIter);
 	MR::connectToSceneAreaObj(this);
-    OSReport("init\n");
 }
 
 void RestrictGameLayoutArea::movement() {

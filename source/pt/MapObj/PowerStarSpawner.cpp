@@ -3,10 +3,10 @@
 #include "Game/Util.h"
 #include "Game/Player/MarioAccess.h"
 #include "Game/LiveActor.h"
-
-#include "Game/Singleton.h"
 #include "Game/System/GameSystem.h"
-using namespace pt;
+#include "pt/LayoutActor/TimerLayout.h"
+
+namespace pt {
 
 /*
 * This version of the PowerStarSpawner is exclusive to PT Debug.
@@ -67,21 +67,20 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::declarePowerStar(this, mScenario); // Declares the star determined by mScenario.
 	makeActorAppeared();
 
-	if (mDisplayStarMode > -1) 
+	if (mDisplayStarMode > -1) {
 		createDisplayStar(); // Creates the Power Star Display model
+		MR::calcGravity(DisplayStar);
+	}
 }
 
 void PowerStarSpawner::movement() {
 
 	if (MR::isValidSwitchB(this)) {
-		OSReport("switch valid\n");
 		if (MR::isOnSwitchB(this)) {
-			OSReport("switch on\n");
 			MR::showModel(DisplayStar);
 			MR::tryEmitEffect(DisplayStar, "Light");
 		}
 		else {
-			OSReport("switch off\n");
 			MR::hideModel(DisplayStar);
 			MR::tryDeleteEffect(DisplayStar, "Light");
 		}
@@ -136,8 +135,7 @@ void PowerStarSpawner::createDisplayStar() {
 		DisplayStar = new ModelObj("パワースター", "PowerStar", mDisplayStarMode ? (MtxPtr)DisplayStarMtx : NULL, -2, -2, -2, false);
 
 		if (mDisplayStarMode == 0) {
-			upVec.set<f32>(-mGravity);
-			DisplayStar->mRotation.set(upVec);
+			DisplayStar->mRotation.set(mRotation);
 			DisplayStar->mTranslation.set(mTranslation);
 		}
 
@@ -156,8 +154,10 @@ void PowerStarSpawner::createDisplayStar() {
 
 		if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 			
+			#ifndef GLE
 			if (mFrame == -1)
 				mFrame = pt::getPowerStarColorCurrentStage(mScenario);
+			#endif
 
 			MR::startBtp(DisplayStar, "PowerStarColor");
 			MR::startBrk(DisplayStar, "PowerStarColor");
@@ -175,4 +175,5 @@ void PowerStarSpawner::createDisplayStar() {
 			MR::hideModel(DisplayStar);
 		else
 			MR::emitEffect(DisplayStar, "Light"); // Starts the PowerStar effect "Light" on the DisplayStar.
+}
 }

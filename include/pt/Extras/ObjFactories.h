@@ -94,11 +94,12 @@ namespace pt {
         #define NUM_ACTORS 47
     #endif 
 
+
     #ifdef SMG63
         #define NUM_ACTORS 47
     #endif
 
-    #ifdef SMSS
+    #if defined (SMSS) || defined (GLE)
         #define NUM_ACTORS 46
     #endif
 

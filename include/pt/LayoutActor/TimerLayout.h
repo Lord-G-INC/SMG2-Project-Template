@@ -2,8 +2,9 @@
 
 #include "Game/Screen/LayoutActor.h"
 #include "syati.h"
+#include "Game/System/Misc/GameSceneLayoutHolder.h"
 
-//#ifdef ALL
+#ifdef ALL
 namespace pt {
     class TimerLayout : public LayoutActor {
     public:
@@ -11,6 +12,9 @@ namespace pt {
 
     	virtual void init(const JMapInfoIter &rIter);
     	virtual void control();
+		void exeAppear();
+		void exeDisappear();
+		void exeOnStarGet();
 
     	wchar_t* currTimeDisplay;
     	wchar_t* savedTimeDisplay;
@@ -19,5 +23,13 @@ namespace pt {
     	u32 savedTime;
     	u32 frameDifference;
     };
+
+	namespace NrvTimerLayout {
+		NERVE(NrvWait);
+		NERVE(NrvAppear);
+		NERVE(NrvDisappear);
+		NERVE(NrvOnStarGet);
+	}
+
 }
-//#endif
+#endif

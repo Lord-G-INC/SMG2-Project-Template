@@ -18,6 +18,7 @@
 * Evanbowl, Lord-Giganticus, Galaxy Master, and Aurum for helping me with crash fixes.
 */
 
+namespace pt {
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
@@ -36,8 +37,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
 
-    MR::setSensorRadius(this, "RedCoin", mIsInAirBubble ? 150.0f : 55.0f);
-
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
@@ -47,6 +46,8 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     mCoinCounterPlayer->initWithoutIter();
 
     makeActorAppeared();
+
+    MR::setSensorRadius(this, "Body", mIsInAirBubble ? 350.0f : 55.0f);
 
     MR::useStageSwitchSyncAppear(this, rIter);
     
@@ -178,37 +179,46 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
 
 /* --- RED COIN COUNTER --- */
 
-RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 1) {
+RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 0) {
 }
 
 void RedCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounter", 2);
-    mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
     MR::createAndAddPaneCtrl(this, "Counter", 1);
-    MR::createAndAddPaneCtrl(this, "PCoinCounter", 1);
-    initEffectKeeper(1, "RedCoinCounter", NULL);
+    initEffectKeeper(0, 0, 0);
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
     MR::startAnim(this, "Wait", 0);
     MR::connectToSceneLayout(this);
-}
-
-void RedCoinCounter::control() {
-    mPaneRumbler->update();
+    initNerve(&NrvRedCoinCounter::NrvInit::sInstance);
+    mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
+    mAppearer = new CounterLayoutAppearer(this, TVec2f(0.0f, 0.0f));
 }
 
 void RedCoinCounter::appear() {
+    mAppearer->reset();
     mPaneRumbler->reset();
+    mAppearer->appear(TVec2f(0.0f, 0.0f));
     LayoutActor::appear();
 }
 
+void RedCoinCounter::control() {
+    mAppearer->updateNerve();
+    mPaneRumbler->update();
+}
 
 void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
     MR::setTextBoxNumberRecursive(this, "Counter", count);
-    MR::emitEffect(this, "RedCoinCounterLight");
     MR::startPaneAnim(this, "Counter", hasAllCoins ? "FlashLoop" : "Flash", 0);
+    MR::emitEffect(this, "RedCoinCounterLight");
     mPaneRumbler->start();
 }
 
+namespace NrvRedCoinCounter {
+    void NrvInit::execute(Spine* pSpine) const {
+	}
+
+	NrvInit(NrvInit::sInstance);
+}
 /* --- RED COIN COUNTER PLAYER --- */
 
 RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName, RedCoin* pRedCoin) : LayoutActor(pName, 1) {
@@ -256,4 +266,6 @@ RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
     }
 
     return 0;
+}
+
 }

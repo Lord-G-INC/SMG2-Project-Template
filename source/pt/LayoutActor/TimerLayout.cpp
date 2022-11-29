@@ -5,8 +5,8 @@
 #include "Game/System/AllData/GameSequenceFunction.h"
 #include "Game/System/Misc/GameSceneLayoutHolder.h"
 
-//#ifdef ALL
-using namespace pt;
+#ifdef ALL
+namespace pt {
 
 s32 numScenario = 1; // Checked scenario is 1 by default.
 bool isHidden = false;
@@ -22,13 +22,15 @@ TimerLayout::TimerLayout() : LayoutActor("TimerLayout", 0) {
 void TimerLayout::init(const JMapInfoIter &rIter) {
 	MR::connectToSceneLayout(this);
 	initLayoutManager("TimerLayout", 1);
+	initNerve(&NrvTimerLayout::NrvWait::sInstance);
+	mLayoutActorFlag.mIsHidden = true;
 	appear();
 }
 
 void TimerLayout::control() {
-	if (!MR::isStageStateScenarioOpeningCamera() || MR::isBeginScenarioStarter()) {
+	if (!MR::isStageStateScenarioOpeningCamera() || !MR::isBeginScenarioStarter()) {
 
-		if (MR::testCorePadTrigger1(0))
+		if (MR::testCorePadTrigger1(0) && !MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
 				mLayoutActorFlag.mIsHidden = mLayoutActorFlag.mIsHidden ? false : true;
 
 		if (MR::testCorePadTrigger2(0) && mLayoutActorFlag.mIsHidden == false)
@@ -57,39 +59,61 @@ void TimerLayout::control() {
 		}
 
 		if (MR::isPowerStarGetDemoActive() && MR::hasPowerStarInCurrentStage(numScenario)) {
-			if (currTime < savedTime) {
-				MR::makeClearTimeString(newRecordDisplay, savedTime - currTime);
-				MR::showPaneRecursive(this, "TxtNewRecord");
-				MR::setTextBoxFormatRecursive(this, "TxtNewRecord", L"New record! %ls", newRecordDisplay);
-			}
+			setNerve(&NrvTimerLayout::NrvOnStarGet::sInstance);
 		}
 	}
 }
 
-//void initTimerLayout(LayoutActor* layout) {// This function keeps the layout initialized whenever possible.
-//	MR::connectToSceneLayout(layout);
-//
-//	TimerLayout* TimerLayout = new pt::TimerLayout();
-//
-//	if (!MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
-//		TimerLayout->initWithoutIter();
-//		TimerLayout->mLayoutActorFlag.mIsHidden = true;
-//}
-//
-//kmCall(0x804657A0, initTimerLayout);
+void TimerLayout::exeAppear() {
+	MR::showLayout(this);
+}
+
+void TimerLayout::exeDisappear() {
+	MR::hideLayout(this);
+}
+
+void TimerLayout::exeOnStarGet() {
+	if (currTime < savedTime) {
+		MR::makeClearTimeString(newRecordDisplay, savedTime - currTime);
+		MR::showPaneRecursive(this, "TxtNewRecord");
+		MR::setTextBoxFormatRecursive(this, "TxtNewRecord", L"New record! %ls", newRecordDisplay);
+	}
+}
+namespace NrvTimerLayout {
+	void NrvWait::execute(Spine* pSpine) const {
+		TimerLayout* pActor = (TimerLayout*)pSpine->mExecutor;
+	}
+
+	void NrvAppear::execute(Spine* pSpine) const {
+		TimerLayout* pActor = (TimerLayout*)pSpine->mExecutor;
+		pActor->exeAppear();
+	}
+
+	void NrvDisappear::execute(Spine* pSpine) const {
+		TimerLayout* pActor = (TimerLayout*)pSpine->mExecutor;
+		pActor->exeDisappear();
+	}
+
+	void NrvOnStarGet::execute(Spine* pSpine) const {
+		TimerLayout* pActor = (TimerLayout*)pSpine->mExecutor;
+		pActor->exeOnStarGet();
+	}
+
+	NrvWait(NrvWait::sInstance);
+	NrvAppear(NrvAppear::sInstance);
+	NrvDisappear(NrvDisappear::sInstance);
+	NrvOnStarGet(NrvOnStarGet::sInstance);
+}
 
 void initTimerLayout(GameSceneLayoutHolder* holder, const char* pStr) {
 	MR::joinToNameObjGroup(holder, pStr);
-
+	
 	holder->mTimerLayout = new TimerLayout();
-	OSReport("init\n");
-	if (!MR::isStageMarioFaceShipOrWorldMap() && !MR::isEqualStageName("FileSelect"))
-		holder->mTimerLayout->initWithoutIter();
+	holder->mTimerLayout->initWithoutIter();
 }
 
+kmWrite32(0x8045A0A4, 0x38600048); // li r3, 0x48
 kmCall(0x80471650, initTimerLayout);
 
-
-kmWrite32(0x8045A0A4, 0x38600048); // li r3, 0x48
-
-//#endif
+}
+#endif

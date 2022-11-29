@@ -1,8 +1,9 @@
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/Extras/WarpAreaSystem.h"
 #include "Game/Util.h"
-#ifndef GLE
-using namespace pt;
+
+#ifdef ALL
+namespace pt {
 
 /*
 * Created by Evanbowl with help from Aurum, AwesomeTMC, Galaxy Master, and Zyphro.
@@ -88,5 +89,6 @@ void WarpArea::movement() {
 
 const char* WarpArea::getManagerName() const {
 	return "BindEnd";
+}
 }
 #endif

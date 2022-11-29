@@ -7,7 +7,9 @@
 #include "Game/System.h"
 #include "Game/LiveActor.h"
 
-using namespace pt;
+#if defined (ALL) || defined (NOGLE)
+
+namespace pt {
 
 /*
 * Authors: Evanbowl
@@ -20,7 +22,6 @@ using namespace pt;
 * Chimp, Glider, Disable Pause, Play Star Chance, Purple Coin Over 100, and Story Book.
 */
 
-#if defined (ALL) || defined (NOGLE)
 namespace StageEventDataTable {
 
 	const char* flags;
@@ -123,5 +124,7 @@ namespace StageEventDataTable {
 	kmCall(0x804EF3B8, isStageDisableWorldMapEvents);
 
 	kmBranch(0x800567D0, isStageStarPieceFollowGroupLimit);
+}
+
 }
 #endif

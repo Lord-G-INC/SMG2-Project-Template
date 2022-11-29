@@ -20,10 +20,10 @@ namespace pt {
 		bool mUseTimerSe;
 		bool mDisableP2;
 	};
-};
 
-namespace NrvSwitchBox {
-	NERVE(NrvWait);
-	NERVE(NrvBreak);
-	NERVE(NrvReturn);
+	namespace NrvSwitchBox {
+		NERVE(NrvWait);
+		NERVE(NrvBreak);
+		NERVE(NrvReturn);
+	};
 };

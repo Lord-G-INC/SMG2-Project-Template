@@ -1,6 +1,5 @@
 #include "pt/MapObj/SwitchBox.h"
 #include "Game/Util.h"
-using namespace pt;
 
 /*
  One of the older SMG2PT objects.
@@ -12,6 +11,8 @@ using namespace pt;
 
  And so, this is a rewrite of SMG1's SwitchBox added into 2 with even more options.
 */
+
+namespace pt {
 
 SwitchBox::SwitchBox(const char* pName) : LiveActor(pName) {
 	mTimer = 0;
@@ -119,4 +120,6 @@ namespace NrvSwitchBox {
 	NrvWait(NrvWait::sInstance);
 	NrvBreak(NrvBreak::sInstance);
 	NrvReturn(NrvReturn::sInstance);
+}
+
 }
