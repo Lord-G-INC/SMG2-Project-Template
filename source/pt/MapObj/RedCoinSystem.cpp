@@ -39,6 +39,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
+    initHitSensor(1);
+    MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
+
     mFlashingCtrl = new FlashingCtrl(this, 1);
     mConnector = new MapObjConnector(this);
 
@@ -46,8 +49,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     mCoinCounterPlayer->initWithoutIter();
 
     makeActorAppeared();
-
-    MR::setSensorRadius(this, "Body", mIsInAirBubble ? 350.0f : 55.0f);
 
     MR::useStageSwitchSyncAppear(this, rIter);
     
@@ -86,6 +87,7 @@ void RedCoin::initAirBubble() {
         mAirBubble = MR::createPartsModelNoSilhouettedMapObj(this, "空気アワ", "AirBubble", 0);
         mAirBubble->initFixedPosition(TVec3f(0.0f, 70.0f, 0.0f), TVec3f(0.0f, 0.0f, 0.0f), 0);
         MR::startAction(mAirBubble, "Move");
+        MR::setSensorRadius(this, "RedCoin", 100.0f);
     }
 }
 
@@ -115,7 +117,6 @@ void RedCoin::collect() {
     getRedCoinControllerFromGroup(this)->incCountAndUpdateLayouts(this);
     MR::startSound(this, getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
-
     mIsCollected = true;
     MR::hideModel(this);
     MR::invalidateHitSensors(this);
@@ -131,10 +132,11 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
     mElapsed = 0;
     mHasAllRedCoins = false;
+    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
+
     mCounterPlayerLayoutMode = false;
     mShouldNotRewardCoins = false;
-    mLayoutAnim = false;
-    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
+    mLayoutAnimType = false;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -143,10 +145,10 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::invalidateClipping(this);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
     MR::useStageSwitchReadA(this, rIter);
-    
-    MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode);
-    MR::getJMapInfoArg1NoInit(rIter, &mShouldNotRewardCoins);
-    MR::getJMapInfoArg2NoInit(rIter, &mLayoutAnim);
+
+    MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg1NoInit(rIter, &mLayoutAnimType); // RedCoinCounterPlayer: Picks the layout animation that should be played.
+    MR::getJMapInfoArg2NoInit(rIter, &mShouldNotRewardCoins); // Should the number layout appear at the Red Coin or the player?
 
     initSound(1, "RedCoin", &mTranslation, 0);
 
@@ -167,9 +169,11 @@ void RedCoinController::movement() {
 
 void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     mNumCoins += 1;
-    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
+    
+    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1; // Red Coin autocalculation
+
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
-    pRedCoin->mCoinCounterPlayer->updateCounter(mNumCoins, mCounterPlayerLayoutMode, mLayoutAnim);
+    pRedCoin->mCoinCounterPlayer->updateCounter(mNumCoins, mCounterPlayerLayoutMode, mLayoutAnimType);
     
     GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
 }
@@ -178,13 +182,11 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
 
 /* --- RED COIN COUNTER --- */
 
-
 /*
 * Layout created by RedCoinController that displays the current
 * number of red coins collected in the Red Coin Group.
 */
-RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 0) {
-}
+RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 0) {}
 
 void RedCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounter", 2);
@@ -196,6 +198,7 @@ void RedCoinCounter::init(const JMapInfoIter& rIter) {
     MR::connectToSceneLayout(this);
 
     mPaneRumbler = new CountUpPaneRumbler(this, "Counter");
+    mPaneRumbler->mRumbleCalculator->mRumbleStrength = 8.0f;
     mPaneRumbler->reset();
 }
 
@@ -207,7 +210,6 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
     MR::setTextBoxNumberRecursive(this, "Counter", count);
     MR::startPaneAnim(this, "Counter", hasAllCoins ? "FlashLoop" : "Flash", 0);
     MR::emitEffect(this, "RedCoinCounterLight");
-    mPaneRumbler->mRumbleCalculator->mRumbleStrength = 5.0f;
     mPaneRumbler->start();
 }
 

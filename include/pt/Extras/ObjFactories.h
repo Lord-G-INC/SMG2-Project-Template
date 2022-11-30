@@ -74,36 +74,11 @@ namespace pt {
 
     template<>
     NameObj* createExtActor<MorphItemNeoIce>(const char *pName);
-
-    template<>
-    NameObj* createExtActor<PowerStarSpawner>(const char *pName);
-
+    
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
 
-    /*
-    * Number of total new actor entries. This value has to adjusted everytime a creation function
-    * is added or removed!
-    */
-
-    #ifdef ALL
-        #define NUM_ACTORS 48
-    #endif 
-
-    #ifdef NOGLE
-        #define NUM_ACTORS 47
-    #endif 
-
-
-    #ifdef SMG63
-        #define NUM_ACTORS 47
-    #endif
-
-    #if defined (SMSS) || defined (GLE)
-        #define NUM_ACTORS 46
-    #endif
-
-    const CreateActorEntry cNewCreateNameObjTable[NUM_ACTORS] = {
+    const CreateActorEntry cNewCreateNameObjTable[] = {
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
         // AreaObj
         { "ForbidJumpArea", NameObjFactory::createNameObj<AreaObj> },

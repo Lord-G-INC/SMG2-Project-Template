@@ -5,7 +5,6 @@
 #include "Game/MapObj/Coin.h"
 #include "Game/LiveActor/FlashingCtrl.h"
 #include "Game/Screen/CountUpPaneRumbler.h"
-#include "Game/Screen/CounterLayoutAppearer.h"
 
 namespace pt {
 
@@ -53,7 +52,7 @@ namespace pt {
         bool mHasAllRedCoins;
         bool mCounterPlayerLayoutMode; // Obj_arg0
         bool mShouldNotRewardCoins; // Obj_arg1
-        bool mLayoutAnim;  /// Obj_arg2
+        bool mLayoutAnimType;  /// Obj_arg2
     };
     
     
@@ -88,5 +87,4 @@ namespace pt {
     };
     
     RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);
-
 }

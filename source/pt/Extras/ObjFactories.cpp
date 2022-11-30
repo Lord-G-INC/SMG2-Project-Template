@@ -18,11 +18,6 @@ namespace pt {
         return new MorphItemNeoIce("アイスオブジェ");
     }
 
-    template<>
-    NameObj* createExtActor<PowerStarSpawner>(const char *pName) {
-        return new PowerStarSpawner("PowerStarSpawner");
-    }
-
     NameObj* createQuakeEffectArea(const char *pName) {
         if (!MR::isExistSceneObj(SCENE_OBJ_QUAKE_EFFECT_GENERATOR)) {
             MR::createSceneObj(SCENE_OBJ_QUAKE_EFFECT_GENERATOR);
@@ -37,9 +32,8 @@ namespace pt {
 
     void* getNameObjCreator(const char *pName) {
         void* creator = NameObjFactory::getCreator(pName);
-
         if (!creator) {
-            for (s32 i = 0; i < NUM_ACTORS; i++) {
+            for (s32 i = 0; i < sizeof(cNewCreateNameObjTable) / 8; i++) {
                 const CreateActorEntry entry = cNewCreateNameObjTable[i];
 
                 if (MR::isEqualString(entry.pActorName, pName)) {
