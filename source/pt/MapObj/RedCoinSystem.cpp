@@ -168,17 +168,21 @@ void RedCoinController::movement() {
 void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     mNumCoins += 1;
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
-
-    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
-
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
     pRedCoin->mCoinCounterPlayer->updateCounter(mNumCoins, mCounterPlayerLayoutMode, mLayoutAnim);
+    
+    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
 }
 
 /* --- LAYOUTS --- */
 
 /* --- RED COIN COUNTER --- */
 
+
+/*
+* Layout created by RedCoinController that displays the current
+* number of red coins collected in the Red Coin Group.
+*/
 RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, 0) {
 }
 
@@ -203,11 +207,18 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
     MR::setTextBoxNumberRecursive(this, "Counter", count);
     MR::startPaneAnim(this, "Counter", hasAllCoins ? "FlashLoop" : "Flash", 0);
     MR::emitEffect(this, "RedCoinCounterLight");
-    mPaneRumbler->mRumbleCalculator->_20 = 5.0f;
+    mPaneRumbler->mRumbleCalculator->mRumbleStrength = 5.0f;
     mPaneRumbler->start();
 }
 
 /* --- RED COIN COUNTER PLAYER --- */
+
+/*
+* Layout created by RedCoin that displays the current
+* number of red coins collected on collection of a 
+* Red Coin, and the position of the layout is at
+* the collected coin.
+*/
 
 RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName, RedCoin* pRedCoin) : LayoutActor(pName, 1) {
     mRedCoin = pRedCoin;

@@ -3,7 +3,7 @@
 #include "Game/AreaObj.h"
 #include "pt/Extras/WarpAreaSystem.h"
 
-#ifdef ALL
+#if defined (ALL) || defined (NOGLE)
 namespace pt {
 	class WarpArea : public AreaObj {
 	public:

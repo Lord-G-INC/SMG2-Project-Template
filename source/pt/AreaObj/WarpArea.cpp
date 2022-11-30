@@ -2,7 +2,7 @@
 #include "pt/Extras/WarpAreaSystem.h"
 #include "Game/Util.h"
 
-#ifdef ALL
+#if defined (ALL) || defined (NOGLE)
 namespace pt {
 
 /*
