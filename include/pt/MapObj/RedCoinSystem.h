@@ -64,19 +64,12 @@ namespace pt {
         RedCoinCounter(const char* pName);
         
         virtual void init(const JMapInfoIter& rIter);
-        virtual void appear();
         virtual void control();
         void updateCounter(s32 count, bool hasAllCoins);
     
         CountUpPaneRumbler* mPaneRumbler;
-        CounterLayoutAppearer* mAppearer;
     };
-    
-    namespace NrvRedCoinCounter
-    {
-        NERVE(NrvInit);
-    } 
-    
+
     
     
     

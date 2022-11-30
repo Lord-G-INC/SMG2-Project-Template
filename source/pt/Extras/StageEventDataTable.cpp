@@ -80,27 +80,19 @@ namespace StageEventDataTable {
 	}
 	
 	bool isStageStoryBook() {
-	if (MR::isEqualStageName("FileSelect")) //FileSelect will crash if MR::isStageStoryBook returns true on this stage.
-		return false;
-	return StageEventDataTable::readTableCurrentStage("StoryBook"); //Makes the set galaxy a Story Book stage, adding a story book border and preventing return to the Starship.
-	}
-	
-	bool isStageUseTamakoroBGM() { //Makes the set galaxy play the Slider music when a Star Ball is jumped on.
-		return StageEventDataTable::readTableCurrentStage("TamakoroSliderBGM");
+		if (MR::isEqualStageName("FileSelect")) //FileSelect will crash if MR::isStageStoryBook returns true on this stage.
+			return false;
+		return StageEventDataTable::readTableCurrentStage("StoryBook"); //Makes the set galaxy a Story Book stage, adding a story book border and preventing return to the Starship.
 	}
 
 	void isStageDisableFallFailsafe() { //Makes the set stage disable the game's failsafe that kills the player if falling for too long.
-	if (!StageEventDataTable::readTableCurrentStage("DisableFallFailsafe"))
-			MR::forceKillPlayerByAbyss();
+		if (!StageEventDataTable::readTableCurrentStage("DisableFallFailsafe"))
+				MR::forceKillPlayerByAbyss();
 	}
 
 	void isStageDisableWorldMapEvents(NerveExecutor* nrv) { // Makes the set stage not trigger World Map events on star get. They'll still happen, but you won't get the cutscene.
 		if (!StageEventDataTable::readTable("DisableWorldMapEvents", GameSequenceFunction::getClearedStageName()))
 			nrv->updateNerve();
-	}
-
-	bool isStageStarPieceFollowGroupLimit() {
-		return StageEventDataTable::readTableCurrentStage("StarPieceFollowGroupLimit");
 	}
 
 
@@ -116,14 +108,9 @@ namespace StageEventDataTable {
 
 	kmBranch(0x80056BE0, isStageStoryBook);
 
-	kmCall(0x804477B4, isStageUseTamakoroBGM);
-	kmWrite32(0x800857EC, 0x38600001);	
-
 	kmCall(0x80387F64, isStageDisableFallFailsafe);
 
 	kmCall(0x804EF3B8, isStageDisableWorldMapEvents);
-
-	kmBranch(0x800567D0, isStageStarPieceFollowGroupLimit);
 }
 
 }
