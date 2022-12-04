@@ -1,4 +1,5 @@
 ﻿#include "pt/Extras/ObjFactories.h"
+#include "pt/Util/ActorUtil.h"
 
 /*
 * Authors: shibbo, Aurum
@@ -35,7 +36,7 @@ namespace pt {
         if (!creator) {
             for (s32 i = 0; i < sizeof(cNewCreateNameObjTable) / 8; i++) {
                 const CreateActorEntry entry = cNewCreateNameObjTable[i];
-
+       
                 if (MR::isEqualString(entry.pActorName, pName)) {
                     creator = entry.mCreationFunc;
                     break;
@@ -57,7 +58,7 @@ namespace pt {
         void* creator = pFactory->getObjClassName(pName);
 
         if (!creator) {
-            for (s32 i = 0; i < NUM_CLASSES; i++) {
+            for (s32 i = 0; i < sizeof(cNewCreateMapObjTable) / 8; i++) {
                 const CreateActorEntry entry = cNewCreateMapObjTable[i];
 
                 if (MR::isEqualString(entry.pActorName, pName)) {
@@ -79,9 +80,8 @@ namespace pt {
         NameObj* sceneObj = pHolder->newEachObj(type);
 
         if (!sceneObj) {
-            for (s32 i = 0; i < NUM_SCENEOBJS; i++) {
+            for (s32 i = 0; i < sizeof(cNewCreateSceneObjTable) / 8; i++) {
                 const CreateSceneObjEntry e = cNewCreateSceneObjTable[i];
-
                 if (e.mSlotId == type) {
                     sceneObj = e.mCreationFunc();
                     break;

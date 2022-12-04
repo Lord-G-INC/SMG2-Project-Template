@@ -1,6 +1,5 @@
 #include "syati.h"
 #include "Game/Util.h"
-#include "Game/System/Misc/GameSceneLayoutHolder.h"
 #include "Game/Screen/LayoutActor.h"
 #include "Game/System/Misc/TalkMessageCtrl.h"
 #include "pt/Util/ActorUtil.h"

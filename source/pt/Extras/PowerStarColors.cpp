@@ -224,10 +224,10 @@ namespace pt {
 		// If the checked star is already collected, just set the star ball and the star inside to be clear.
 		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
 		
-		#ifdef GLE
-			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
-		#else
+		#if defined (ALL) || defined (NOGLE)
 			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
+		#else
+			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
 		#endif
 
 		if (MR::hasPowerStarInCurrentStage(argScenario))

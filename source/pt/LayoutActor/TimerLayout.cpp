@@ -1,9 +1,6 @@
 #include "pt/LayoutActor/TimerLayout.h"
-#include "Game/Util.h"
-#include "Game/Player.h"
-#include "Game/System.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
-#include "Game/System/Misc/GameSceneLayoutHolder.h"
+#include "Game/Screen/GameSceneLayoutHolder.h"
 
 #ifdef ALL
 namespace pt {

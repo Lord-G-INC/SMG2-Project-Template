@@ -1,10 +1,5 @@
 #include "pt/MapObj/PowerStarSpawner.h"
 #include "pt/Extras/PowerStarColors.h"
-#include "Game/Util.h"
-#include "Game/Player/MarioAccess.h"
-#include "Game/LiveActor.h"
-#include "Game/System/GameSystem.h"
-#include "pt/LayoutActor/TimerLayout.h"
 
 namespace pt {
 
@@ -67,10 +62,8 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::declarePowerStar(this, mScenario); // Declares the star determined by mScenario.
 	makeActorAppeared();
 
-	if (mDisplayStarMode > -1) {
+	if (mDisplayStarMode > -1)
 		createDisplayStar(); // Creates the Power Star Display model
-		MR::calcGravity(DisplayStar);
-	}
 }
 
 void PowerStarSpawner::movement() {
@@ -86,7 +79,7 @@ void PowerStarSpawner::movement() {
 		}
 	}
 
-	if (mDisplayStarMode == 1)
+	if (mDisplayStarMode == 1 || mDisplayStarMode == 2)
 		MR::rotateMtxLocalYDegree((MtxPtr)&DisplayStarMtx, 3.0f);
 
 	if (MR::isOnSwitchA(this))
@@ -132,32 +125,41 @@ void PowerStarSpawner::spawnStar() {
 
 // Display Star
 void PowerStarSpawner::createDisplayStar() {
-		DisplayStar = new ModelObj("パワースター", "PowerStar", mDisplayStarMode ? (MtxPtr)DisplayStarMtx : NULL, -2, -2, -2, false);
+		const char* jpname = mDisplayStarMode < 2 ? "パワースター" : "グランドスター";
+		const char* enname = mDisplayStarMode < 2 ? "PowerStar" : "GrandStar";
+
+		DisplayStar = new ModelObj(jpname, enname, mDisplayStarMode == 0 ? NULL : DisplayStarMtx, -2, -2, -2, false);
 
 		if (mDisplayStarMode == 0) {
-			DisplayStar->mRotation.set(mRotation);
-			DisplayStar->mTranslation.set(mTranslation);
+			MR::setRotation(DisplayStar, mRotation);
+			MR::setPosition(DisplayStar, mTranslation);
 		}
 
 		MR::setMtxTrans((MtxPtr)DisplayStarMtx, mTranslation); // Set the mtx translation to the PowerStarSpawner's mTranslation.
 
-		MR::invalidateShadowAll(DisplayStar); // Shadows are not needed so they are hidden.
-
-		if (mDisplayStarMode == 1) {
-		upVec.set<f32>(-mGravity); // Sets the up vector to what the gravity is. This allows the DisplayStar to calculate it's gravity, like the normal PowerStar.
-		MR::makeMtxUpFront((TMtx34f*)&DisplayStarMtx, upVec, mTranslation);
-		MR::setMtxTrans((MtxPtr)&DisplayStarMtx, mTranslation);
+		if (mDisplayStarMode == 1 || mDisplayStarMode == 2) {
+			upVec.set<f32>(-mGravity); // Sets the up vector to what the gravity is. This allows the DisplayStar to calculate it's gravity, like the normal PowerStar.
+			MR::makeMtxUpFront((TMtx34f*)&DisplayStarMtx, upVec, mTranslation);
+			MR::setMtxTrans((MtxPtr)&DisplayStarMtx, mTranslation);
 		}
 
-		// Set up the color to match the PowerStarType
-			MR::startBva(DisplayStar, "PowerStarColor");
+		MR::invalidateShadowAll(DisplayStar); // Shadows are not needed so they are hidden.
 
-		if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
+		// Set up the color to match the PowerStarType
+
+		if (mDisplayStarMode < 2)
+			MR::startBva(DisplayStar, "PowerStarColor");
+		else {
+			MR::hideMaterial(DisplayStar, "GrandStarBronze");
+			MR::hideMaterial(DisplayStar, MR::hasPowerStarInCurrentStage(mScenario) ? "FooMat" : "GrandStarEmpty");
+		}
+
+		if (!MR::hasPowerStarInCurrentStage(mScenario) && mDisplayStarMode < 2) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 			
-			#ifndef GLE
+		#if defined (ALL) || defined (NOGLE)
 			if (mFrame == -1)
 				mFrame = pt::getPowerStarColorCurrentStage(mScenario);
-			#endif
+		#endif
 
 			MR::startBtp(DisplayStar, "PowerStarColor");
 			MR::startBrk(DisplayStar, "PowerStarColor");

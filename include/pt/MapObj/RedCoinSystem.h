@@ -6,8 +6,6 @@
 #include "Game/LiveActor/FlashingCtrl.h"
 #include "Game/Screen/CountUpPaneRumbler.h"
 
-namespace pt {
-
     class RedCoinCounter;
     class RedCoinCounterPlayer;
     class RedCoinController;
@@ -34,6 +32,7 @@ namespace pt {
         bool mUseConnection; // Obj_arg1
         bool mIsCollected;
         bool mIsInAirBubble;
+        bool mInvalidateShadows;
     };
     
     /* --- RED COIN CONTROLLER --- */
@@ -45,6 +44,7 @@ namespace pt {
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
         void incCountAndUpdateLayouts(RedCoin* rRedCoin);
+        void calcControllerVisibilty();
     
         RedCoinCounter* mRedCoinCounter;
         s32 mNumCoins;
@@ -64,9 +64,11 @@ namespace pt {
         
         virtual void init(const JMapInfoIter& rIter);
         virtual void control();
+        void appearIfHidden();
         void updateCounter(s32 count, bool hasAllCoins);
     
         CountUpPaneRumbler* mPaneRumbler;
+        bool mIsValidAppear;
     };
 
     
@@ -87,4 +89,3 @@ namespace pt {
     };
     
     RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);
-}

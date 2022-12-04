@@ -74,7 +74,7 @@ namespace pt {
 
     template<>
     NameObj* createExtActor<MorphItemNeoIce>(const char *pName);
-    
+
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
 
@@ -149,9 +149,8 @@ namespace pt {
     * Number of total new class entries. This value has to be adjusted everytime a creation function
     * is added or removed!
     */
-    #define NUM_CLASSES 16
 
-    const CreateActorEntry cNewCreateMapObjTable[NUM_CLASSES] = {
+    const CreateActorEntry cNewCreateMapObjTable[] = {
         { "AirFar100m", NameObjFactory::createNameObj<AirFar100m> },
         { "AssemblyBlock", NameObjFactory::createNameObj<AssemblyBlock> },
         { "BallOpener", NameObjFactory::createNameObj<BallOpener> },
@@ -179,13 +178,12 @@ namespace pt {
     * Number of total new SceneObj instances. This value has to adjusted everytime a creation func-
     * tion is added or removed!
     */
-    #define NUM_SCENEOBJS 1
 
     /*
     * There is a bunch of free SceneObj slots that we can still use as desired. The following slots
     * are unused as of now: 0x3E, 0x47, 0x48, 0x49, 0x54, 0x5A, 0x68, 0x69 and 0x7B.
     */
-    const CreateSceneObjEntry cNewCreateSceneObjTable[NUM_SCENEOBJS] = {
+    const CreateSceneObjEntry cNewCreateSceneObjTable[] = {
         { SCENE_OBJ_BLUE_CHIP_HOLDER, createBlueChipHolder }
     };
 };

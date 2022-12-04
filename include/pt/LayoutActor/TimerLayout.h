@@ -2,7 +2,7 @@
 
 #include "Game/Screen/LayoutActor.h"
 #include "syati.h"
-#include "Game/System/Misc/GameSceneLayoutHolder.h"
+#include "Game/Screen/GameSceneLayoutHolder.h"
 
 #ifdef ALL
 namespace pt {
