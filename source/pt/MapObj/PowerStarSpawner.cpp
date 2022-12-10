@@ -97,7 +97,7 @@ void PowerStarSpawner::spawnStar() {
 	if (mElapsed == 0 && mUseSE)
 		MR::startLevelSound(this, "OjPowerStarSpawnerSpawn", -1, -1, -1);
 
-	if (mElapsed >= mDelay && !MR::isPlayerInRush()) {
+	if (mElapsed >= mDelay && !MR::isPlayerInRush() && MR::isOnGroundPlayer()) {
 		switch (mSpawnMode) { // I do not know how to improve this section.
 			case -1:
 			MR::appearEventPowerStar("PowerStarSpawner", mScenario, &mTranslation, 0, 0, 0);

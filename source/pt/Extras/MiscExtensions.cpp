@@ -52,7 +52,7 @@ namespace pt {
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 3.0f);
 			MR::startBrk(pActor, "Red");
 
-			pActor->mSpinDriverPathDrawer->mColor = -1;
+			pActor->mSpinDriverPathDrawer->mColor = 2;
 		}
 		else {
 			pActor->initColor();
@@ -61,21 +61,11 @@ namespace pt {
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
 
-	ResTIMG* redLaunchStarTest(const char* pStr1, const char* pStr2, SpinDriverPathDrawInit* pDrawer) {
-		pDrawer->newTexture = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
-
-		OSReport("no way lol\n");
-		return MR::loadTexFromArc(pStr1, pStr2, 0);
-	}
-
-	kmWrite32(0x8045A29C, 0x3860002C);
-	kmWrite32(0x8030E270, 0x7FC5F378);
-	kmCall(0x8030E274, redLaunchStarTest);
 
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor == 2) {
-			SpinDriverPathDrawInit* sus = (SpinDriverPathDrawInit*)MR::getSceneObjHolder()->getObj(0x55);
-			sus->newTexture->load(GX_TEXMAP0);
+			JUTTexture* test = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
+			test->load(GX_TEXMAP0);
 		}
 
 	pDrawer->calcDrawCode();
