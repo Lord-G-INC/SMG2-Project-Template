@@ -31,6 +31,10 @@ namespace pt {
         return new SuperSpinDriver(pName, SUPER_SPIN_DRIVER_GREEN);
     }
 
+    NameObj* createSuperSpinDriverRed(const char *pName) {
+        return new SuperSpinDriver(pName, 3);
+    }
+
     void* getNameObjCreator(const char *pName) {
         void* creator = NameObjFactory::getCreator(pName);
         if (!creator) {

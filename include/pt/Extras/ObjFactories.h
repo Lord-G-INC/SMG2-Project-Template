@@ -31,6 +31,7 @@
 #include "pt/MapObj/SwitchBox.h"
 #include "pt/MapObj/RedCoinSystem.h"
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
+#include "pt/MapObj/RedCoinSwitch.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -77,6 +78,7 @@ namespace pt {
 
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
+    NameObj* createSuperSpinDriverRed(const char *pName);
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
@@ -128,15 +130,17 @@ namespace pt {
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
         { "SwitchBox", createExtActor<SwitchBox> },
+        { "SuperSpinDriverRed", createSuperSpinDriverRed },
         { "RedCoin", createExtActor<RedCoin> },
-        { "RedCoinController", createExtActor<RedCoinController> }, // 46 (SMSS)
+        { "RedCoinController", createExtActor<RedCoinController> },
+        { "RedCoinSwitch", createExtActor<RedCoinSwitch> },
 
         #if defined (ALL) || defined (NOGLE)
-        { "WarpArea", createExtActor<WarpArea> }, // 48 (ALL), 47 (NOGLE)
+        { "WarpArea", createExtActor<WarpArea> },
         #endif
 
         #if defined (ALL) || defined (SMG63)
-        { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 47 SMG63
+        { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 50
         #endif
     };
 

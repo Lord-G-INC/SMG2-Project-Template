@@ -25,7 +25,6 @@ void SwitchBox::init(const JMapInfoIter& rIter) {
 	initHitSensor(1); // Initializes the HitSensor.
 
 	MR::addHitSensorMapObj(this, "SwitchBox", 1, 75.0f, TVec3f(0.0f, 150.0f, 0.0f));
-	HitSensor* SwitchBox = LiveActor::getSensor("SwitchBox");
 
     initSound(2, "SwitchBox", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
 

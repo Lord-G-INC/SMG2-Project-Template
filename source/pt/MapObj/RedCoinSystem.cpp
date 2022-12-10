@@ -24,11 +24,13 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsInAirBubble = false;
     mInvalidateShadows = false;
 
-    pt::setupCoin(this);
+    MR::createCoinRotater();
+    MR::createCoinHolder();
+    MR::addToCoinHolder(this, this);
 }
 
 void RedCoin::init(const JMapInfoIter& rIter) {
-    MR::processInitFunction(this, rIter, "RedCoin", false);
+    MR::processInitFunction(this, rIter, false);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
@@ -42,7 +44,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
-    mConnector = new MapObjConnector(this);
 
     mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer", this);
     mCoinCounterPlayer->initWithoutIter();
@@ -117,7 +118,7 @@ void RedCoin::collect() {
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
 
     getRedCoinControllerFromGroup(this)->incCountAndUpdateLayouts(this);
-    MR::startSound(this, getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", 10000, 10000);
+    MR::startSound(this, getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
     MR::hideModel(this);
@@ -134,7 +135,7 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
     mElapsed = 0;
     mHasAllRedCoins = false;
-    mRedCoinCounter = MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDRedCoinCounter;
+    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
 
     mCounterPlayerLayoutMode = false;
     mShouldNotRewardCoins = false;
@@ -146,6 +147,8 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+
+    MR::useStageSwitchReadAppear(this, rIter);
     MR::useStageSwitchReadA(this, rIter);
     MR::useStageSwitchWriteB(this, rIter);
 
@@ -160,10 +163,16 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinController::movement() {
-    calcControllerVisibilty();
+    calcCounterVisibilty();
 
-    if (mHasAllRedCoins)
+    if (mHasAllRedCoins) {
         mElapsed++;
+
+        if (MR::isValidSwitchB(this))
+            if (!MR::isOnSwitchB(this)) {
+                MR::onSwitchB(this);
+            }
+    }
 
         if (mElapsed == 120)
             MR::startAnim(mRedCoinCounter, "End", 0);
@@ -185,23 +194,29 @@ void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
     GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
 }
 
-void RedCoinController::calcControllerVisibilty() {
-
-    if (MR::isDemoActive() || MR::isNormalTalking() || MR::isPlayerDead() || MR::isPowerStarGetDemoActive())
+void RedCoinController::calcCounterVisibilty() {
+    bool checks = MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isPlayerDead() || MR::isPowerStarGetDemoActive();
+    if (checks)
         MR::hideLayout(mRedCoinCounter);
     else {
         if (mRedCoinCounter->mIsValidAppear)
             mRedCoinCounter->appearIfHidden();
     }
 
-    if (MR::isValidSwitchB(this)) {
-        if (!MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins)
-            MR::hideLayout(mRedCoinCounter);
+    if (MR::isValidSwitchAppear(this)) {
+        if (MR::isOnSwitchAppear(this))
+            mRedCoinCounter->appearIfHidden();
+    }
+    else {
+        if (MR::isValidSwitchB(this)) {
+            if (!MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins)
+                MR::hideLayout(mRedCoinCounter);
         else {
             if (mRedCoinCounter->mIsValidAppear) 
                 MR::showLayout(mRedCoinCounter);
+            }
         }
-    }
+    }  
 }
 
 /* --- LAYOUTS --- */
@@ -254,15 +269,6 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
     MR::emitEffect(this, "RedCoinCounterLight");
     mPaneRumbler->start();
 }
-
-void initRedCoinCounter(CounterLayoutController* pController) {
-    MR::connectToSceneLayout(pController);
-    
-    pController->mPTDRedCoinCounter = new RedCoinCounter("RedCoinCounter");
-}
-
-kmWrite32(0x80471780, 0x38600050);
-kmCall(0x804657A0, initRedCoinCounter);
 
 /* --- RED COIN COUNTER PLAYER --- */
 

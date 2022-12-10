@@ -44,7 +44,7 @@
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
         void incCountAndUpdateLayouts(RedCoin* rRedCoin);
-        void calcControllerVisibilty();
+        void calcCounterVisibilty();
     
         RedCoinCounter* mRedCoinCounter;
         s32 mNumCoins;
@@ -52,7 +52,7 @@
         bool mHasAllRedCoins;
         bool mCounterPlayerLayoutMode; // Obj_arg0
         bool mShouldNotRewardCoins; // Obj_arg1
-        bool mLayoutAnimType;  /// Obj_arg2
+        bool mLayoutAnimType;  // Obj_arg2
     };
     
     

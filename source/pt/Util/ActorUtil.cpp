@@ -61,13 +61,4 @@ namespace pt {
 	
 		return 0;
 	}
-	
-	// Simple function to properly set up a custom coin type. Will be used again in the future.
-	void setupCoin(Coin* pCoin) {
-		if (!MR::isExistSceneObj(0x41))
-    	  MR::createCoinRotater();
-
-    	MR::createCoinHolder();
-    	MR::addToCoinHolder(pCoin, pCoin);
-	}
 }

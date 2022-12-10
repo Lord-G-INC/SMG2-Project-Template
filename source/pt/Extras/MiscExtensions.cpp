@@ -3,6 +3,8 @@
 #include "Game/Screen/LayoutActor.h"
 #include "Game/System/Misc/TalkMessageCtrl.h"
 #include "pt/Util/ActorUtil.h"
+#include "JSystem/JUtility/JUTTexture.h"
+#include "Game/MapObj/SpinDriverPathDrawer.h"
 
 /*
 * Authors: Aurum
@@ -46,12 +48,42 @@ namespace pt {
 
 			pActor->mSpinDriverPathDrawer->mColor = 0; 
 		}
+		else if (pActor->mColor == SUPER_SPIN_DRIVER_RED) {
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 3.0f);
+			MR::startBrk(pActor, "Red");
+
+			pActor->mSpinDriverPathDrawer->mColor = -1;
+		}
 		else {
 			pActor->initColor();
 		}
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
+
+	ResTIMG* redLaunchStarTest(const char* pStr1, const char* pStr2, SpinDriverPathDrawInit* pDrawer) {
+		pDrawer->newTexture = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
+
+		OSReport("no way lol\n");
+		return MR::loadTexFromArc(pStr1, pStr2, 0);
+	}
+
+	kmWrite32(0x8045A29C, 0x3860002C);
+	kmWrite32(0x8030E270, 0x7FC5F378);
+	kmCall(0x8030E274, redLaunchStarTest);
+
+	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
+		if (pDrawer->mColor == 2) {
+			SpinDriverPathDrawInit* sus = (SpinDriverPathDrawInit*)MR::getSceneObjHolder()->getObj(0x55);
+			sus->newTexture->load(GX_TEXMAP0);
+		}
+
+	pDrawer->calcDrawCode();
+	}
+
+	kmWrite32(0x8030EF04, 0x48000020);
+	kmCall(0x8030EF28, setSpinDriverPathColor);
+
 
 	/*
 	* The Green Launch Star is coded to load a model from SuperSpinDriverEmpty.arc. This was used for the transparent model
@@ -236,6 +268,7 @@ namespace pt {
 		sprintf(str, "New%d", selectTxt - 18);
 
 		return selectTxt < 18 ? msg->getBranchID() : str;
+
 	}
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
@@ -249,6 +282,7 @@ namespace pt {
 
     kmCall(0x801F8290, SamboHead_DieIfInWater);
 	#endif
+
 	//void sus(LiveActor* actor, const JMapInfoIter& iter) {
 	//	MR::useStageSwitchWriteA(actor, iter);
 	//	MR::declareStarPiece(actor, 0x18);
