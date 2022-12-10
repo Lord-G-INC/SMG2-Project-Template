@@ -10,14 +10,10 @@ RedCoinSwitch::RedCoinSwitch(const char* pName) : LiveActor(pName) {
 void RedCoinSwitch::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
     initHitSensor(1);
-    MR::addHitSensorMapObj(this, "Switch", 1, 75.0f, TVec3f(0.0f, 150.0f, 0.0f));
-    MR::initCollisionParts(this, "RedCoinSwitch", getSensor("Switch"), (MtxPtr)getBaseMtx());
-    MR::invalidateClipping(this);
     MR::getJMapInfoArg0NoInit(rIter, &mTime);
     MR::getJMapInfoArg1NoInit(rIter, &mCollectedPowerStar);
 
     mTimeLimitLayout = new TimeLimitLayout(1);
-    mTimeLimitLayout->setDisplayModeOnNormal(1);
     MR::connectToSceneLayout(mTimeLimitLayout);
     mTimeLimitLayout->initWithoutIter();
     
