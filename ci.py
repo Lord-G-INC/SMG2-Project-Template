@@ -29,6 +29,16 @@ os.chdir("deps")
 if os.path.exists("CodeWarrior") != True and os.path.exists("Kamek") != True:
     subprocess.run(SYATI_SETUP)
 
+os.chdir("syati")
+
+if os.path.exists("deps") != True:
+    os.mkdir("deps")
+
+os.chdir("deps")
+
+if os.path.exists("CodeWarrior") != True and os.path.exists("Kamek") != True:
+    subprocess.run(SYATI_SETUP)
+
 os.chdir(HOME_DIR)
 
 def no_gle():
