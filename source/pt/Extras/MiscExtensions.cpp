@@ -60,25 +60,15 @@ namespace pt {
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
 
 
+	JUTTexture* Colors[4] = 
+	{new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0),
+	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Blue.bti", 0), 0),
+	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Rainbow.bti", 0), 0),
+	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Purple.bti", 0), 0)};
+
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
-		if (pDrawer->mColor == 2) {
-			JUTTexture* texRed = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
-			texRed->load(GX_TEXMAP0);
-		}
-
-		if (pDrawer->mColor == 3) {
-			JUTTexture* texBlue = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Blue.bti", 0), 0);
-			texBlue->load(GX_TEXMAP0);
-		}
-
-		if (pDrawer->mColor == 4) {
-			JUTTexture* texRainbow = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Rainbow.bti", 0), 0);
-			texRainbow->load(GX_TEXMAP0);
-		}
-
-		if (pDrawer->mColor == 5) {
-			JUTTexture* texPurple = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Purple.bti", 0), 0);
-			texPurple->load(GX_TEXMAP0);
+		if (pDrawer->mColor >= 2) {
+			Colors[pDrawer->mColor-2]->load(GX_TEXMAP0);
 		}
 
 	pDrawer->calcDrawCode(); // Restore original call
