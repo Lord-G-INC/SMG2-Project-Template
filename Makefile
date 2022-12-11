@@ -6,7 +6,6 @@ SYMBOLS := deps/Syati/symbols
 INPUT := $(wildcard source/*.cpp) $(wildcard source/pt/**/*.cpp)
 OUTPUT := $(patsubst source/%.cpp, build/%.o,$(INPUT))
 RESULT := CustomCode_$(REG).bin
-mkfile_path := $(firstword $(MAKEFILE_LIST))
 
 $(if $(EXTRA), $(info Extra Build Flag $(EXTRA) enabled.))
 
