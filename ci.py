@@ -125,3 +125,7 @@ for file in files:
     os.remove(file)
 
 with_gle()
+
+files = glob("*.bin")
+for file in files:
+    os.remove(file)
