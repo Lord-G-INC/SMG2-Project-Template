@@ -41,6 +41,7 @@ namespace pt {
 	* we hijack calls to initColor in order to check for the green color first. If the Launch Star's color is set to green,
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
+
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
 		if (pActor->mColor == SUPER_SPIN_DRIVER_GREEN) {
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 1.0f);
@@ -48,15 +49,20 @@ namespace pt {
 
 			pActor->mSpinDriverPathDrawer->mColor = 0; 
 		}
-		else if (pActor->mColor == SUPER_SPIN_DRIVER_RED) {
+		else if (pActor->mColor == 3) { // Custom: Red
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 3.0f);
 			MR::startBrk(pActor, "Red");
 
 			pActor->mSpinDriverPathDrawer->mColor = 2;
 		}
-		else {
-			pActor->initColor();
+		else if (pActor->mColor == 4) { // Custom: Blue
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 4.0f);
+			MR::startBrk(pActor, "Red");
+
+			pActor->mSpinDriverPathDrawer->mColor = 3;
 		}
+		else
+			pActor->initColor();
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
@@ -64,11 +70,16 @@ namespace pt {
 
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor == 2) {
-			JUTTexture* test = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
-			test->load(GX_TEXMAP0);
+			JUTTexture* texRed = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0);
+			texRed->load(GX_TEXMAP0);
 		}
 
-	pDrawer->calcDrawCode();
+		if (pDrawer->mColor == 3) {
+			JUTTexture* texBlue = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Blue.bti", 0), 0);
+			texBlue->load(GX_TEXMAP0);
+		}
+
+	pDrawer->calcDrawCode(); // Restore original call
 	}
 
 	kmWrite32(0x8030EF04, 0x48000020);
@@ -238,6 +249,7 @@ namespace pt {
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
 	#endif
+
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
 	* 
@@ -250,41 +262,24 @@ namespace pt {
 	*/
 
 	const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
-		s32 selectTxt;
-		msg->mTalkNodeCtrl->getNextNodeBranch();
-		asm("lhz %0, 0x8(r3)" : "=r" (selectTxt)); // Temporary workaround until we figure out what class this is in.
+		s16 selectTxt;
+		selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
 
-		char* str = new char[7];
+		char* str = new char[5];
 		sprintf(str, "New%d", selectTxt - 18);
 
 		return selectTxt < 18 ? msg->getBranchID() : str;
-
 	}
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
 
 	#ifdef SMSS
-	 void SamboHead_DieIfInWater(LiveActor* pActor) {
+	 void smssKillSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
          pActor->kill();
     }
 
-    kmCall(0x801F8290, SamboHead_DieIfInWater);
+    kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 	#endif
-
-	//void sus(LiveActor* actor, const JMapInfoIter& iter) {
-	//	MR::useStageSwitchWriteA(actor, iter);
-	//	MR::declareStarPiece(actor, 0x18);
-	//	OSReport("switch %s\n", actor->mName);
-	//}
-	//
-	//kmWrite32(0x800DAABC, 0x60000000);
-	////kmWrite32(0x800DAAC4, 0x7F63DB78);
-	////kmCall(0x800DAAC8, sus);
-
-	//void sus2(const NameObj* obj) {
-	//	if (MR::isValidSwitchA(obj))
-	//		MR::onSwitchA(obj);
-	//}
 }

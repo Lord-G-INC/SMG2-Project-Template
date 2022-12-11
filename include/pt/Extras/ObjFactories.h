@@ -79,6 +79,7 @@ namespace pt {
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
     NameObj* createSuperSpinDriverRed(const char *pName);
+    NameObj* createSuperSpinDriverBlue(const char *pName);
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
@@ -131,6 +132,7 @@ namespace pt {
         { "SwingRope", createExtActor<SwingRope> },
         { "SwitchBox", createExtActor<SwitchBox> },
         { "SuperSpinDriverRed", createSuperSpinDriverRed },
+        { "SuperSpinDriverBlue", createSuperSpinDriverBlue },
         { "RedCoin", createExtActor<RedCoin> },
         { "RedCoinController", createExtActor<RedCoinController> },
         { "RedCoinSwitch", createExtActor<RedCoinSwitch> },
