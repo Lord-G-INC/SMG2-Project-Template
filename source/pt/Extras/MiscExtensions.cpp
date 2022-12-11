@@ -43,37 +43,17 @@ namespace pt {
 	*/
 
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
-		if (pActor->mColor == SUPER_SPIN_DRIVER_GREEN) {
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 1.0f);
-			MR::startBrk(pActor, "Green");
+		s32 color = pActor->mColor == SUPER_SPIN_DRIVER_GREEN ? 0 : 
+		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow") ? 4 :
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple") ? 5 : -1;
+		if (color != 1) {
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)(color + 1));
+			MR::startBrk(pActor, color == 0 ? "Green" : "Red");
 
-			pActor->mSpinDriverPathDrawer->mColor = 0; 
-		}
-		else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverRed")) { // Custom: Red
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 3.0f);
-			MR::startBrk(pActor, "Red");
-
-			pActor->mSpinDriverPathDrawer->mColor = 2;
-		}
-		else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue")) { // Custom: Blue
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 4.0f);
-			MR::startBrk(pActor, "Red");
-
-			pActor->mSpinDriverPathDrawer->mColor = 3;
-		}
-			else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow")) { // CA: Rainbow
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 5.0f);
-			MR::startBrk(pActor, "Red");
-
-			pActor->mSpinDriverPathDrawer->mColor = 4;
-		}
-			else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple")) { // CA: Purple
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 6.0f);
-			MR::startBrk(pActor, "Red");
-
-			pActor->mSpinDriverPathDrawer->mColor = 5;
-		}
-		else
+			pActor->mSpinDriverPathDrawer->mColor = color;
+		} else
 			pActor->initColor();
 	}
 
