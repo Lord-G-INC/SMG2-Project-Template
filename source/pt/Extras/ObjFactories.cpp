@@ -31,12 +31,8 @@ namespace pt {
         return new SuperSpinDriver(pName, SUPER_SPIN_DRIVER_GREEN);
     }
 
-    NameObj* createSuperSpinDriverRed(const char *pName) {
+    NameObj* createSuperSpinDriverCustomColor(const char *pName) {
         return new SuperSpinDriver(pName, 3);
-    }
-
-    NameObj* createSuperSpinDriverBlue(const char *pName) {
-        return new SuperSpinDriver(pName, 4);
     }
 
     void* getNameObjCreator(const char *pName) {

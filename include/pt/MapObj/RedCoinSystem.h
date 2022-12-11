@@ -52,7 +52,9 @@
         bool mHasAllRedCoins;
         bool mCounterPlayerLayoutMode; // Obj_arg0
         bool mShouldNotRewardCoins; // Obj_arg1
-        bool mLayoutAnimType;  // Obj_arg2
+        bool mLayoutAnimType; // Obj_arg2
+        s32 mPowerStarCheck; // Obj_arg3
+        s32 mIconID; // Obj_arg4
     };
     
     
@@ -66,6 +68,7 @@
         virtual void control();
         void appearIfHidden();
         void updateCounter(s32 count, bool hasAllCoins);
+        void updateStarIndicator(s32 starID, s32 iconID);
     
         CountUpPaneRumbler* mPaneRumbler;
         bool mIsValidAppear;

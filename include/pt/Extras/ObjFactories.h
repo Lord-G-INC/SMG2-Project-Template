@@ -78,8 +78,7 @@ namespace pt {
 
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
-    NameObj* createSuperSpinDriverRed(const char *pName);
-    NameObj* createSuperSpinDriverBlue(const char *pName);
+    NameObj* createSuperSpinDriverCustomColor(const char *pName);
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
@@ -123,7 +122,6 @@ namespace pt {
         { "ScrewSwitchReverse", createExtActor<ScrewSwitchReverse> },
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
-        { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
         { "ValveSwitch", createExtActor<ValveSwitch> }, // 40
         { "WatchTowerRotateStep", createExtActor<WatchTowerRotateStep>},
@@ -131,19 +129,27 @@ namespace pt {
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
         { "SwitchBox", createExtActor<SwitchBox> },
-        { "SuperSpinDriverRed", createSuperSpinDriverRed },
-        { "SuperSpinDriverBlue", createSuperSpinDriverBlue },
         { "RedCoin", createExtActor<RedCoin> },
         { "RedCoinController", createExtActor<RedCoinController> },
         { "RedCoinSwitch", createExtActor<RedCoinSwitch> },
+        // Custom SuperSpinDriver colors
+        { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
+        { "SuperSpinDriverRed", createSuperSpinDriverCustomColor },
+        { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor },
+        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor }, // 50
+        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor }, // 50
 
         #if defined (ALL) || defined (NOGLE)
-        { "WarpArea", createExtActor<WarpArea> },
+            { "WarpArea", createExtActor<WarpArea> },
         #endif
 
         #if defined (ALL) || defined (SMG63)
-        { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 50
+            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 50
         #endif
+        
+        #if defined (ALL) || defined (CA)
+        #endif
+
     };
 
 

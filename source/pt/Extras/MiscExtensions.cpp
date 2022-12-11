@@ -49,17 +49,29 @@ namespace pt {
 
 			pActor->mSpinDriverPathDrawer->mColor = 0; 
 		}
-		else if (pActor->mColor == 3) { // Custom: Red
+		else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverRed")) { // Custom: Red
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 3.0f);
 			MR::startBrk(pActor, "Red");
 
 			pActor->mSpinDriverPathDrawer->mColor = 2;
 		}
-		else if (pActor->mColor == 4) { // Custom: Blue
+		else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue")) { // Custom: Blue
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 4.0f);
 			MR::startBrk(pActor, "Red");
 
 			pActor->mSpinDriverPathDrawer->mColor = 3;
+		}
+			else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow")) { // CA: Rainbow
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 5.0f);
+			MR::startBrk(pActor, "Red");
+
+			pActor->mSpinDriverPathDrawer->mColor = 4;
+		}
+			else if (MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple")) { // CA: Purple
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 6.0f);
+			MR::startBrk(pActor, "Red");
+
+			pActor->mSpinDriverPathDrawer->mColor = 5;
 		}
 		else
 			pActor->initColor();
@@ -79,10 +91,20 @@ namespace pt {
 			texBlue->load(GX_TEXMAP0);
 		}
 
+		if (pDrawer->mColor == 4) {
+			JUTTexture* texRainbow = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Rainbow.bti", 0), 0);
+			texRainbow->load(GX_TEXMAP0);
+		}
+
+		if (pDrawer->mColor == 5) {
+			JUTTexture* texPurple = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Purple.bti", 0), 0);
+			texPurple->load(GX_TEXMAP0);
+		}
+
 	pDrawer->calcDrawCode(); // Restore original call
 	}
 
-	kmWrite32(0x8030EF04, 0x48000020);
+	kmWrite32(0x8030EF04, 0x48000020); // skip call to MR::setSpinDriverPathColorNormal
 	kmCall(0x8030EF28, setSpinDriverPathColor);
 
 

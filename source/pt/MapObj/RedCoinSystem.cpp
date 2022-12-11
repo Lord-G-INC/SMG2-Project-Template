@@ -135,11 +135,12 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
     mElapsed = 0;
     mHasAllRedCoins = false;
-    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
 
     mCounterPlayerLayoutMode = false;
     mShouldNotRewardCoins = false;
     mLayoutAnimType = false;
+    mPowerStarCheck = 0;
+    mIconID = 0x37;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -155,11 +156,15 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode); // Should the number layout appear at the Red Coin or the player?
     MR::getJMapInfoArg1NoInit(rIter, &mLayoutAnimType); // RedCoinCounterPlayer: Picks the layout animation that should be played.
     MR::getJMapInfoArg2NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg3NoInit(rIter, &mPowerStarCheck); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg4NoInit(rIter, &mIconID); // Should the Red Coin increment the coin counter by 2?
 
     initSound(1, "RedCoin", &mTranslation, 0);
-
+    
+    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
     mRedCoinCounter->initWithoutIter();
     mRedCoinCounter->appear();
+    mRedCoinCounter->updateStarIndicator(mPowerStarCheck, mIconID);
 }
 
 void RedCoinController::movement() {
@@ -237,6 +242,7 @@ void RedCoinCounter::init(const JMapInfoIter& rIter) {
 
     MR::createAndAddPaneCtrl(this, "Counter", 1);
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
+
     MR::connectToSceneLayout(this);
     MR::hideLayout(this);
 
@@ -268,6 +274,17 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
     MR::startPaneAnim(this, "Counter", hasAllCoins ? "FlashLoop" : "Flash", 0);
     MR::emitEffect(this, "RedCoinCounterLight");
     mPaneRumbler->start();
+}
+
+void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
+    if (!MR::hasPowerStarInCurrentStage(starID))
+        iconID = 0x52;
+
+    wchar_t* str = L"";
+    MR::addPictureFontCode(str, iconID);
+    MR::setTextBoxFormatRecursive(this, "TxtCount", str);
+
+    OSReport("%d, %x\n", starID, iconID);
 }
 
 /* --- RED COIN COUNTER PLAYER --- */
