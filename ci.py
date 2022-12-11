@@ -42,7 +42,7 @@ if os.path.exists("CodeWarrior") != True and os.path.exists("Kamek") != True:
 os.chdir(HOME_DIR)
 
 def no_gle():
-    subprocess.run(f"python {BUILD} --nogle", shell=True)
+    subprocess.run(f"python {BUILD} --nogle")
 
     bins = glob("*.bin")
 
@@ -76,7 +76,7 @@ def no_gle():
             w.write(p.absolute(), f"CustomCode\\{p.name}")
 
 def with_gle():
-    subprocess.run(f"python {BUILD} --gle", shell=True)
+    subprocess.run(f"python {BUILD} --gle")
 
     bins = glob("*.bin")
 
