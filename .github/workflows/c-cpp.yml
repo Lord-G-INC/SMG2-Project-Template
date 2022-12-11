@@ -14,14 +14,13 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
-    - shell: cmd
-      run: echo ${{ github.event_name }}
     - shell: pwsh
       working-directory: deps
       run: Invoke-WebRequest -Uri https://github.com/Lord-Giganticus/SyatiSetup/releases/download/Auto/syatisetup.exe -OutFile syatisetup.exe
     - uses: actions/setup-python@v4
     - run: python ci.py
     - uses: "marvinpinto/action-automatic-releases@latest"
+      if: ${{ github.event_name == 'push' }}
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "Auto"
