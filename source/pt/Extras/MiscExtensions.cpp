@@ -65,8 +65,7 @@ namespace pt {
 
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor >= 2) {
-			JUTTexture* tex = new JUTTexture(
-				MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[pDrawer->mColor - 2], 0), 0);
+			JUTTexture* tex = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[pDrawer->mColor - 2], 0), 0);
 			tex->load(GX_TEXMAP0);
 		}
 
