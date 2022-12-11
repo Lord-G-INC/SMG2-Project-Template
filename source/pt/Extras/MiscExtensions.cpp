@@ -48,7 +48,7 @@ namespace pt {
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow") ? 4 :
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple") ? 5 : -1;
-		if (color != 1) {
+		if (color != -1) {
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)(color + 1));
 			MR::startBrk(pActor, color == 0 ? "Green" : "Red");
 
@@ -60,15 +60,14 @@ namespace pt {
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
 
 
-	JUTTexture* Colors[4] = 
-	{new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Red.bti", 0), 0),
-	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Blue.bti", 0), 0),
-	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Rainbow.bti", 0), 0),
-	new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", "Purple.bti", 0), 0)};
+	const char* ColorsStr[4] = 
+	{"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
 
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor >= 2) {
-			Colors[pDrawer->mColor-2]->load(GX_TEXMAP0);
+			JUTTexture* tex = new JUTTexture(
+				MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[pDrawer->mColor - 2], 0), 0);
+			tex->load(GX_TEXMAP0);
 		}
 
 	pDrawer->calcDrawCode(); // Restore original call
