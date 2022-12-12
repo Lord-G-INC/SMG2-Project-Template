@@ -156,8 +156,8 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode); // Should the number layout appear at the Red Coin or the player?
     MR::getJMapInfoArg1NoInit(rIter, &mLayoutAnimType); // RedCoinCounterPlayer: Picks the layout animation that should be played.
     MR::getJMapInfoArg2NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
-    MR::getJMapInfoArg3NoInit(rIter, &mPowerStarCheck); // Should the Red Coin increment the coin counter by 2?
-    MR::getJMapInfoArg4NoInit(rIter, &mIconID); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg3NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
+    MR::getJMapInfoArg4NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
     initSound(1, "RedCoin", &mTranslation, 0);
     

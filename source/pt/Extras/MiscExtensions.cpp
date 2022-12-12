@@ -42,8 +42,12 @@ namespace pt {
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
 
+	const char* ColorsStr[4] = 
+	{"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+	JUTTexture** Colors = new JUTTexture*[4];
+
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
-		s32 color = pActor->mColor == SUPER_SPIN_DRIVER_GREEN ? 0 : 
+		s32 color = pActor->mColor == 1 ? 0 : 
 		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow") ? 4 :
@@ -55,24 +59,22 @@ namespace pt {
 			pActor->mSpinDriverPathDrawer->mColor = color;
 		} else
 			pActor->initColor();
+
+		s32 idx = color - 2;
+
+        if (color >= 2)
+            Colors[idx] = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[idx], 0), 0);
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
 
-
-	const char* ColorsStr[4] = 
-	{"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-
 	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
-		if (pDrawer->mColor >= 2) {
-			JUTTexture* tex = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[pDrawer->mColor - 2], 0), 0);
-			tex->load(GX_TEXMAP0);
-		}
+		if (pDrawer->mColor >= 2)
+			Colors[pDrawer->mColor-2]->load(GX_TEXMAP0);
 
-	pDrawer->calcDrawCode(); // Restore original call
+		pDrawer->calcDrawCode(); // Restore original call
 	}
 
-	kmWrite32(0x8030EF04, 0x48000020); // skip call to MR::setSpinDriverPathColorNormal
 	kmCall(0x8030EF28, setSpinDriverPathColor);
 
 
