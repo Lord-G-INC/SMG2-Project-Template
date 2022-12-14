@@ -2,9 +2,13 @@
 
 #include <syati.h>
 
+const char* ColorsStr[4] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+
+const int TexSize = sizeof(ColorsStr)/sizeof(const char*);
+
 class JUTHolder {
     public:
-    JUTTexture* Textures[4];
+    JUTTexture* Textures[TexSize];
     void SetTexture(u8 pos, JUTTexture* texture) {
         // Get Address of pointers, delete old one if adresses dont match, otherwise do nothing.
         u64 ladr = (u64)Textures[pos];
@@ -26,12 +30,13 @@ class JUTHolder {
         return Textures[pos];
     }
     JUTHolder() {
-        for (int i = 0; i < 4; i++) {
+        OSReport("TexSize: %d\n", TexSize);
+        for (int i = 0; i < TexSize; i++) {
             Textures[i] = 0;
         }
     }
     ~JUTHolder() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < TexSize; i++) {
             delete Textures[i];
         }
     }

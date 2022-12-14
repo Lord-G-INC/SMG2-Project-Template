@@ -43,8 +43,6 @@ namespace pt {
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
 
-	const char* ColorsStr[4] = 
-	{"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
 	JUTHolder Colors = JUTHolder();
 
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
