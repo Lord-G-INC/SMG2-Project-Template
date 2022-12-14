@@ -2,7 +2,7 @@
 
 #include <syati.h>
 
-const char* ColorsStr[4] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
 
 const int TexSize = sizeof(ColorsStr)/sizeof(const char*);
 
