@@ -5,6 +5,7 @@
 #include "pt/Util/ActorUtil.h"
 #include "JSystem/JUtility/JUTTexture.h"
 #include "Game/MapObj/SpinDriverPathDrawer.h"
+#include "pt/Extras/MiscExtensions.h"
 
 /*
 * Authors: Aurum
@@ -44,7 +45,7 @@ namespace pt {
 
 	const char* ColorsStr[4] = 
 	{"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-	JUTTexture** Colors = new JUTTexture*[4];
+	JUTHolder Colors{};
 
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor == 1 ? 0 : 
@@ -63,7 +64,7 @@ namespace pt {
 		s32 idx = color - 2;
 
         if (color >= 2)
-            Colors[idx] = new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[idx], 0), 0);
+            Colors.SetTexture(idx, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[idx], 0), 0));
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
