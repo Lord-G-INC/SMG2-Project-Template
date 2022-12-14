@@ -4,7 +4,7 @@
 
 class JUTHolder {
     public:
-    JUTTexture* Textures[4]{};
+    JUTTexture* Textures[4];
     void SetTexture(u8 pos, JUTTexture* texture) {
         // Get Address of pointers, delete old one if adresses dont match, otherwise do nothing.
         u64 ladr = (u64)Textures[pos];
