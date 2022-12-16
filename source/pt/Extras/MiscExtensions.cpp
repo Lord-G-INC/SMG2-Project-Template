@@ -43,8 +43,6 @@ namespace pt {
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
 
-	JUTHolder Colors = JUTHolder();
-
 	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor == 1 ? 0 : 
 		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
