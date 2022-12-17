@@ -2,7 +2,11 @@
 
 #include <syati.h>
 
+#ifdef CA
+const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
+#else
 const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+#endif
 
 const int TexSize = sizeof(ColorsStr)/sizeof(const char*);
 

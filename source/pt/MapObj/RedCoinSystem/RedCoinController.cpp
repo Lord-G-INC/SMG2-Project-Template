@@ -7,9 +7,7 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mElapsed = 0;
     mHasAllRedCoins = false;
 
-    mCounterPlayerLayoutMode = false;
     mShouldNotRewardCoins = false;
-    mLayoutAnimType = false;
     mPowerStarCheck = 0;
     mIconID = 0x37;
 }
@@ -24,11 +22,9 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::useStageSwitchReadA(this, rIter);
     MR::useStageSwitchWriteB(this, rIter);
 
-    MR::getJMapInfoArg0NoInit(rIter, &mCounterPlayerLayoutMode); // Should the number layout appear at the Red Coin or the player?
-    MR::getJMapInfoArg1NoInit(rIter, &mLayoutAnimType); // RedCoinCounterPlayer: Picks the layout animation that should be played.
-    MR::getJMapInfoArg2NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
-    MR::getJMapInfoArg3NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
-    MR::getJMapInfoArg4NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
+    MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
+    MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
     initSound(1, "RedCoin", &mTranslation, 0);
     
@@ -88,7 +84,7 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
-    ((RedCoin*)pActor)->mCoinCounterPlayer->updateCounter(mNumCoins, mCounterPlayerLayoutMode, mLayoutAnimType);
+    ((RedCoin*)pActor)->mCoinCounterPlayer->updateCounter(mNumCoins);
     
     GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
 }

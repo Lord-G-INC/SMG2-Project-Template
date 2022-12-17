@@ -65,7 +65,9 @@ void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
 * the collected coin.
 */
 
-RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName) : LayoutActor(pName, 1) {
+
+RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName, LiveActor* pActor) : LayoutActor(pName, 1) {
+    mActor = pActor;
     bool mLytPos;
 }
 
@@ -75,10 +77,10 @@ void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
     MR::setTextBoxNumberRecursive(this, "TxtText", 0);
 }
 
-void RedCoinCounterPlayer::calcScreenPos(LiveActor* pActor) {
+void RedCoinCounterPlayer::control() {
     TVec2f screenPos;
-    TVec3f pos = mLytPos ? *MR::getPlayerPos() : pActor->mTranslation;
-    pos.y += mLytPos ? 250 : 150;
+    TVec3f pos = mActor->mTranslation;
+    pos.y += 150;
     MR::calcScreenPosition(&screenPos, pos);
     setTrans(screenPos);
 
@@ -86,10 +88,8 @@ void RedCoinCounterPlayer::calcScreenPos(LiveActor* pActor) {
         kill();
 }
 
-void RedCoinCounterPlayer::updateCounter(s32 count, bool layoutPos, bool layoutAnim) {
+void RedCoinCounterPlayer::updateCounter(s32 count) {
     MR::setTextBoxNumberRecursive(this, "TxtText", count);
-    mLytPos = layoutPos;
-    MR::startAnim(this, layoutAnim ? "Appear" : "AppearNew", 0);
+    MR::startAnim(this, "AppearNew", 0);
     appear();
-
 }

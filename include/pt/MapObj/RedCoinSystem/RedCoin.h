@@ -30,4 +30,5 @@
         bool mIsCollected;
         bool mIsInAirBubble;
         bool mInvalidateShadows;
+        bool mCounterPlayerPos;
     };

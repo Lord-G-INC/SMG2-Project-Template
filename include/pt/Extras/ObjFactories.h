@@ -146,6 +146,11 @@ namespace pt {
         #if defined (ALL) || defined (SMG63)
             { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
         #endif
+
+        #if defined (ALL) || defined (CA)
+        { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor },
+        { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor },
+        #endif
     };
 
 

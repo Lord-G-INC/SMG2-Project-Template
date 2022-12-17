@@ -2,7 +2,7 @@
 
 	#include "syati.h"
     #include "Game/Screen/CountUpPaneRumbler.h"
-
+    
     class RedCoinCounter : public LayoutActor {
     public:
         RedCoinCounter(const char* pName);
@@ -19,11 +19,13 @@
     
     class RedCoinCounterPlayer : public LayoutActor {
     public:
-        RedCoinCounterPlayer(const char* pName);
+        RedCoinCounterPlayer(const char* pName, LiveActor* pActor);
         
         virtual void init(const JMapInfoIter& rIter);
-        void calcScreenPos(LiveActor* pActor);
-        void updateCounter(s32 count, bool layoutPos, bool layoutAnim);
-    
+        virtual void control();
+        void calcScreenPos(LiveActor* pActor, bool lytpos);
+        void updateCounter(s32 count);
+
+        LiveActor* mActor;
         bool mLytPos;
     };

@@ -23,6 +23,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
+    mCounterPlayerPos = false;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -40,6 +41,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows);
+    MR::getJMapInfoArg4NoInit(rIter, &mCounterPlayerPos);
     
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -51,7 +53,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     mConnector = new MapObjConnector(this);
     mConnector->attach(mTranslation);
 
-    mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer");
+    mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer", this);
     mCoinCounterPlayer->initWithoutIter();
 
     makeActorAppeared();
@@ -77,9 +79,6 @@ void RedCoin::control() {
     
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this))
         appearAndMove();
-
-    if (mIsCollected)
-        mCoinCounterPlayer->calcScreenPos(this);
 }
 
 void RedCoin::calcAndSetBaseMtx() {
@@ -138,6 +137,7 @@ void RedCoin::collect() {
     MR::invalidateHitSensors(this);
     MR::emitEffect(this, "RedCoinGet");
     mFlashingCtrl->end();
+    MR::incPlayerLife(1);
     makeActorDead();
 }
 

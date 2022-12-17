@@ -45,6 +45,7 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::connectToSceneMapObj(this);
 	MR::invalidateClipping(this); // This object will never unload when offscreen.
 	MR::calcGravity(this);
+	MR::registerDemoSimpleCastAll(this);
 
 	MR::useStageSwitchReadA(this, rIter); // Reads SW_A.
 	MR::useStageSwitchReadB(this, rIter); // Reads SW_B
