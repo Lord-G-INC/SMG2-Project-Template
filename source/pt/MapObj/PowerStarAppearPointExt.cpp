@@ -14,7 +14,6 @@
 namespace pt {
 
 PowerStarAppearPointExt::PowerStarAppearPointExt(const char* pName) : LiveActor(pName) {
-	mCamInfo = NULL;
     mSpawnAtPlayer = false;
     mYOffset = 275;
 }
@@ -25,6 +24,7 @@ void PowerStarAppearPointExt::init(const JMapInfoIter& rIter) {
     MR::invalidateClipping(this);
 
     MR::joinToGroupArray(this, rIter, "パワースター出現ポイントグループ", 16);
+    mCamInfo = new ActorCameraInfo(rIter);
     MR::initActorCamera(this, rIter, &mCamInfo);
 
     MR::getJMapInfoArg0NoInit(rIter, &mSpawnAtPlayer);

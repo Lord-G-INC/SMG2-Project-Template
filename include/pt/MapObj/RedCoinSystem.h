@@ -45,6 +45,7 @@
         virtual void movement();
         void incCountAndUpdateLayouts(RedCoin* rRedCoin);
         void calcCounterVisibilty();
+        void resetAllRedCoins();
     
         RedCoinCounter* mRedCoinCounter;
         s32 mNumCoins;

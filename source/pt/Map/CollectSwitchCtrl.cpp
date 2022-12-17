@@ -43,6 +43,8 @@ namespace pt {
 		MR::getJMapInfoArg2NoInit(rIter, &mComparator);
 		MR::getJMapInfoArg3NoInit(rIter, &mSwitchOnce);
 
+		MR::registerDemoSimpleCastAll(this);
+
 		// Try to clear Star Bits
 		bool clearStarPiece = false;
 		MR::getJMapInfoArg4NoInit(rIter, &clearStarPiece);

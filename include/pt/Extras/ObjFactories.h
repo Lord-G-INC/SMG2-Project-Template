@@ -136,20 +136,16 @@ namespace pt {
         { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
         { "SuperSpinDriverRed", createSuperSpinDriverCustomColor },
         { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor },
-        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor }, // 50
-        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor }, // 50
+        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor },
+        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor },
 
         #if defined (ALL) || defined (NOGLE)
             { "WarpArea", createExtActor<WarpArea> },
         #endif
 
         #if defined (ALL) || defined (SMG63)
-            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 50
+            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
         #endif
-        
-        #if defined (ALL) || defined (CA)
-        #endif
-
     };
 
 

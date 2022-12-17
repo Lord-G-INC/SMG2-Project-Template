@@ -32,12 +32,15 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+    MR::registerDemoSimpleCastAll(this);
+    
+    MR::addToClippingTarget(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows);
-
+    
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
     initHitSensor(1);
@@ -45,13 +48,20 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
+    mConnector = new MapObjConnector(this);
+    mConnector->attach(mTranslation);
+
     mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer", this);
     mCoinCounterPlayer->initWithoutIter();
 
     makeActorAppeared();
 
     MR::useStageSwitchSyncAppear(this, rIter);
-    
+    MR::useStageSwitchReadParam(this, rIter);
+
+    if (!mUseConnection)
+        MR::offBind(this);
+
     if (MR::isValidSwitchB(this)) {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);
@@ -101,7 +111,8 @@ void RedCoin::appearAndMove() {
     coinVelocity.scale(coinVelocity.y, -mGravity);
 
     appearMove(mTranslation, coinVelocity, 1, 0);
-    mLifeTime = 0x7FFFFFFF;
+    setCannotTime(100);
+    setLife(0x7FFFFFFF);
     mFlashingCtrl->end();
     MR::validateHitSensors(this);
 }
@@ -173,11 +184,15 @@ void RedCoinController::movement() {
     if (mHasAllRedCoins) {
         mElapsed++;
 
-        if (MR::isValidSwitchB(this))
-            if (!MR::isOnSwitchB(this)) {
-                MR::onSwitchB(this);
-            }
+        //if (MR::isValidSwitchB(this))
+        //    if (!MR::isOnSwitchB(this)) {
+        //        MR::onSwitchB(this);
+        //    }
     }
+        if (MR::isValidSwitchB(this))
+            if (MR::isOnSwitchB(this) && mNumCoins > 0) {
+                resetAllRedCoins();
+            }
 
         if (mElapsed == 120)
             MR::startAnim(mRedCoinCounter, "End", 0);
@@ -186,6 +201,25 @@ void RedCoinController::movement() {
             MR::onSwitchA(this);
             makeActorDead();
         }
+}
+
+void RedCoinController::resetAllRedCoins() {
+    LiveActorGroup* group = MR::getGroupFromArray(this);
+
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
+            group->getActor(i)->makeActorAppeared();
+            MR::showModel(group->getActor(i));
+            MR::validateShadowAll(group->getActor(i));
+            MR::validateHitSensors(group->getActor(i));
+            ((RedCoin*)group->getActor(i))->mIsCollected = false;
+        }
+    }
+
+    mNumCoins = 0;
+    MR::hideLayout(mRedCoinCounter);
+    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
+    MR::offSwitchB(this);
 }
 
 void RedCoinController::incCountAndUpdateLayouts(RedCoin* pRedCoin) {
@@ -207,21 +241,6 @@ void RedCoinController::calcCounterVisibilty() {
         if (mRedCoinCounter->mIsValidAppear)
             mRedCoinCounter->appearIfHidden();
     }
-
-    if (MR::isValidSwitchAppear(this)) {
-        if (MR::isOnSwitchAppear(this))
-            mRedCoinCounter->appearIfHidden();
-    }
-    else {
-        if (MR::isValidSwitchB(this)) {
-            if (!MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins)
-                MR::hideLayout(mRedCoinCounter);
-        else {
-            if (mRedCoinCounter->mIsValidAppear) 
-                MR::showLayout(mRedCoinCounter);
-            }
-        }
-    }  
 }
 
 /* --- LAYOUTS --- */
@@ -277,14 +296,9 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
 }
 
 void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
-    if (!MR::hasPowerStarInCurrentStage(starID))
-        iconID = 0x52;
-
     wchar_t* str = L"";
-    MR::addPictureFontCode(str, iconID);
+    MR::addPictureFontCode(str, MR::hasPowerStarInCurrentStage(starID) ? iconID : 0x52);
     MR::setTextBoxFormatRecursive(this, "TxtCount", str);
-
-    OSReport("%d, %x\n", starID, iconID);
 }
 
 /* --- RED COIN COUNTER PLAYER --- */
