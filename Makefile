@@ -3,7 +3,7 @@ LD := deps/Kamek/Kamek.exe
 CC_FLAGS := -c -Cpp_exceptions off -nodefaults -proc gekko -fp hard -lang=c++ -O4,s -inline on -rtti off -sdata 0 -sdata2 0 -align powerpc -func_align 4 -str pool -enum int -DGEKKO -DMTX_USE_PS -i . -I- -i include -I- -i deps\\Syati\\include
 SYMBOLS := deps/Syati/symbols
 
-INPUT := $(wildcard source/*.cpp) $(wildcard source/pt/**/*.cpp)
+INPUT := $(wildcard source/*.cpp) $(wildcard source/pt/**/*.cpp) $(wildcard source/pt/**/**/*.cpp)
 OUTPUT := $(patsubst source/%.cpp, build/%.o,$(INPUT))
 RESULT := CustomCode_$(REG).bin
 
