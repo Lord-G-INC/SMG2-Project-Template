@@ -1,4 +1,4 @@
-#include "pt/MapObj/RedCoinSwitch.h"
+#include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
 #include "pt/Util/ActorUtil.h"
 
 RedCoinSwitch::RedCoinSwitch(const char* pName) : LiveActor(pName) {

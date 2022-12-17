@@ -29,9 +29,9 @@
 
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/MapObj/SwitchBox.h"
-#include "pt/MapObj/RedCoinSystem.h"
+#include "pt/MapObj/RedCoinSystem/RedCoin.h"
+#include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
-#include "pt/MapObj/RedCoinSwitch.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
