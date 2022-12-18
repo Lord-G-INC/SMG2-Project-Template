@@ -31,10 +31,9 @@ PowerStarSpawner::PowerStarSpawner(const char* pName) : LiveActor(pName) {
 	mDelay = 0;
 	mUseSE = 0;
 	mFromMario = 0;
-	mDisplayStarMode = -1;
 	mElapsed = -1;
 	mCamInfo = 0;
-	mFrame = -1;
+	mSpawnCondition = -1;
 }
 
 void PowerStarSpawner::init(JMapInfoIter const& rIter) {
@@ -45,44 +44,23 @@ void PowerStarSpawner::init(JMapInfoIter const& rIter) {
 	MR::connectToSceneMapObj(this);
 	MR::invalidateClipping(this); // This object will never unload when offscreen.
 	MR::calcGravity(this);
-	MR::registerDemoSimpleCastAll(this);
 
 	MR::useStageSwitchReadA(this, rIter); // Reads SW_A.
-	MR::useStageSwitchReadB(this, rIter); // Reads SW_B
-
+	
 	MR::getJMapInfoArg0NoInit(rIter, &mScenario); // Star ID
 	MR::getJMapInfoArg1NoInit(rIter, &mSpawnMode); // Time Stop/Instant Appear/Squizzard Spawn
 	MR::getJMapInfoArg2NoInit(rIter, &mDelay); // Delay before spawn.
 	MR::getJMapInfoArg3NoInit(rIter, &mUseSE); // Play a sound effect?
 	MR::getJMapInfoArg4NoInit(rIter, &mFromMario); // Should the Star start it's spawn path at Mario?
-	MR::getJMapInfoArg5NoInit(rIter, &mDisplayStarMode); // Show display model?
-	MR::getJMapInfoArg6NoInit(rIter, &mFrame);
+	MR::getJMapInfoArg5NoInit(rIter, &mSpawnCondition);
 
 	initSound(1, "PowerStarSpawner", &mTranslation, 0);
 
 	MR::declarePowerStar(this, mScenario); // Declares the star determined by mScenario.
 	makeActorAppeared();
-
-	if (mDisplayStarMode > -1)
-		createDisplayStar(); // Creates the Power Star Display model
 }
 
 void PowerStarSpawner::movement() {
-
-	if (MR::isValidSwitchB(this)) {
-		if (MR::isOnSwitchB(this)) {
-			MR::showModel(DisplayStar);
-			MR::tryEmitEffect(DisplayStar, "Light");
-		}
-		else {
-			MR::hideModel(DisplayStar);
-			MR::tryDeleteEffect(DisplayStar, "Light");
-		}
-	}
-
-	if (mDisplayStarMode == 1 || mDisplayStarMode == 2)
-		MR::rotateMtxLocalYDegree((MtxPtr)&DisplayStarMtx, 3.0f);
-
 	if (MR::isOnSwitchA(this))
 		spawnStar();
 }
@@ -98,7 +76,7 @@ void PowerStarSpawner::spawnStar() {
 	if (mElapsed == 0 && mUseSE)
 		MR::startLevelSound(this, "OjPowerStarSpawnerSpawn", -1, -1, -1);
 
-	if (mElapsed >= mDelay && !MR::isPlayerInRush() && MR::isOnGroundPlayer()) {
+	if (spawnCondition() && mElapsed >= mDelay) {
 		switch (mSpawnMode) { // I do not know how to improve this section.
 			case -1:
 			MR::appearEventPowerStar("PowerStarSpawner", mScenario, &mTranslation, 0, 0, 0);
@@ -116,67 +94,18 @@ void PowerStarSpawner::spawnStar() {
 			MR::appearEventPowerStar("PowerStarSpawner", mScenario, &mTranslation, 1, 0, 1);
 			break;
 		}
-
-		if (mDisplayStarMode > -1)
-			DisplayStar->makeActorDead();
-
 		makeActorDead();
 	}
 }
 
-// Display Star
-void PowerStarSpawner::createDisplayStar() {
-		const char* jpname = mDisplayStarMode < 2 ? "パワースター" : "グランドスター";
-		const char* enname = mDisplayStarMode < 2 ? "PowerStar" : "GrandStar";
+bool PowerStarSpawner::spawnCondition() {
+	if (mSpawnCondition == 0)
+		return !MR::isPlayerInRush();
+	if (mSpawnCondition == 1)
+		return MR::isOnGroundPlayer();
+	if (mSpawnCondition == 2)
+		return !MR::isPlayerInRush() && MR::isOnGroundPlayer();
 
-		DisplayStar = new ModelObj(jpname, enname, mDisplayStarMode == 0 ? NULL : DisplayStarMtx, -2, -2, -2, false);
-
-		if (mDisplayStarMode == 0) {
-			MR::setRotation(DisplayStar, mRotation);
-			MR::setPosition(DisplayStar, mTranslation);
-		}
-
-		MR::setMtxTrans((MtxPtr)DisplayStarMtx, mTranslation); // Set the mtx translation to the PowerStarSpawner's mTranslation.
-
-		if (mDisplayStarMode == 1 || mDisplayStarMode == 2) {
-			upVec.set<f32>(-mGravity); // Sets the up vector to what the gravity is. This allows the DisplayStar to calculate it's gravity, like the normal PowerStar.
-			MR::makeMtxUpFront((TMtx34f*)&DisplayStarMtx, upVec, mTranslation);
-			MR::setMtxTrans((MtxPtr)&DisplayStarMtx, mTranslation);
-		}
-
-		MR::invalidateShadowAll(DisplayStar); // Shadows are not needed so they are hidden.
-
-		// Set up the color to match the PowerStarType
-
-		if (mDisplayStarMode < 2)
-			MR::startBva(DisplayStar, "PowerStarColor");
-		else {
-			MR::hideMaterial(DisplayStar, "GrandStarBronze");
-			MR::hideMaterial(DisplayStar, MR::hasPowerStarInCurrentStage(mScenario) ? "FooMat" : "GrandStarEmpty");
-		}
-
-		if (!MR::hasPowerStarInCurrentStage(mScenario) && mDisplayStarMode < 2) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
-			
-		#if defined (ALL) || defined (NOGLE)
-			if (mFrame == -1)
-				mFrame = pt::getPowerStarColorCurrentStage(mScenario);
-		#endif
-
-			MR::startBtp(DisplayStar, "PowerStarColor");
-			MR::startBrk(DisplayStar, "PowerStarColor");
-			MR::startBtk(DisplayStar, "PowerStarColor");
-
-			MR::setBtpFrameAndStop(DisplayStar, mFrame);
-			MR::setBrkFrameAndStop(DisplayStar, mFrame);
-			MR::setBtkFrameAndStop(DisplayStar, mFrame);
-			MR::setBvaFrameAndStop(DisplayStar, 0);
-		}
-
-		DisplayStar->appear();
-
-		if (MR::isValidSwitchB(this))
-			MR::hideModel(DisplayStar);
-		else
-			MR::emitEffect(DisplayStar, "Light"); // Starts the PowerStar effect "Light" on the DisplayStar.
+	return true;
 }
 }

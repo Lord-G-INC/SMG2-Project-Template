@@ -19,9 +19,8 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
     MR::registerDemoSimpleCastAll(this);
 
-    MR::useStageSwitchReadAppear(this, rIter);
-    MR::useStageSwitchReadA(this, rIter);
-    MR::useStageSwitchWriteB(this, rIter);
+    MR::useStageSwitchWriteA(this, rIter);
+    MR::useStageSwitchReadB(this, rIter);
 
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
@@ -47,7 +46,7 @@ void RedCoinController::movement() {
         //    }
     }
         if (MR::isValidSwitchB(this))
-            if (MR::isOnSwitchB(this) && mNumCoins > 0) {
+            if (MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins) {
                 resetAllRedCoins();
             }
 
@@ -65,17 +64,21 @@ void RedCoinController::resetAllRedCoins() {
 
     for (s32 i = 0; i < group->mNumObjs; i++) {
         if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
-            group->getActor(i)->makeActorAppeared();
+            RedCoin* coin = ((RedCoin*)group->getActor(i));
             MR::showModel(group->getActor(i));
             MR::validateShadowAll(group->getActor(i));
             MR::validateHitSensors(group->getActor(i));
-            ((RedCoin*)group->getActor(i))->mIsCollected = false;
+            coin->mIsCollected = false;
+
+            if (coin->mIsInAirBubble)
+                coin->mAirBubble->makeActorAppeared();
         }
     }
 
     mNumCoins = 0;
-    MR::hideLayout(mRedCoinCounter);
     MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
+    mRedCoinCounter->mIsValidAppear = false;
+    MR::hideLayout(mRedCoinCounter);
     MR::offSwitchB(this);
 }
 

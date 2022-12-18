@@ -17,6 +17,7 @@ void RedCoinCounter::init(const JMapInfoIter& rIter) {
     MR::createAndAddPaneCtrl(this, "Counter", 1);
     MR::setTextBoxNumberRecursive(this, "Counter", 0);
 
+    MR::registerDemoSimpleCastAll(this);
     MR::connectToSceneLayout(this);
     MR::hideLayout(this);
 
@@ -73,6 +74,7 @@ void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounterPlayer", 1);
     MR::connectToSceneLayout(this);
     MR::setTextBoxNumberRecursive(this, "TxtText", 0);
+    MR::registerDemoSimpleCastAll(this);
 }
 
 void RedCoinCounterPlayer::control() {
