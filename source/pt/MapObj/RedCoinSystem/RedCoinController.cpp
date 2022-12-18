@@ -17,6 +17,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+    MR::registerDemoSimpleCastAll(this);
 
     MR::useStageSwitchReadAppear(this, rIter);
     MR::useStageSwitchReadA(this, rIter);

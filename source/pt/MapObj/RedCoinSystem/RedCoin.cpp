@@ -33,9 +33,6 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
     MR::joinToGroupArray(this, rIter, "RedCoin", 32);
-    MR::registerDemoSimpleCastAll(this);
-    
-    MR::addToClippingTarget(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
@@ -53,7 +50,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     mConnector = new MapObjConnector(this);
     mConnector->attach(mTranslation);
 
-    mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer", this);
+    mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer");
     mCoinCounterPlayer->initWithoutIter();
 
     makeActorAppeared();
@@ -75,10 +72,15 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoin::control() {
+    mCoinCounterPlayer->calcScreenPos(mCounterPlayerPos ? *MR::getPlayerPos() : mTranslation, mCounterPlayerPos ? 250.0f : 150.0f);
+
     MR::calcGravity(this);
     
-    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this))
+    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected)
         appearAndMove();
+    
+    if (mIsCollected)
+        mVelocity = TVec3f(0.0f, 0.0f, 0.0f);
 }
 
 void RedCoin::calcAndSetBaseMtx() {
@@ -133,12 +135,11 @@ void RedCoin::collect() {
     MR::startSound(this, getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
-    MR::hideModel(this);
     MR::invalidateHitSensors(this);
+    MR::invalidateShadowAll(this);
     MR::emitEffect(this, "RedCoinGet");
-    mFlashingCtrl->end();
     MR::incPlayerLife(1);
-    makeActorDead();
+    MR::hideModel(this);
 }
 
 

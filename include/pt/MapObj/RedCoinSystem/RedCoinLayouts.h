@@ -19,13 +19,10 @@
     
     class RedCoinCounterPlayer : public LayoutActor {
     public:
-        RedCoinCounterPlayer(const char* pName, LiveActor* pActor);
+        RedCoinCounterPlayer(const char* pName);
         
         virtual void init(const JMapInfoIter& rIter);
         virtual void control();
-        void calcScreenPos(LiveActor* pActor, bool lytpos);
+        void calcScreenPos(TVec3f pos, f32 heightAdd);
         void updateCounter(s32 count);
-
-        LiveActor* mActor;
-        bool mLytPos;
     };

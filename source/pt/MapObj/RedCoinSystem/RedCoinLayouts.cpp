@@ -66,9 +66,7 @@ void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
 */
 
 
-RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName, LiveActor* pActor) : LayoutActor(pName, 1) {
-    mActor = pActor;
-    bool mLytPos;
+RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName) : LayoutActor(pName, 1) {
 }
 
 void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
@@ -78,14 +76,15 @@ void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinCounterPlayer::control() {
-    TVec2f screenPos;
-    TVec3f pos = mActor->mTranslation;
-    pos.y += 150;
-    MR::calcScreenPosition(&screenPos, pos);
-    setTrans(screenPos);
-
     if (MR::isAnimStopped(this, 0))
         kill();
+}
+
+void RedCoinCounterPlayer::calcScreenPos(TVec3f pos, f32 heightAdd) {
+    TVec2f screenPos;
+    pos.y += heightAdd;
+    MR::calcScreenPosition(&screenPos, pos);
+    setTrans(screenPos);
 }
 
 void RedCoinCounterPlayer::updateCounter(s32 count) {
