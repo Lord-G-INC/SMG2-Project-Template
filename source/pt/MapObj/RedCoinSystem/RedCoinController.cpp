@@ -16,7 +16,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::initDefaultPos(this, rIter);
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
     MR::registerDemoSimpleCastAll(this);
 
     MR::useStageSwitchWriteA(this, rIter);
@@ -83,14 +83,18 @@ void RedCoinController::resetAllRedCoins() {
 }
 
 void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
+    RedCoin* coin = ((RedCoin*)pActor);
     mNumCoins += 1;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
-    ((RedCoin*)pActor)->mCoinCounterPlayer->updateCounter(mNumCoins);
+    coin->mCoinCounterPlayer->updateCounter(mNumCoins);
     
-    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
+    if (!coin->mHasRewardedCoins) {
+        GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
+        coin->mHasRewardedCoins = true;
+    }
 }
 
 void RedCoinController::calcCounterVisibilty() {

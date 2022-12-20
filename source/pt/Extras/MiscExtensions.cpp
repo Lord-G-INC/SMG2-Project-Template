@@ -48,7 +48,14 @@ namespace pt {
 		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow") ? 4 :
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple") ? 5 : -1;
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple") ? 5 :
+		#if defined (CA) || defined (ALL)
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlack") ? 6 :
+		MR::isEqualString(pActor->mName ,"SuperSpinDriverWhite") ? 7 : -1;
+		#else
+		-1;
+		#endif
+
 		if (color != -1) {
 			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)(color + 1));
 			MR::startBrk(pActor, color == 0 ? "Green" : "Red");
@@ -56,11 +63,9 @@ namespace pt {
 			pActor->mSpinDriverPathDrawer->mColor = color;
 		} else
 			pActor->initColor();
-
-		s32 idx = color - 2;
-
+			
         if (color >= 2)
-            Colors.SetTexture(idx, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[idx], 0), 0));
+            Colors.SetTexture(color - 2, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 2], 0), 0));
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init

@@ -33,6 +33,7 @@
 #include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
 #include "pt/MapObj/DisplayStar.h"
+#include "pt/Map/CometTimerObj.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -102,6 +103,7 @@ namespace pt {
         // Map
         { "PlayerSwitchCtrl", createExtActor<PlayerSwitchCtrl> },
         { "SensorDetector", createExtActor<SensorDetector> },
+        { "CometTimerObj", createExtActor<CometTimerObj> },
         { "Banekiti", createExtActor<Banekiti> },
         // MapObj
         { "BlueChip", createExtActor<BlueChip> },

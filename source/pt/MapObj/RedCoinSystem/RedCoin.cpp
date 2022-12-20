@@ -24,6 +24,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsInAirBubble = false;
     mInvalidateShadows = false;
     mCounterPlayerPos = false;
+    mHasRewardedCoins = false;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -32,7 +33,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 32);
+    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
@@ -141,5 +142,3 @@ void RedCoin::collect() {
     MR::incPlayerLife(1);
     MR::hideModel(this);
 }
-
-

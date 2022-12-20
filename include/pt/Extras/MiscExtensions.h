@@ -2,7 +2,7 @@
 
 #include <syati.h>
 
-#ifdef CA
+#if defined (CA) || defined (ALL)
 const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
 #else
 const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};

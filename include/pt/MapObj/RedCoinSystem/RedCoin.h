@@ -31,4 +31,5 @@
         bool mIsInAirBubble;
         bool mInvalidateShadows;
         bool mCounterPlayerPos;
+        bool mHasRewardedCoins;
     };
