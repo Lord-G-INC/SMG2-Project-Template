@@ -17,4 +17,5 @@ namespace pt {
 	AnimScaleController* createSamboAnimScaleController(AnimScaleParam *pAnimScaleParam);
 
 	void* loadArcAndFile(const char *pArc, const char *pFile);
+	void* loadFile(const char* pFile);
 };
