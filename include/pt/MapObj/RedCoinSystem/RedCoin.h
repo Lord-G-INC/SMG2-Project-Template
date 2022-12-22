@@ -26,6 +26,8 @@
         RedCoinCounterPlayer* mCoinCounterPlayer;
         LiveActorGroup* mGroup;
         f32 mLaunchVelocity; // Obj_arg0
+        s32 sus;
+        s32 mElapsed;
         bool mUseConnection; // Obj_arg1
         bool mIsCollected;
         bool mIsInAirBubble;

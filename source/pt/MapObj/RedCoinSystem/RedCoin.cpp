@@ -15,16 +15,19 @@
 *
 * Credits:
 * Evanbowl, Lord-Giganticus, Galaxy Master, and Aurum for helping me with crash fixes.
-*
+*/
+
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
-    mLaunchVelocity = 25.0f;
+    mLaunchVelocity = 250.0f;
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
     mCounterPlayerPos = false;
     mHasRewardedCoins = false;
+    sus = 0;
+    mElapsed = 0;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -40,6 +43,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows);
     MR::getJMapInfoArg4NoInit(rIter, &mCounterPlayerPos);
+    MR::getJMapInfoArg5NoInit(rIter, &sus);
     
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -77,9 +81,13 @@ void RedCoin::control() {
 
     MR::calcGravity(this);
     
-    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected)
-        appearAndMove();
-    
+    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
+        mElapsed++;
+        
+        if (mElapsed >= sus)
+            appearAndMove();
+    }
+
     if (mIsCollected)
         mVelocity = TVec3f(0.0f, 0.0f, 0.0f);
 }
@@ -111,7 +119,7 @@ void RedCoin::initAirBubble() {
 void RedCoin::appearAndMove() {
     MR::startSound(this, "SE_SY_RED_COIN_APPEAR", -1, -1);
 
-    TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity, 0.0f);
+    TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
     coinVelocity.scale(coinVelocity.y, -mGravity);
 
     appearMove(mTranslation, coinVelocity, 1, 0);

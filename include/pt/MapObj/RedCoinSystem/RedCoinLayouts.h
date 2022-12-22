@@ -10,6 +10,7 @@
         virtual void init(const JMapInfoIter& rIter);
         virtual void control();
         void appearIfHidden();
+        void disappearIfShown();
         void updateCounter(s32 count, bool hasAllCoins);
         void updateStarIndicator(s32 starID, s32 iconID);
     

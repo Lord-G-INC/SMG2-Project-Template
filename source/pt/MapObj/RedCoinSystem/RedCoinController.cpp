@@ -1,4 +1,5 @@
 #include "pt/MapObj/RedCoinSystem/RedCoinController.h"
+#include "pt/Util/ActorUtil.h"
 
 /* --- RED COIN CONTROLLER --- */
 
@@ -27,7 +28,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
     initSound(1, "RedCoin", &mTranslation, 0);
-    
+
     mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
     mRedCoinCounter->initWithoutIter();
     mRedCoinCounter->appear();
@@ -37,14 +38,9 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 void RedCoinController::movement() {
     calcCounterVisibilty();
 
-    if (mHasAllRedCoins) {
+    if (mHasAllRedCoins)
         mElapsed++;
 
-        //if (MR::isValidSwitchB(this))
-        //    if (!MR::isOnSwitchB(this)) {
-        //        MR::onSwitchB(this);
-        //    }
-    }
         if (MR::isValidSwitchB(this))
             if (MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins) {
                 resetAllRedCoins();
@@ -98,9 +94,10 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
 }
 
 void RedCoinController::calcCounterVisibilty() {
-    bool checks = MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isPlayerDead() || MR::isPowerStarGetDemoActive();
+    bool checks = MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || MR::isPlayerDead() || MR::isPowerStarGetDemoActive();
+
     if (checks)
-        MR::hideLayout(mRedCoinCounter);
+        mRedCoinCounter->disappearIfShown();
     else {
         if (mRedCoinCounter->mIsValidAppear)
             mRedCoinCounter->appearIfHidden();

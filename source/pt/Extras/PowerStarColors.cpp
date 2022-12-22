@@ -232,13 +232,14 @@ namespace pt {
 
 		if (MR::hasPowerStarInCurrentStage(argScenario))
 			colorFrame = 4;
+	
+		if (colorFrame == 1)
+			MR::startBtkAndSetFrameAndStop(actor, "BallStarColor", 1);
 		
 		// BTP and BRK animations are started and set using colorFrame.
 		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);
 		MR::startBrkAndSetFrameAndStop(actor, "BallColor", colorFrame);
 
-		if (colorFrame == 1)
-			MR::startBtkAndSetFrameAndStop(actor, "BallStarColor", 1);
 	}
 	kmWrite32(0x8044461C, 0x7F84E378);
 	kmCall(0x80444620, TamakoroCustomPowerStarColors);

@@ -38,6 +38,12 @@ void RedCoinCounter::appearIfHidden() {
     }
 }
 
+void RedCoinCounter::disappearIfShown() { 
+    if (!MR::isHiddenLayout(this)) {
+        MR::startAnim(this, "End", 1);
+    }
+}
+
 void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
 
     if (count == 1) {

@@ -26,10 +26,6 @@ void DisplayStar::init(const JMapInfoIter& rIter) {
         MR::connectToSceneMapObj(this);
         MR::registerDemoSimpleCastAll(this);
 
-        MR::makeMtxUpFront(&mMtx, -mGravity, mTranslation);
-
-		//MR::setMtxTrans((MtxPtr)mMtx, mTranslation); // Set the mtx translation to the PowerStarSpawner's mTranslation.
-
 		if (mIsRotate) {
 			MR::setRotation(this, mRotation);
 			MR::setPosition(this, mTranslation);
@@ -50,14 +46,10 @@ void DisplayStar::init(const JMapInfoIter& rIter) {
 
         MR::emitEffect(this, "Light");
 
-        LiveActor::calcAndSetBaseMtx();
 		appear();
 }
 
 void DisplayStar::control() {
-    //if (mIsRotate)
-	    MR::rotateMtxLocalYDegree((MtxPtr)&mMtx, 3.0f);
-
     if (MR::isValidSwitchA(this))
         if (MR::isOnSwitchA(this))
             makeActorDead();
@@ -71,13 +63,10 @@ void DisplayStar::setupColor(s32 scenario) {
 			mFrame = pt::getPowerStarColorCurrentStage(mScenario);
 	#endif
 
-		MR::startBtp(this, "PowerStarColor");
-		MR::startBrk(this, "PowerStarColor");
-		MR::startBtk(this, "PowerStarColor");
+		MR::startBtpAndSetFrameAndStop(this, "PowerStarColor", mFrame);
+		MR::startBrkAndSetFrameAndStop(this, "PowerStarColor", mFrame);
+		MR::startBtkAndSetFrameAndStop(this, "PowerStarColor", mFrame);
 
-		MR::setBtpFrameAndStop(this, mFrame);
-		MR::setBrkFrameAndStop(this, mFrame);
-		MR::setBtkFrameAndStop(this, mFrame);
 		MR::setBvaFrameAndStop(this, 0);
 	}
 }
