@@ -127,7 +127,6 @@ void RedCoin::appearAndMove() {
     appearMove(mTranslation, coinVelocity, 1, 0);
     setCannotTime(300);
     setLife(0x7FFFFFFF);
-    mFlashingCtrl->end();
     MR::validateHitSensors(this);
 }
 

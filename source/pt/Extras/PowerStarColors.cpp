@@ -21,6 +21,7 @@ namespace pt {
 	* 3: "Red"
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
+	* 6: "Silver" [PTD]
 	*/
 
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
@@ -215,6 +216,26 @@ namespace pt {
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
 
+
+	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
+	void greenStarAppearParticleFix(LiveActor* pActor, s32 mColor) {
+		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
+	}
+
+	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
+	kmCall(0x802E0870, greenStarAppearParticleFix);
+
+
+	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
+	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
+		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
+	}
+
+	#if defined (NOGLE) || defined (ALL)
+		kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
+		kmCall(0x802DFE04, customPowerStarLightColors);
+	#endif
+
 	/*
 	*	Silver Star Colors
 	*	A suggestion from Alex SMG and others that turned out to be really fun to make.
@@ -232,12 +253,4 @@ namespace pt {
 
 	kmCall(0x8035F830, SilverStarColors);
 	#endif
-
-	void greenStarAppearParticleFix(LiveActor* pActor, const char* pStr) {
-		MR::forceDeleteEffect(pActor, pStr);
-		
-		OSReport("actor name: %s, particle: %s, Obj_arg0: %d\n", pActor->mName, pStr, ((s32*)pActor)[0x24]);
 	}
-
-	//kmCall(0x802E1628, greenStarAppearParticleFix);
-}

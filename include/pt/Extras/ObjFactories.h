@@ -94,7 +94,7 @@ namespace pt {
         { "Anagon", createExtActor<Anagon> },
         // Enemy
         { "BallBeamer", createExtActor<BallBeamer> },
-        { "CocoSambo", createExtActor<CocoSambo> }, // 10
+        { "CocoSambo", createExtActor<CocoSambo> },
         { "DharmaSambo", createExtActor<DharmaSambo> },
         { "JumpGuarder", createExtActor<JumpGuarder> },
         { "Mogu", createExtActor<Mogu> },
@@ -107,8 +107,9 @@ namespace pt {
         { "Banekiti", createExtActor<Banekiti> },
         // MapObj
         { "BlueChip", createExtActor<BlueChip> },
-        { "BlueChipGroup", createExtActor<BlueChipGroup> }, // 20
+        { "BlueChipGroup", createExtActor<BlueChipGroup> },
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
+        { "ChooChooTrain", createExtActor<ChooChooTrain> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
         { "DisplayStar", createExtActor<DisplayStar> },
         { "FirePressureRadiate", createExtActor<FirePressureRadiate> },
@@ -118,7 +119,7 @@ namespace pt {
         { "MorphItemCollectionFoo", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemCollectionIce", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemNeoFoo", createExtActor<MorphItemNeoFoo> },
-        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> }, // 30
+        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> },
         { "MultipleChoiceDice", createExtActor<MultipleChoiceDice> },
         { "Pompon2Plant", createExtActor<PomponPlant> },
         { "PowerStarSpawner", createExtActor<PowerStarSpawner> },
@@ -127,7 +128,7 @@ namespace pt {
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
-        { "ValveSwitch", createExtActor<ValveSwitch> }, // 40
+        { "ValveSwitch", createExtActor<ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<WaterLeakPipe>},
         // Ride
@@ -162,11 +163,6 @@ namespace pt {
     * Extended ProductMapCreator
     */
 
-    /*
-    * Number of total new class entries. This value has to be adjusted everytime a creation function
-    * is added or removed!
-    */
-
     const CreateActorEntry cNewCreateMapObjTable[] = {
         { "AirFar100m", NameObjFactory::createNameObj<AirFar100m> },
         { "AssemblyBlock", NameObjFactory::createNameObj<AssemblyBlock> },
@@ -189,14 +185,7 @@ namespace pt {
 
     /*
     * Extended SceneObjHolder
-    */
-
-    /*
-    * Number of total new SceneObj instances. This value has to adjusted everytime a creation func-
-    * tion is added or removed!
-    */
-
-    /*
+    *
     * There is a bunch of free SceneObj slots that we can still use as desired. The following slots
     * are unused as of now: 0x3E, 0x47, 0x48, 0x49, 0x54, 0x5A, 0x68, 0x69 and 0x7B.
     */

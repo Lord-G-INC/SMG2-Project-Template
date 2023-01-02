@@ -79,7 +79,7 @@ void RedCoinController::resetAllRedCoins() {
 
 void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     RedCoin* coin = ((RedCoin*)pActor);
-    mNumCoins += 1;
+    mNumCoins++;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 

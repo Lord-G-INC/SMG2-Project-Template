@@ -39,7 +39,6 @@ void RedCoinCounter::appearIfHidden() {
 }
 
 void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
-
     if (count == 1) {
         mIsValidAppear = true;
         appearIfHidden();
