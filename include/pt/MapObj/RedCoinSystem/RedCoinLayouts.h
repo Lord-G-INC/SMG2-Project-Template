@@ -10,7 +10,6 @@
         virtual void init(const JMapInfoIter& rIter);
         virtual void control();
         void appearIfHidden();
-        void disappearIfShown();
         void updateCounter(s32 count, bool hasAllCoins);
         void updateStarIndicator(s32 starID, s32 iconID);
     
@@ -24,6 +23,6 @@
         
         virtual void init(const JMapInfoIter& rIter);
         virtual void control();
-        void calcScreenPos(TVec3f pos, f32 heightAdd);
+        void calcScreenPos(LiveActor* pActor, bool type);
         void updateCounter(s32 count);
     };

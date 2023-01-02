@@ -17,10 +17,10 @@
         RedCoinCounter* mRedCoinCounter;
         s32 mNumCoins;
         s32 mElapsed;
-        bool mHasAllRedCoins;
-        bool mShouldNotRewardCoins; // Obj_arg0
         s32 mPowerStarCheck; // Obj_arg1
         s32 mIconID; // Obj_arg2
+        bool mShouldNotRewardCoins; // Obj_arg0
+        bool mHasAllRedCoins;
     };
     
     RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);

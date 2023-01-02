@@ -17,6 +17,7 @@ void RedCoinSwitch::init(const JMapInfoIter& rIter) {
 
     mTimeLimitLayout = new TimeLimitLayout(1);
     MR::connectToSceneLayout(mTimeLimitLayout);
+    mTimeLimitLayout->setDisplayModeOnNormal(1);
     mTimeLimitLayout->initWithoutIter();
     
     makeActorAppeared();

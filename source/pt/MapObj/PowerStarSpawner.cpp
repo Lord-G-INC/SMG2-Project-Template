@@ -102,7 +102,7 @@ bool PowerStarSpawner::spawnCondition() {
 	if (mSpawnCondition == 0)
 		return !MR::isPlayerInRush();
 	if (mSpawnCondition == 1)
-		return MR::isOnGroundPlayer();
+		return MR::isOnGroundPlayer() || MR::isPlayerSwimming();
 	if (mSpawnCondition == 2)
 		return !MR::isPlayerInRush() && MR::isOnGroundPlayer();
 

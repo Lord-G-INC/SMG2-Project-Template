@@ -38,12 +38,6 @@ void RedCoinCounter::appearIfHidden() {
     }
 }
 
-void RedCoinCounter::disappearIfShown() { 
-    if (!MR::isHiddenLayout(this)) {
-        MR::startAnim(this, "End", 1);
-    }
-}
-
 void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
 
     if (count == 1) {
@@ -58,9 +52,9 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
 }
 
 void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
-    wchar_t* str = L"";
-    MR::addPictureFontCode(str, MR::hasPowerStarInCurrentStage(starID) ? iconID : 0x52);
-    MR::setTextBoxFormatRecursive(this, "TxtCount", str);
+    wchar_t str;
+    MR::addPictureFontCode(&str, MR::hasPowerStarInCurrentStage(starID) ? iconID : 0x52);
+    MR::setTextBoxFormatRecursive(this, "TxtCount", &str);
 }
 
 /* --- RED COIN COUNTER PLAYER --- */
@@ -88,15 +82,19 @@ void RedCoinCounterPlayer::control() {
         kill();
 }
 
-void RedCoinCounterPlayer::calcScreenPos(TVec3f pos, f32 heightAdd) {
+void RedCoinCounterPlayer::calcScreenPos(LiveActor* pActor, bool type) {
     TVec2f screenPos;
-    pos.y += heightAdd;
-    MR::calcScreenPosition(&screenPos, pos);
+    TVec3f newPos;
+    TVec3f pos = type ? *((MarioActor*)pActor)->getGravityVec() : pActor->mGravity;
+    f32 heightAdd = type ? 250.0f : 150.0f;
+    
+    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pActor->mTranslation, (Vec*)&newPos, -heightAdd);
+    MR::calcScreenPosition(&screenPos, newPos);
     setTrans(screenPos);
 }
 
 void RedCoinCounterPlayer::updateCounter(s32 count) {
     MR::setTextBoxNumberRecursive(this, "TxtText", count);
-    MR::startAnim(this, "AppearNew", 0);
+    MR::startAnim(this, "Appear", 0);
     appear();
 }

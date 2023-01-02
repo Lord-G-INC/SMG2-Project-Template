@@ -27,8 +27,6 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
-    initSound(1, "RedCoin", &mTranslation, 0);
-
     mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
     mRedCoinCounter->initWithoutIter();
     mRedCoinCounter->appear();
@@ -50,6 +48,7 @@ void RedCoinController::movement() {
             MR::startAnim(mRedCoinCounter, "End", 0);
 
         if (mElapsed == 140) {
+            MR::hideLayout(mRedCoinCounter);
             MR::onSwitchA(this);
             makeActorDead();
         }
@@ -61,9 +60,9 @@ void RedCoinController::resetAllRedCoins() {
     for (s32 i = 0; i < group->mNumObjs; i++) {
         if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
             RedCoin* coin = ((RedCoin*)group->getActor(i));
-            MR::showModel(group->getActor(i));
-            MR::validateShadowAll(group->getActor(i));
-            MR::validateHitSensors(group->getActor(i));
+            MR::showModel(coin);
+            MR::validateShadowAll(coin);
+            MR::validateHitSensors(coin);
             coin->mIsCollected = false;
 
             if (coin->mIsInAirBubble)
@@ -94,17 +93,13 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
 }
 
 void RedCoinController::calcCounterVisibilty() {
-    bool checks = MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || MR::isPlayerDead() || MR::isPowerStarGetDemoActive();
-
-    if (checks)
-        mRedCoinCounter->disappearIfShown();
+    if (MR::isPowerStarGetDemoActive())
+        MR::startAnim(mRedCoinCounter, "End", 0);
     else {
         if (mRedCoinCounter->mIsValidAppear)
             mRedCoinCounter->appearIfHidden();
     }
 }
-
-/* --- LAYOUTS --- */
 
 /* --- RED COIN UTIL  --- */
 

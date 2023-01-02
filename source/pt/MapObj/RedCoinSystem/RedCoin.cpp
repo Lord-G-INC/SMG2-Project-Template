@@ -8,7 +8,7 @@
 * These actors are exclusive to PT Debug.
 * RedCoin, RedCoinController, RedCoinAppearer
 *
-* A long awaited project, that I finally decided to scrape together.
+* A long awaited project that I finally decided to scrape together.
 *
 * A coin type from other Mario games that activates an event once all
 * red coins (usually 8) are collected. Typically a star would spawn.
@@ -26,7 +26,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mInvalidateShadows = false;
     mCounterPlayerPos = false;
     mHasRewardedCoins = false;
-    sus = 0;
+    mAppearDelay = 0;
     mElapsed = 0;
 
     MR::createCoinRotater();
@@ -37,13 +37,14 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
     MR::joinToGroupArray(this, rIter, "RedCoin", 64);
+    MR::calcGravity(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble);
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows);
     MR::getJMapInfoArg4NoInit(rIter, &mCounterPlayerPos);
-    MR::getJMapInfoArg5NoInit(rIter, &sus);
+    MR::getJMapInfoArg5NoInit(rIter, &mAppearDelay);
     
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -61,7 +62,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     makeActorAppeared();
 
     MR::useStageSwitchSyncAppear(this, rIter);
+}
 
+void RedCoin::initAfterPlacement() {
     if (!mUseConnection)
         MR::offBind(this);
 
@@ -76,15 +79,14 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     initAirBubble();
 }
 
-void RedCoin::control() {
-    mCoinCounterPlayer->calcScreenPos(mCounterPlayerPos ? *MR::getPlayerPos() : mTranslation, mCounterPlayerPos ? 250.0f : 150.0f);
 
-    MR::calcGravity(this);
+void RedCoin::control() {
+    mCoinCounterPlayer->calcScreenPos(mCounterPlayerPos ? (LiveActor*)MarioAccess::getPlayerActor() : this, mCounterPlayerPos);
     
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
         mElapsed++;
         
-        if (mElapsed >= sus)
+        if (mElapsed >= mAppearDelay)
             appearAndMove();
     }
 
@@ -117,13 +119,13 @@ void RedCoin::initAirBubble() {
 }
 
 void RedCoin::appearAndMove() {
-    MR::startSound(this, "SE_SY_RED_COIN_APPEAR", -1, -1);
+    MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
 
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
     coinVelocity.scale(coinVelocity.y, -mGravity);
 
     appearMove(mTranslation, coinVelocity, 1, 0);
-    setCannotTime(100);
+    setCannotTime(300);
     setLife(0x7FFFFFFF);
     mFlashingCtrl->end();
     MR::validateHitSensors(this);
@@ -141,7 +143,7 @@ void RedCoin::collect() {
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
 
     getRedCoinControllerFromGroup(this)->incCountAndUpdateLayouts(this);
-    MR::startSound(this, getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
+    MR::startSystemSE(getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
     MR::invalidateHitSensors(this);

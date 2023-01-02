@@ -43,7 +43,7 @@ namespace pt {
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
 
-	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
+	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor == 1 ? 0 : 
 		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
 		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
@@ -68,16 +68,16 @@ namespace pt {
             Colors.SetTexture(color - 2, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 2], 0), 0));
 	}
 
-	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
+	kmCall(0x8031E29C, initSuperSpinDriverCustomColor); // redirect initColor in init
 
-	void setSpinDriverPathColor(SpinDriverPathDrawer* pDrawer) {
+	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor >= 2)
 			Colors[pDrawer->mColor-2]->load(GX_TEXMAP0);
 
 		pDrawer->calcDrawCode(); // Restore original call
 	}
 
-	kmCall(0x8030EF28, setSpinDriverPathColor);
+	kmCall(0x8030EF28, setSpinDriverPathCustomColor);
 
 
 	/*
@@ -233,16 +233,14 @@ namespace pt {
 	* Here we change it to read Obj_arg0, so the second texture can be used in custom galaxies.
 	*/
 
-	#ifdef ALL
-	s32 OceanSphereTexturePatch(const JMapInfoIter& iter) {
+	s32 OceanSphereTexturePatch(const JMapInfoIter& rIter) {
 		s32 arg = 0;
-		MR::getJMapInfoArg0NoInit(iter, &arg);
+		MR::getJMapInfoArg0NoInit(rIter, &arg);
 		return arg;
 	}
 
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
-	#endif
 
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
@@ -256,8 +254,7 @@ namespace pt {
 	*/
 
 	const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
-		s16 selectTxt;
-		selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
+		s16 selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
 
 		char* str = new char[5];
 		sprintf(str, "New%d", selectTxt - 18);
@@ -269,8 +266,9 @@ namespace pt {
 
 	 void smssKillSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
-         pActor->kill();
+        pActor->kill();
     }
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
-}
+
+} 
