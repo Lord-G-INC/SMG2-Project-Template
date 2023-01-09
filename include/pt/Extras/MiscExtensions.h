@@ -1,6 +1,7 @@
 #pragma once
 
 #include <syati.h>
+#define arrsize(item) sizeof(item)/sizeof(item[0])
 
 #if defined (CA) || defined (ALL)
 const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
@@ -8,7 +9,7 @@ const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "
 const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
 #endif
 
-const int TexSize = sizeof(ColorsStr)/sizeof(const char*);
+const int TexSize = arrsize(ColorsStr);
 
 template <int SIZE>
 class JUTHolder {
