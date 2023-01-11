@@ -121,7 +121,7 @@ namespace pt {
 		kmCall(0x804B8048, loadPTPictureFont);
 	#endif
 
-	void getStarIcon(wchar_t* txt, s32 type) {
+	void getStarIcon(wchar_t* pStr, s32 type) {
 		const char* stage = 0;
 		s32 scenarioId;
 		s32 icon;
@@ -160,7 +160,7 @@ namespace pt {
 			 	icon = 0x71;
 			}
 
-		MR::addPictureFontCode(txt, icon);
+		MR::addPictureFontCode(pStr, icon);
 	}
 
 	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we disable ours.
@@ -183,7 +183,6 @@ namespace pt {
 	void TamakoroCustomPowerStarColors(Tamakoro* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
 		s32 colorFrame = -1;
-		bool noClearBall = false;
 		
 		// Check Obj_arg1. This will be the scenario ID to check the Power Star Color of.
 		MR::getJMapInfoArg1NoInit(iter, &argScenario);	
@@ -207,15 +206,13 @@ namespace pt {
 
 	// Define new particles.
 	// These will be picked using the Star Ball's current BTP frame.
-	const char* cNewParticles[] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
-	
+	const char* cNewParticles[7] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
 	void TamakoroCustomPowerStarColorsParticles(Tamakoro* actor) {
-		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added.
+		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added to replace it.
 		MR::emitEffect(actor, cNewParticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
 	}
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
-
 
 	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
 	void greenStarAppearParticleFix(LiveActor* pActor, s32 mColor) {
@@ -224,7 +221,6 @@ namespace pt {
 
 	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 	kmCall(0x802E0870, greenStarAppearParticleFix);
-
 
 	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
 	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {

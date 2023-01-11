@@ -43,36 +43,35 @@ namespace pt {
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
 	*/
 
-	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
-		s32 color = pActor->mColor == 1 ? 0 : 
-		MR::isEqualString(pActor->mName, "SuperSpinDriverRed") ? 2 : 
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlue") ? 3 : 
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverRainbow") ? 4 :
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverPurple") ? 5 :
-		#if defined (CA) || defined (ALL)
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverBlack") ? 6 :
-		MR::isEqualString(pActor->mName ,"SuperSpinDriverWhite") ? 7 : -1;
-		#else
-		-1;
-		#endif
+	#if defined (CA) || defined (ALL)
+	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
+	JUTHolder<6> Colors = JUTHolder<6>();
+	#else
+	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+	JUTHolder<4> Colors = JUTHolder<4>();
+	#endif
 
-		if (color != -1) {
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)(color + 1));
+	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
+		s32 color = pActor->mColor;
+
+		if (color != 0 && color != 2) {
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)color);
 			MR::startBrk(pActor, color == 0 ? "Green" : "Red");
 
-			pActor->mSpinDriverPathDrawer->mColor = color;
+			pActor->mSpinDriverPathDrawer->mColor = color == 1 ? 0 : color;
 		} else
 			pActor->initColor();
 			
-        if (color >= 2)
-            Colors.SetTexture(color - 2, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 2], 0), 0));
+        if (color >= 3)
+            Colors.SetTexture(color - 3, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 3], 0), 0));
+	
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverCustomColor); // redirect initColor in init
 
 	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
-		if (pDrawer->mColor >= 2)
-			Colors[pDrawer->mColor-2]->load(GX_TEXMAP0);
+		if (pDrawer->mColor >= 3)
+			Colors[pDrawer->mColor - 3]->load(GX_TEXMAP0);
 
 		pDrawer->calcDrawCode(); // Restore original call
 	}

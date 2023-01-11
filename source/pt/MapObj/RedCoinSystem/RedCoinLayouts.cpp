@@ -30,6 +30,16 @@ void RedCoinCounter::control() {
     mPaneRumbler->update();
 }
 
+void RedCoinCounter::calcVisibility() {
+    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking())
+        MR::hideLayout(this);
+    else {
+        if (mIsValidAppear)
+            appearIfHidden();
+    }
+}
+
+
 void RedCoinCounter::appearIfHidden() { 
     if (MR::isHiddenLayout(this)) {
         MR::showLayout(this);
@@ -77,8 +87,7 @@ void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinCounterPlayer::control() {
-    if (MR::isAnimStopped(this, 0))
-        kill();
+    MR::killAtAnimStopped(this, 0);
 }
 
 void RedCoinCounterPlayer::calcScreenPos(LiveActor* pActor, bool type) {

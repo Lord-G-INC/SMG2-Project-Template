@@ -20,7 +20,7 @@
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
-    mLaunchVelocity = 250.0f;
+    mLaunchVelocity = 400.0f;
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
@@ -122,11 +122,10 @@ void RedCoin::appearAndMove() {
     MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
 
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
-    coinVelocity.scale(coinVelocity.y, -mGravity);
+    coinVelocity.scale(coinVelocity.y, mGravity);
 
-    appearMove(mTranslation, coinVelocity, 1, 0);
+    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
     setCannotTime(300);
-    setLife(0x7FFFFFFF);
     MR::validateHitSensors(this);
 }
 
@@ -139,15 +138,16 @@ void RedCoin::collect() {
         mAirBubble->kill();
     }
     
-    MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
-
     getRedCoinControllerFromGroup(this)->incCountAndUpdateLayouts(this);
     MR::startSystemSE(getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
+    MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
     MR::invalidateHitSensors(this);
     MR::invalidateShadowAll(this);
     MR::emitEffect(this, "RedCoinGet");
     MR::incPlayerLife(1);
     MR::hideModel(this);
 }
+
+kmWrite32(0x8028C980, 0x4BD96361);

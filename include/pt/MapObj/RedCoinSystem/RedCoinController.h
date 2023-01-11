@@ -11,7 +11,6 @@
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
         void incCountAndUpdateLayouts(LiveActor* pActor);
-        void calcCounterVisibilty();
         void resetAllRedCoins();
     
         RedCoinCounter* mRedCoinCounter;

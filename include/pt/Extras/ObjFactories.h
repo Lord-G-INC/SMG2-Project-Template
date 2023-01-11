@@ -62,11 +62,15 @@ namespace pt {
         return new T(pName);
     }
 
+    template<s32 COLOR>
+    NameObj* createSuperSpinDriverCustomColor(const char *pName) {
+        return new SuperSpinDriver(pName, COLOR);
+    }
+
     struct CreateSceneObjEntry {
         s32 mSlotId;
         NameObj* (*mCreationFunc)(void);
     };
-
 
     /*
     * Extended NameObjFactory
@@ -80,7 +84,6 @@ namespace pt {
 
     NameObj* createQuakeEffectArea(const char *pName);
     NameObj* createSuperSpinDriverGreen(const char *pName);
-    NameObj* createSuperSpinDriverCustomColor(const char *pName);
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
@@ -109,7 +112,6 @@ namespace pt {
         { "BlueChip", createExtActor<BlueChip> },
         { "BlueChipGroup", createExtActor<BlueChipGroup> },
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
-        { "ChooChooTrain", createExtActor<ChooChooTrain> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
         { "DisplayStar", createExtActor<DisplayStar> },
         { "FirePressureRadiate", createExtActor<FirePressureRadiate> },
@@ -139,10 +141,10 @@ namespace pt {
         { "RedCoinSwitch", createExtActor<RedCoinSwitch> },
         // Custom SuperSpinDriver colors
         { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
-        { "SuperSpinDriverRed", createSuperSpinDriverCustomColor },
-        { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor },
-        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor },
-        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor },
+        { "SuperSpinDriverRed", createSuperSpinDriverCustomColor<3> },
+        { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
+        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
+        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
 
         #if defined (ALL) || defined (NOGLE)
             { "WarpArea", createExtActor<WarpArea> },
@@ -153,8 +155,8 @@ namespace pt {
         #endif
 
         #if defined (ALL) || defined (CA)
-        { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor },
-        { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor },
+            { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<7> },
+            { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
         #endif
     };
 

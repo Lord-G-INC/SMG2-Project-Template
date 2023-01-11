@@ -34,7 +34,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinController::movement() {
-    calcCounterVisibilty();
+    mRedCoinCounter->calcVisibility();
 
     if (mHasAllRedCoins)
         mElapsed++;
@@ -89,15 +89,6 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     if (!coin->mHasRewardedCoins) {
         GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
         coin->mHasRewardedCoins = true;
-    }
-}
-
-void RedCoinController::calcCounterVisibilty() {
-    if (MR::isPowerStarGetDemoActive())
-        MR::startAnim(mRedCoinCounter, "End", 0);
-    else {
-        if (mRedCoinCounter->mIsValidAppear)
-            mRedCoinCounter->appearIfHidden();
     }
 }
 
