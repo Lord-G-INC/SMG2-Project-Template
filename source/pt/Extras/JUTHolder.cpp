@@ -2,7 +2,7 @@
 
 template <s32 SIZE>
 JUTHolder<SIZE>::JUTHolder() {
-    
+    msize = SIZE;
     OSReport("Size: %d\n", mSize);
     for (int i = 0; i < mSize; i++) {
         Textures[i] = 0;

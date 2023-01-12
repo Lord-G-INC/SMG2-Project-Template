@@ -13,5 +13,5 @@ class JUTHolder {
     JUTHolder();
     ~JUTHolder();
 
-    s32 mSize = SIZE;
+    s32 mSize;
 };
