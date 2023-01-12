@@ -5,7 +5,7 @@
 #include "pt/Util/ActorUtil.h"
 #include "JSystem/JUtility/JUTTexture.h"
 #include "Game/MapObj/SpinDriverPathDrawer.h"
-#include "pt/Extras/MiscExtensions.h"
+#include "pt/Extras/JUTHolder.h"
 
 /*
 * Authors: Aurum
@@ -36,27 +36,25 @@ namespace pt {
 	kmCall(0x800413F0, getErrorMessage); // MR::getGameMessageDirect will return the error message instead of NULL
 
 	/*
-	* Green Launch Star
+	* Green + Custom Launch Stars
 	*
 	* Unsurprisingly, all the BTP and BRK frames for the green Launch Star is still found inside SuperSpinDriver.arc. Here,
 	* we hijack calls to initColor in order to check for the green color first. If the Launch Star's color is set to green,
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
+	*
+	* This code also allows new BTP frames and SpinDriverPath textures to be loaded and used.
+	* Support for new BRK frames may be added in the future.
 	*/
 
-	#if defined (CA) || defined (ALL)
-	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
-	JUTHolder<6> Colors = JUTHolder<6>();
-	#else
 	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-	JUTHolder<4> Colors = JUTHolder<4>();
-	#endif
+	JUTHolder Colors = JUTHolder(4);
 
 	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor;
 
 		if (color != 0 && color != 2) {
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", (f32)color);
-			MR::startBrk(pActor, color == 0 ? "Green" : "Red");
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", color);
+			MR::startBrk(pActor, color == 1 ? "Green" : "Red");
 
 			pActor->mSpinDriverPathDrawer->mColor = color == 1 ? 0 : color;
 		} else
@@ -64,14 +62,13 @@ namespace pt {
 			
         if (color >= 3)
             Colors.SetTexture(color - 3, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 3], 0), 0));
-	
 	}
 
 	kmCall(0x8031E29C, initSuperSpinDriverCustomColor); // redirect initColor in init
 
 	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor >= 3)
-			Colors[pDrawer->mColor - 3]->load(GX_TEXMAP0);
+			Colors.getTexture(pDrawer->mColor - 3)->load(GX_TEXMAP0);
 
 		pDrawer->calcDrawCode(); // Restore original call
 	}
