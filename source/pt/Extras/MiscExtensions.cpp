@@ -47,7 +47,8 @@ namespace pt {
 	*/
 
 	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-	JUTHolder Colors = JUTHolder(4);
+	const int size = arrsize(ColorsStr);
+	JUTHolder<size> Colors = JUTHolder<size>();
 
 	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor;

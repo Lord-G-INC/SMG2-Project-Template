@@ -3,14 +3,15 @@
 #include <syati.h>
 #define arrsize(item) sizeof(item)/sizeof(item[0])
 
+template <s32 SIZE>
 class JUTHolder {
     public:
-    JUTTexture* Textures[16];
+    JUTTexture* Textures[SIZE];
     void SetTexture(u8 pos, JUTTexture* texture);
     JUTTexture* operator[](u8 pos);
     JUTTexture* getTexture(u8 pos);
-    JUTHolder(s32 size);
+    JUTHolder();
     ~JUTHolder();
 
-    s32 mSize;
+    s32 mSize = SIZE;
 };

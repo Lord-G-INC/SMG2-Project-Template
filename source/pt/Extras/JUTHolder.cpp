@@ -1,7 +1,7 @@
 #include "pt/Extras/JUTHolder.h"
 
-JUTHolder::JUTHolder(s32 size) {
-    mSize = size;
+template <s32 SIZE>
+JUTHolder<SIZE>::JUTHolder() {
     
     OSReport("Size: %d\n", mSize);
     for (int i = 0; i < mSize; i++) {
@@ -9,13 +9,15 @@ JUTHolder::JUTHolder(s32 size) {
     }
 }
 
-JUTHolder::~JUTHolder() {
+template <s32 SIZE>
+JUTHolder<SIZE>::~JUTHolder() {
     for (int i = 0; i < mSize; i++) {
         delete Textures[i];
     }
 }
 
-void JUTHolder::SetTexture(u8 pos, JUTTexture* texture) {
+template <s32 SIZE>
+void JUTHolder<SIZE>::SetTexture(u8 pos, JUTTexture* texture) {
     // Get Address of pointers, delete old one if adresses dont match, otherwise do nothing.
     u64 ladr = (u64)Textures[pos];
     u64 radr = (u64)texture;
@@ -33,10 +35,12 @@ void JUTHolder::SetTexture(u8 pos, JUTTexture* texture) {
     }
 }
 
-JUTTexture* JUTHolder::operator[](u8 pos) {
+template <s32 SIZE>
+JUTTexture* JUTHolder<SIZE>::operator[](u8 pos) {
     return Textures[pos];
 }
 
-JUTTexture* JUTHolder::getTexture(u8 pos) {
+template <s32 SIZE>
+JUTTexture* JUTHolder<SIZE>::getTexture(u8 pos) {
     return Textures[pos];
 }
