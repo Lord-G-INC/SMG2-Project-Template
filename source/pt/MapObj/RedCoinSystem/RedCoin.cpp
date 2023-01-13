@@ -121,8 +121,9 @@ void RedCoin::initAirBubble() {
 void RedCoin::appearAndMove() {
     MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
 
+
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
-    coinVelocity.scale(coinVelocity.y, mGravity);
+    coinVelocity.scale(coinVelocity.y, -mGravity);
 
     appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
     setCannotTime(300);
@@ -149,5 +150,3 @@ void RedCoin::collect() {
     MR::incPlayerLife(1);
     MR::hideModel(this);
 }
-
-kmWrite32(0x8028C980, 0x4BD96361);
