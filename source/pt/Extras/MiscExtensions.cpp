@@ -95,20 +95,19 @@ namespace pt {
 	*/
 
 	ResTIMG* CustomFlagTextures(LiveActor* pActor, const char* pStr, const JMapInfoIter& rIter) {
-			s32 flagBti = 0;
-			char* outArcStr = new char[24];
-			char* outBtiStr = new char[24];
-			MR::getJMapInfoArg0NoInit(rIter, &flagBti);
+		s32 flagBti = 0;
+		char* outArcStr = new char[24];
+		char* outBtiStr = new char[24];
+		MR::getJMapInfoArg0NoInit(rIter, &flagBti);
+
+		snprintf(outArcStr, 24, "%s.arc", pStr);
+
+		if (flagBti < 1)
+			snprintf(outBtiStr, 24, "%s.bti", pStr);
+		else
+			snprintf(outBtiStr, 24, "%s%d.bti", pStr, flagBti);
 			
-			snprintf(outArcStr, 24, "%s.arc", pStr);
-
-			if (flagBti < 1)
-				snprintf(outBtiStr, 24, "%s.bti", pStr);
-			else
-				snprintf(outBtiStr, 24, "%s%d.bti", pStr, flagBti);
-
-			OSReport("%s, %s\n", outArcStr, outBtiStr);
-			return MR::loadTexFromArc(pActor, outArcStr, outBtiStr);
+		return MR::loadTexFromArc(pActor, outArcStr, outBtiStr);
 	}
 
 	kmWrite32(0x80254880, 0x60000000); // nop
