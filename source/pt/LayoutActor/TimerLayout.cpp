@@ -2,6 +2,14 @@
 #include "Game/System/AllData/GameSequenceFunction.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
+/*
+* Clear Time In Stage Layout
+*
+* A basic layout made to display your current clear time while in a stage.
+*
+* Only available on the "ALL" configuration.
+*/
+
 #ifdef ALL
 namespace pt {
 

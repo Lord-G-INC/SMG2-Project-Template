@@ -22,4 +22,6 @@
         bool mHasAllRedCoins;
     };
     
+    namespace RedCoinUtil {
     RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);
+    }

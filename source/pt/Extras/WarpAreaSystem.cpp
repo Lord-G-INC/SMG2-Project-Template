@@ -16,7 +16,11 @@ namespace pt {
 * Reads the BCSV at /SystemData/PTSystemData.arc/WarpAreaStageTable.bcsv to determine what galaxy it should take the player to.
 *
 * WarpAreaErrorLayout appears when specific parts of the WarpArea are set up incorrectly.
+*
+* This feature is exclusive to PTD.
+* This feature is disabled on GLE builds.
 */
+
 	WarpAreaStageTable::WarpAreaStageTable(bool init) {
 		mDestStageName; // Destination Stage Name
 		mDestScenarioNo = 0; // Destionation Scenario Number

@@ -1,5 +1,13 @@
 #include "pt/Map/CometTimerObj.h"
 
+/*
+* Comet Timer Creator
+*
+* Creates a Comet Timer on switch activation.
+*
+* Work in progress. Exclusive to PTD.
+*/
+
 CometTimerObj::CometTimerObj(const char* pName) : LiveActor(pName) {
     mTime = 60;
     mKillPlayer = false;

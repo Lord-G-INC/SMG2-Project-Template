@@ -1,6 +1,14 @@
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Extras/PowerStarColors.h"
 
+/*
+* Display Power Star
+*
+* A "fake" power star used for decoration or being a dummy star.
+*
+* Work in progress. Exclusive to PTD.
+*/
+
 DisplayStar::DisplayStar(const char* pName) : LiveActor(pName) {
     mIsRotate = -1;
     mIsGrandStar = false;

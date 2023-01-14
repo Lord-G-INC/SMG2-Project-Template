@@ -78,7 +78,7 @@ void RedCoinController::resetAllRedCoins() {
 }
 
 void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
-    RedCoin* coin = ((RedCoin*)pActor);
+    RedCoin* coin = (RedCoin*)pActor;
     mNumCoins++;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
@@ -97,6 +97,7 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
 // Iterates through the group actors, until it finds an actor in the group named "RedCoinController".
 // If the actor is found, then it is returned.
 
+namespace RedCoinUtil {
 RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
     LiveActorGroup* group = MR::getGroupFromArray(actor);
 
@@ -108,4 +109,5 @@ RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
     }
 
     return 0;
+}
 }

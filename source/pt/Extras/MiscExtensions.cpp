@@ -84,6 +84,36 @@ namespace pt {
 	*/
 	kmWrite32(0x8031E2A4, 0x60000000); // NOP call to initEmptyModel.
 
+	/*
+	* Custom Flag Textures
+	*
+	* Requires a BTI added to the target Flag.arc ending with a number.
+	* This number is what Obj_arg0 will select.
+	* 
+	* Setting Obj_arg0 to 4 would mean that...
+	* (FlagName(4)).bti would be selected in (FlagName).arc
+	*/
+
+	ResTIMG* CustomFlagTextures(LiveActor* pActor, const char* pStr, const JMapInfoIter& rIter) {
+			s32 flagBti = 0;
+			char* outArcStr = new char[24];
+			char* outBtiStr = new char[24];
+			MR::getJMapInfoArg0NoInit(rIter, &flagBti);
+			
+			snprintf(outArcStr, 24, "%s.arc", pStr);
+
+			if (flagBti < 1)
+				snprintf(outBtiStr, 24, "%s.bti", pStr);
+			else
+				snprintf(outBtiStr, 24, "%s%d.bti", pStr, flagBti);
+
+			OSReport("%s, %s\n", outArcStr, outBtiStr);
+			return MR::loadTexFromArc(pActor, outArcStr, outBtiStr);
+	}
+
+	kmWrite32(0x80254880, 0x60000000); // nop
+	kmWrite32(0x80254884, 0x7FA5EB78); // mr r5, r29
+	kmCall(0x8025488C, CustomFlagTextures);
 
 	///*
 	//* Shell-casting Magikoopa

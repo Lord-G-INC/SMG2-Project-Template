@@ -22,6 +22,8 @@ namespace pt {
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
 	* 6: "Silver" [PTD]
+	*
+	* This code is compiled but never run on GLE builds.
 	*/
 
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
@@ -117,7 +119,7 @@ namespace pt {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
 
-	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we can disable ours.
+	#if defined (ALL) || defined (NOGLE)
 		kmCall(0x804B8048, loadPTPictureFont);
 	#endif
 
@@ -163,7 +165,7 @@ namespace pt {
 		MR::addPictureFontCode(pStr, icon);
 	}
 
-	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we disable ours.
+	#if defined (ALL) || defined (NOGLE)
 		kmCall(0x80041E30, getStarIcon); // Normal Star icons
 		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
 		kmCall(0x80041F94, getStarIcon); // Hidden Star icons
@@ -222,7 +224,7 @@ namespace pt {
 	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 	kmCall(0x802E0870, greenStarAppearParticleFix);
 
-	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
+	Color8 starLightColors[2] = {Color8(0x96, 0x96, 0x32, 0), Color8(128, 128, 128, 0)};
 	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
 		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
 	}

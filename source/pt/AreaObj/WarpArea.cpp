@@ -11,7 +11,8 @@ namespace pt {
 * An area that takes the player to a specified General Position with the name "WarpAreaDestPos".
 * Can also take the player to galaxies.
 *
-* This is PT Debug exclusive due to a similar feature being in Galaxy Level Engine.
+* This feature is PT Debug exclusive.
+* This feature is disabled on GLE builds.
 */
 
 WarpArea::WarpArea(const char* pName) : AreaObj(pName) {

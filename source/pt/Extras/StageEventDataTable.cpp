@@ -20,6 +20,9 @@ namespace pt {
 *
 * These functions un-hardcode certain options a stage can have. Those being:
 * Chimp, Glider, Disable Pause, Play Star Chance, Purple Coin Over 100, and Story Book.
+*
+* This feature is exclusive to PTD.
+* This feature is disabled on GLE builds.
 */
 
 namespace StageEventDataTable {
