@@ -39,3 +39,6 @@ NO_GLE:
 all:
 	$(MAKE) NO_GLE
 	$(MAKE) GLE
+
+clean:
+	@cmd /c rm -f CustomCode*.bin
