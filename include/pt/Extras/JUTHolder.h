@@ -3,10 +3,10 @@
 #include <syati.h>
 #define arrsize(item) sizeof(item)/sizeof(item[0])
 
-template <s32 SIZE>
 class JUTHolder {
     public:
-    JUTTexture* Textures[SIZE];
+    const size_t SIZE;
+    JUTTexture** Textures;
     void SetTexture(u8 pos, JUTTexture* texture) {
         // Get Address of pointers, delete old one if adresses dont match, otherwise do nothing.
         u64 ladr = (u64)Textures[pos];
@@ -14,31 +14,25 @@ class JUTHolder {
         if (ladr != radr) {
             if (ladr != NULL) {
                 OSReport("Texture %d has been deleted.\n", pos);
-                delete Textures[pos];
+                memset(Textures[pos], 0, sizeof(JUTTexture));
             } else {
                 OSReport("Texture %d now has a value.\n", pos);
             }
-            Textures[pos] = texture;
+            memmove(Textures[pos], texture, sizeof(JUTTexture));
+            delete texture;
         } else {
             OSReport("Address did not change, not changing Texture %d\n", pos);
-            delete texture;
         }
     }
     JUTTexture* operator[](u8 pos) {
         return Textures[pos];
     }
-    JUTTexture* getTexture(u8 pos) {
-        return operator[](pos);
-    }
-    JUTHolder() {
+    JUTHolder(size_t size) : SIZE(size) {
         OSReport("Size: %d\n", SIZE);
-        for (int i = 0; i < SIZE; i++) {
-            Textures[i] = 0;
-        }
+        Textures = new JUTTexture*[size];
+        memset(Textures, 0, size*sizeof(JUTTexture*));
     }
     ~JUTHolder() {
-        for (int i = 0; i < SIZE; i++) {
-            delete Textures[i];
-        }
+        delete [] Textures;
     }
 };

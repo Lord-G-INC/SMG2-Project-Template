@@ -48,7 +48,7 @@ namespace pt {
 
 	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
 	const int size = arrsize(ColorsStr);
-	JUTHolder<size> Colors = JUTHolder<size>();
+	JUTHolder Colors = size;
 
 	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor;
@@ -69,7 +69,7 @@ namespace pt {
 
 	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
 		if (pDrawer->mColor >= 3)
-			Colors.getTexture(pDrawer->mColor - 3)->load(GX_TEXMAP0);
+			Colors[pDrawer->mColor - 3]->load(GX_TEXMAP0);
 
 		pDrawer->calcDrawCode(); // Restore original call
 	}
