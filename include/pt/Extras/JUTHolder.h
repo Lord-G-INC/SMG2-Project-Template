@@ -14,7 +14,7 @@ class JUTHolder {
         if (ladr != radr) {
             if (ladr != NULL) {
                 OSReport("Texture %d has been deleted.\n", pos);
-                memset(Textures[pos], 0, sizeof(JUTTexture));
+                memset(Textures[pos], 0, 88);
             } else {
                 OSReport("Texture %d now has a value.\n", pos);
             }
