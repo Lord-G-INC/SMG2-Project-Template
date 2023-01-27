@@ -54,7 +54,7 @@ namespace pt {
 
     void Jiraira::attackSensor(HitSensor *pSender, HitSensor *pReceiver) {
         if (pSender == getSensor("Explode")) {
-            if (MR::isSensorPlayerOrRide(pReceiver) && !MR::isPlayerFlying()) {
+            if (MR::isSensorPlayerOrRide(pReceiver)) {
                 MR::sendMsgEnemyAttackExplosion(pReceiver, pSender);
             }
             else if (MR::isSensorEnemy(pReceiver) || MR::isSensorMapObj(pReceiver)) {

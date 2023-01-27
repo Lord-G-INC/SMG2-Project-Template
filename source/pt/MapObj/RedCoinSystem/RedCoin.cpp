@@ -12,6 +12,8 @@
 *
 * Some parts of this actor are initialized through ActorInfo.
 *
+* Must be linked to a RedCoinController through Group ID.
+*
 * Credits:
 * Evanbowl, Lord-Giganticus, Galaxy Master, and Aurum for helping me with crash fixes.
 */
@@ -19,7 +21,7 @@
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
-    mLaunchVelocity = 250.0f;
+    mLaunchVelocity = 300.0f;
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
@@ -28,6 +30,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mAppearDelay = 0;
     mElapsed = 0;
 
+    // Setup Coin
     MR::createCoinRotater();
     MR::createCoinHolder();
     MR::addToCoinHolder(this, this);
@@ -60,6 +63,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     makeActorAppeared();
 
+    // Can't use ActorInfo for this one...
     MR::useStageSwitchSyncAppear(this, rIter);
 }
 
@@ -120,10 +124,10 @@ void RedCoin::initAirBubble() {
 void RedCoin::appearAndMove() {
     MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
 
-
+    // I seriously need a better way to do this...
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
-    coinVelocity.scale(coinVelocity.y, -mGravity);
-
+    coinVelocity.scale(coinVelocity.y, mGravity);
+    
     appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
     setCannotTime(300);
     MR::validateHitSensors(this);

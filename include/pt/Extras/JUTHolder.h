@@ -18,7 +18,7 @@ class JUTHolder {
             } else {
                 OSReport("Texture %d now has a value.\n", pos);
             }
-            memmove(Textures[pos], texture, sizeof(JUTTexture));
+            Textures[pos] = texture;
             delete texture;
         } else {
             OSReport("Address did not change, not changing Texture %d\n", pos);
@@ -30,7 +30,9 @@ class JUTHolder {
     JUTHolder(size_t size) : SIZE(size) {
         OSReport("Size: %d\n", SIZE);
         Textures = new JUTTexture*[size];
-        memset(Textures, 0, size*sizeof(JUTTexture*));
+        for (int i = 0; i < SIZE; i++) {
+            Textures[i] = NULL;
+        }
     }
     ~JUTHolder() {
         delete [] Textures;

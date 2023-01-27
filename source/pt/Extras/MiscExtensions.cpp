@@ -235,24 +235,6 @@ namespace pt {
 	kmWrite32(0x804129F4, 0x4BBFCABD); // Replace call to MR::isInAreaObj with MR::isInDeath.
 
 	/*
-	* Mini Patch: Custom HipDropSwitch colors
-	* 
-	* A fun but useless patch suggested by Alex SMG.
-	*/
-
-	#if defined (ALL) || defined (SMG63)
-	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
-		MR::needStageSwitchWriteA(actor, iter);
-
-		s32 frame = 0;
-		MR::getJMapInfoArg1NoInit(iter, &frame);
-		MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
-	}
-	
-	kmCall(0x802AF524, customHipDropSwitchColors);
-	#endif
-
-	/*
 	* Mini Patch: Ocean Sphere Texture Patch
 	* 
 	* The TearDropGalaxy and SkullSharkGalaxy checks for setting the texture are in SMG2.
@@ -297,4 +279,7 @@ namespace pt {
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 
+	#if defined(CA) || defined (ALL)
+	kmWrite32(0x802B0468, 0x60000000);
+	#endif
 } 

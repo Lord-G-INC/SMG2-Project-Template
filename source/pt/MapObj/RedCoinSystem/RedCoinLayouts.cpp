@@ -76,8 +76,7 @@ void RedCoinCounter::updateStarIndicator(s32 starID, s32 iconID) {
 */
 
 
-RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName) : LayoutActor(pName, 1) {
-}
+RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName) : LayoutActor(pName, 1) {}
 
 void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
     initLayoutManager("RedCoinCounterPlayer", 1);
@@ -97,6 +96,7 @@ void RedCoinCounterPlayer::calcScreenPos(LiveActor* pActor, bool type) {
     f32 heightAdd = type ? 250.0f : 150.0f;
     
     JMAVECScaleAdd((Vec*)&pos, (Vec*)&pActor->mTranslation, (Vec*)&newPos, -heightAdd);
+    
     MR::calcScreenPosition(&screenPos, newPos);
     setTrans(screenPos);
 }

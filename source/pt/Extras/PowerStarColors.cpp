@@ -23,7 +23,7 @@ namespace pt {
 	* 5: "Blue"
 	* 6: "Silver" [PTD]
 	*
-	* This code is compiled but never run on GLE builds.
+	* This code is compiled into GLE builds, but is never run.
 	*/
 
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
@@ -43,7 +43,7 @@ namespace pt {
 		else if (MR::isEqualSubString(type, "Blue")) {
 			return 5;
 		}
-		else if (MR::isEqualSubString(type, "Silver")) { // Shh, you see nothing.
+		else if (MR::isEqualSubString(type, "Silver")) {
 			return 6;
 		}
 
@@ -142,7 +142,7 @@ namespace pt {
 				icon = 0x72;
 			else if (icon == 0x106)
 				icon = 0x4A;
-			}
+		}
 
 		else if (type == 0x65) {// Comet Star icons
 			icon = 0x110 + starColor;
@@ -153,14 +153,14 @@ namespace pt {
 				icon = 0x7D;
 			else if (icon == 0x112)
 				icon = 0x4F;
-			}
+		}
 
 		else if (type == 0x71) {// Uncollected Hidden Star icons
 			icon = 0x120 + starColor;
 
 			if (icon == 0x120)
 			 	icon = 0x71;
-			}
+		}
 
 		MR::addPictureFontCode(pStr, icon);
 	}
@@ -221,10 +221,12 @@ namespace pt {
 		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
 	}
 
-	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
-	kmCall(0x802E0870, greenStarAppearParticleFix);
+	#if defined (NOGLE) || defined (ALL)
+		kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
+		kmCall(0x802E0870, greenStarAppearParticleFix);
+	#endif;
 
-	Color8 starLightColors[2] = {Color8(0x96, 0x96, 0x32, 0), Color8(128, 128, 128, 0)};
+	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
 	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
 		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
 	}

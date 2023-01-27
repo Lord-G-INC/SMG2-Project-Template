@@ -3,6 +3,18 @@
 
 /* --- RED COIN CONTROLLER --- */
 
+/*
+    Manages the collected Red Coins, calculated through an Actor Group.
+    Activates an event once all linked Red Coins, usually 8, are collected.
+
+    Obj_args:
+    0: [Bool] Do not increment the coin counter by 2
+    1: [Int] Power Star Indicator: -1 to disable
+    2: [Int] Picture Font Icon ID Entry
+
+    Created by Evanbowl
+*/
+
 RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
     mElapsed = 0;
@@ -23,10 +35,12 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::useStageSwitchWriteA(this, rIter);
     MR::useStageSwitchReadB(this, rIter);
 
+    // Get Obj_args
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
+    // Initialize the RedCoinCounter
     mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
     mRedCoinCounter->initWithoutIter();
     mRedCoinCounter->appear();
@@ -37,12 +51,7 @@ void RedCoinController::movement() {
     mRedCoinCounter->calcVisibility();
 
     if (mHasAllRedCoins)
-        mElapsed++;
-
-        if (MR::isValidSwitchB(this))
-            if (MR::isOnSwitchB(this) && mNumCoins > 0 && !mHasAllRedCoins) {
-                resetAllRedCoins();
-            }
+        mElapsed++; // There may be a better way to do this
 
         if (mElapsed == 120)
             MR::startAnim(mRedCoinCounter, "End", 0);
@@ -53,6 +62,9 @@ void RedCoinController::movement() {
             makeActorDead();
         }
 }
+
+// This function is unused, but there are plans for
+// this function to be included if it can be figured out.
 
 void RedCoinController::resetAllRedCoins() {
     LiveActorGroup* group = MR::getGroupFromArray(this);
@@ -77,6 +89,7 @@ void RedCoinController::resetAllRedCoins() {
     MR::offSwitchB(this);
 }
 
+// Increases both layouts by 1
 void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     RedCoin* coin = (RedCoin*)pActor;
     mNumCoins++;
@@ -86,6 +99,7 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
     coin->mCoinCounterPlayer->updateCounter(mNumCoins);
     
+    // Only ever increment coins once.
     if (!coin->mHasRewardedCoins) {
         GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
         coin->mHasRewardedCoins = true;
@@ -95,7 +109,7 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
 /* --- RED COIN UTIL  --- */
 
 // Iterates through the group actors, until it finds an actor in the group named "RedCoinController".
-// If the actor is found, then it is returned.
+// If the actor name matches, then the actor is returned.
 
 namespace RedCoinUtil {
 RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {

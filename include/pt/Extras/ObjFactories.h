@@ -155,7 +155,7 @@ namespace pt {
         #endif
 
         #if defined (ALL) || defined (CA)
-            { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<7> },
+            { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<8> },
             { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
         #endif
     };
