@@ -5,7 +5,7 @@
 #include "pt/Util/ActorUtil.h"
 #include "JSystem/JUtility/JUTTexture.h"
 #include "Game/MapObj/SpinDriverPathDrawer.h"
-#include "pt/Extras/JUTHolder.h"
+#include "pt/Extras/JUTTextureHolder.h"
 
 /*
 * Authors: Aurum
@@ -46,9 +46,13 @@ namespace pt {
 	* Support for new BRK frames may be added in the future.
 	*/
 
-	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-	const int size = arrsize(ColorsStr);
-	JUTHolder Colors = size;
+	#if defined (CA) || defined (ALL)
+		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
+	#else
+		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+	#endif
+
+	JUTTextureHolder Colors = arrsize(ColorsStr);
 
 	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
 		s32 color = pActor->mColor;
