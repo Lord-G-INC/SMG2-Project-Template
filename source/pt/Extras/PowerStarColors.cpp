@@ -123,6 +123,10 @@ namespace pt {
 		kmCall(0x804B8048, loadPTPictureFont);
 	#endif
 
+	s32 normalStarIcons[] = {0x37, 0x72, 0x7E, 0x7F, 0x52, 0x80, 0x4A};
+	s32 cometStarIcons[] = {0x65, 0x7D, 0x4F, 0x7F, 0x52, 0x82, 0x83};
+	s32 hiddenStarIcons[] = {0x71, 0x84, 0x85, 0x86, 0x52, 0x87, 0x88};
+
 	void getStarIcon(wchar_t* pStr, s32 type) {
 		const char* stage = 0;
 		s32 scenarioId;
@@ -130,39 +134,10 @@ namespace pt {
 
 		asm("mr %0, r27" : "=r" (stage));
 		asm("mr %0, r31" : "=r" (scenarioId));
-
+		
 		s32 starColor = getPowerStarColor(stage, scenarioId);
 
-		if (type == 0x37) { // Normal Star icons
-			icon = 0x100 + starColor;
-
-			if (icon == 0x100)
-				icon = 0x37;
-			else if (icon == 0x101)
-				icon = 0x72;
-			else if (icon == 0x106)
-				icon = 0x4A;
-		}
-
-		else if (type == 0x65) {// Comet Star icons
-			icon = 0x110 + starColor;
-
-			if (icon == 0x110)
-				icon = 0x65;
-			else if (icon == 0x111)
-				icon = 0x7D;
-			else if (icon == 0x112)
-				icon = 0x4F;
-		}
-
-		else if (type == 0x71) {// Uncollected Hidden Star icons
-			icon = 0x120 + starColor;
-
-			if (icon == 0x120)
-			 	icon = 0x71;
-		}
-
-		MR::addPictureFontCode(pStr, icon);
+		MR::addPictureFontCode(pStr, type == 0x37 ? normalStarIcons[starColor] : type == 0x65 ? cometStarIcons[starColor] : type == 0x71 ? hiddenStarIcons[starColor] : 0x52);
 	}
 
 	#if defined (ALL) || defined (NOGLE)
