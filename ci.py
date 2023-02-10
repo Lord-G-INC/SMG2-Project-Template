@@ -62,6 +62,10 @@ def no_gle():
         for file in files:
             p = Path(file)
             w.write(p.absolute(), p.name)
+        files = glob("*.bin")
+        for file in files:
+            p = Path(file)
+            w.write(p.absolute(), p.name)
         os.chdir(HOME_DIR)
         for entry,_,_ in os.walk("SMG2PTD"):
             if entry != "SMG2PTD":
@@ -96,6 +100,13 @@ def with_gle():
         for file in files:
             # GLE does not currently support Korean or Tiawan regions.
             if "KOR" in file or "TWN" in file:
+                continue
+            p = Path(file)
+            w.write(p.absolute(), p.name)
+        files = glob("*.bin")
+        for file in files:
+            # GLE does not currently support Korean or Tiawan regions.
+            if "K" in file or "W" in file:
                 continue
             p = Path(file)
             w.write(p.absolute(), p.name)
