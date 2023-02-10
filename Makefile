@@ -9,9 +9,6 @@ RESULT := CustomCode_$(REG).bin
 
 $(if $(EXTRA), $(info Extra Build Flag $(EXTRA) enabled.))
 
-main: $(RESULT)
-	@cmd /c rmdir /s /q build 
-
 $(RESULT): $(OUTPUT)
 	@$(LD) $^ -externals=$(SYMBOLS)/$(REG).txt -output-kamek=$@
 
