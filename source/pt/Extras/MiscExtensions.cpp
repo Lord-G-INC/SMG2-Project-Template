@@ -3,6 +3,9 @@
 #include "Game/Screen/LayoutActor.h"
 #include "Game/System/Misc/TalkMessageCtrl.h"
 #include "pt/Util/ActorUtil.h"
+#include "JSystem/JUtility/JUTTexture.h"
+#include "Game/MapObj/SpinDriverPathDrawer.h"
+#include "pt/Extras/JUTTextureHolder.h"
 
 /*
 * Authors: Aurum
@@ -33,25 +36,50 @@ namespace pt {
 	kmCall(0x800413F0, getErrorMessage); // MR::getGameMessageDirect will return the error message instead of NULL
 
 	/*
-	* Green Launch Star
+	* Green + Custom Launch Stars
 	*
 	* Unsurprisingly, all the BTP and BRK frames for the green Launch Star is still found inside SuperSpinDriver.arc. Here,
 	* we hijack calls to initColor in order to check for the green color first. If the Launch Star's color is set to green,
 	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
+	*
+	* This code also allows new BTP frames and SpinDriverPath textures to be loaded and used.
+	* Support for new BRK frames may be added in the future.
 	*/
-	void initSuperSpinDriverGreenColor(SuperSpinDriver *pActor) {
-		if (pActor->mColor == SUPER_SPIN_DRIVER_GREEN) {
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", 1.0f);
-			MR::startBrk(pActor, "Green");
 
-			pActor->mSpinDriverPathDrawer->mColor = 0; 
-		}
-		else {
+	#if defined (CA) || defined (ALL)
+		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
+	#else
+		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
+	#endif
+
+	JUTTextureHolder Colors = arrsize(ColorsStr);
+
+	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
+		s32 color = pActor->mColor;
+
+		if (color != 0 && color != 2) {
+			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", color);
+			MR::startBrk(pActor, color == 1 ? "Green" : "Red");
+
+			pActor->mSpinDriverPathDrawer->mColor = color == 1 ? 0 : color;
+		} else
 			pActor->initColor();
-		}
+			
+        if (color >= 3)
+            Colors.SetTexture(color - 3, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 3], 0), 0));
 	}
 
-	kmCall(0x8031E29C, initSuperSpinDriverGreenColor); // redirect initColor in init
+	kmCall(0x8031E29C, initSuperSpinDriverCustomColor); // redirect initColor in init
+
+	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
+		if (pDrawer->mColor >= 3)
+			Colors[pDrawer->mColor - 3]->load(GX_TEXMAP0);
+
+		pDrawer->calcDrawCode(); // Restore original call
+	}
+
+	kmCall(0x8030EF28, setSpinDriverPathCustomColor);
+
 
 	/*
 	* The Green Launch Star is coded to load a model from SuperSpinDriverEmpty.arc. This was used for the transparent model
@@ -60,6 +88,35 @@ namespace pt {
 	*/
 	kmWrite32(0x8031E2A4, 0x60000000); // NOP call to initEmptyModel.
 
+	/*
+	* Custom Flag Textures
+	*
+	* Requires a BTI added to the target Flag.arc ending with a number.
+	* This number is what Obj_arg0 will select.
+	* 
+	* Setting Obj_arg0 to 4 would mean that...
+	* (FlagName(4)).bti would be selected in (FlagName).arc
+	*/
+
+	ResTIMG* CustomFlagTextures(LiveActor* pActor, const char* pStr, const JMapInfoIter& rIter) {
+		s32 flagBti = 0;
+		char* outArcStr = new char[24];
+		char* outBtiStr = new char[24];
+		MR::getJMapInfoArg0NoInit(rIter, &flagBti);
+
+		snprintf(outArcStr, 24, "%s.arc", pStr);
+
+		if (flagBti < 1)
+			snprintf(outBtiStr, 24, "%s.bti", pStr);
+		else
+			snprintf(outBtiStr, 24, "%s%d.bti", pStr, flagBti);
+			
+		return MR::loadTexFromArc(pActor, outArcStr, outBtiStr);
+	}
+
+	kmWrite32(0x80254880, 0x60000000); // nop
+	kmWrite32(0x80254884, 0x7FA5EB78); // mr r5, r29
+	kmCall(0x8025488C, CustomFlagTextures);
 
 	///*
 	//* Shell-casting Magikoopa
@@ -182,40 +239,21 @@ namespace pt {
 	kmWrite32(0x804129F4, 0x4BBFCABD); // Replace call to MR::isInAreaObj with MR::isInDeath.
 
 	/*
-	* Mini Patch: Custom HipDropSwitch colors
-	* 
-	* A fun but useless patch suggested by Alex SMG.
-	*/
-
-	#if defined (ALL) || defined (SMG63)
-	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
-		MR::needStageSwitchWriteA(actor, iter);
-
-		s32 frame = 0;
-		MR::getJMapInfoArg1NoInit(iter, &frame);
-		MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
-	}
-	
-	kmCall(0x802AF524, customHipDropSwitchColors);
-	#endif
-
-	/*
 	* Mini Patch: Ocean Sphere Texture Patch
 	* 
 	* The TearDropGalaxy and SkullSharkGalaxy checks for setting the texture are in SMG2.
 	* Here we change it to read Obj_arg0, so the second texture can be used in custom galaxies.
 	*/
 
-	#ifdef ALL
-	s32 OceanSphereTexturePatch(const JMapInfoIter& iter) {
+	s32 OceanSphereTexturePatch(const JMapInfoIter& rIter) {
 		s32 arg = 0;
-		MR::getJMapInfoArg0NoInit(iter, &arg);
+		MR::getJMapInfoArg0NoInit(rIter, &arg);
 		return arg;
 	}
 
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
-	#endif
+
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
 	* 
@@ -228,11 +266,9 @@ namespace pt {
 	*/
 
 	const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
-		s32 selectTxt;
-		msg->mTalkNodeCtrl->getNextNodeBranch();
-		asm("lhz %0, 0x8(r3)" : "=r" (selectTxt)); // Temporary workaround until we figure out what class this is in.
+		s16 selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
 
-		char* str = new char[7];
+		char* str = new char[5];
 		sprintf(str, "New%d", selectTxt - 18);
 
 		return selectTxt < 18 ? msg->getBranchID() : str;
@@ -240,27 +276,14 @@ namespace pt {
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
-
-	#ifdef SMSS
-	 void SamboHead_DieIfInWater(LiveActor* pActor) {
+	 void smssKillSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
-         pActor->kill();
+        pActor->kill();
     }
 
-    kmCall(0x801F8290, SamboHead_DieIfInWater);
-	#endif
-	//void sus(LiveActor* actor, const JMapInfoIter& iter) {
-	//	MR::useStageSwitchWriteA(actor, iter);
-	//	MR::declareStarPiece(actor, 0x18);
-	//	OSReport("switch %s\n", actor->mName);
-	//}
-	//
-	//kmWrite32(0x800DAABC, 0x60000000);
-	////kmWrite32(0x800DAAC4, 0x7F63DB78);
-	////kmCall(0x800DAAC8, sus);
+    kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 
-	//void sus2(const NameObj* obj) {
-	//	if (MR::isValidSwitchA(obj))
-	//		MR::onSwitchA(obj);
-	//}
-}
+	#if defined(CA) || defined (ALL)
+	kmWrite32(0x802B0468, 0x60000000);
+	#endif
+} 

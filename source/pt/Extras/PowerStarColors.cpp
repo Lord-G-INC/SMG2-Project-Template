@@ -21,8 +21,11 @@ namespace pt {
 	* 3: "Red"
 	* 4: nothing, this is the transparent color
 	* 5: "Blue"
+	* 6: "Silver" [PTD]
+	*
+	* This code is compiled into GLE builds, but is never run.
 	*/
-	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we can disable ours.
+
 	s32 getPowerStarColor(const char *pStage, s32 scenarioId) {
 		const char* type;
 		GalaxyStatusAccessor gsa(MR::makeGalaxyStatusAccessor(pStage));
@@ -40,7 +43,7 @@ namespace pt {
 		else if (MR::isEqualSubString(type, "Blue")) {
 			return 5;
 		}
-		else if (MR::isEqualSubString(type, "Silver")) { // Shh, you see nothing.
+		else if (MR::isEqualSubString(type, "Silver")) {
 			return 6;
 		}
 
@@ -53,7 +56,8 @@ namespace pt {
 	s32 getPowerStarColorCurrentStage(s32 scenarioId) {
 		return getPowerStarColor(MR::getCurrentStageName(), scenarioId);
 	}
-	
+
+	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we can disable ours.
 	/*
 	* At the given address in PowerStar::initMapToolInfo, there is a check which always results true, allowing us to
 	* rewrite these instructions. Here, we load the color ID based on the PowerStarType setting in ScenarioData.bcsv.
@@ -97,7 +101,7 @@ namespace pt {
 	kmWrite32(0x802DF030, 0x4800000C); // skip unnecessary instructions
 
 	kmWrite32(0x804CB8BC, 0x48169D65); // This uses strstr instead of MR::isEqualString in the isPowerStarTypeHidden__12ScenarioDataCFl function. Allows types like BlueHidden to work.
-
+	#endif
 	/*
 	* Power Star Font Icons
 	*
@@ -115,95 +119,34 @@ namespace pt {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
 
-	kmCall(0x804B8048, loadPTPictureFont);
+	#if defined (ALL) || defined (NOGLE)
+		kmCall(0x804B8048, loadPTPictureFont);
+	#endif
 
-	void getStarIcon(wchar_t* txt, s32 type) {
-		const char *stage;
+	s32 normalStarIcons[] = {0x37, 0x72, 0x7E, 0x7F, 0x52, 0x80, 0x4A};
+	s32 cometStarIcons[] = {0x65, 0x7D, 0x4F, 0x7F, 0x52, 0x82, 0x83};
+	s32 hiddenStarIcons[] = {0x71, 0x84, 0x85, 0x86, 0x52, 0x87, 0x88};
+
+	void getStarIcon(wchar_t* pStr, s32 type) {
+		const char* stage = 0;
 		s32 scenarioId;
 		s32 icon;
 
 		asm("mr %0, r27" : "=r" (stage));
 		asm("mr %0, r31" : "=r" (scenarioId));
+		
+		s32 starColor = getPowerStarColor(stage, scenarioId);
 
-		s32 getStarColor = getPowerStarColor(stage, scenarioId);
-
-		if (type == 0x37) // Normal Star icons
-		switch (getStarColor) {
-			default:
-			case 0:
-				icon = 0x37; // Normal
-			break;
-			case 1:
-				icon = 0x72; // Bronze
-			break;
-			case 2:
-				icon = 0x80; // LegacyGreen
-			break;
-			case 3:
-				icon = 0x7E; // Red
-			break;
-			case 5:
-				icon = 0x7F; // Blue
-			break;
-			case 6:
-				icon = 0x4A; // Silver
-			}
-
-		else if (type == 0x65) // Comet Star icons
-			switch (getStarColor) {
-			default:
-			case 0:
-				icon = 0x65; // Normal
-			break;
-			case 1:
-				icon = 0x7D; // Bronze
-			break;
-			case 2:
-				icon = 0x4F; // LegacyGreen
-			break;
-			case 3:
-				icon = 0x81; // Red
-			break;
-			case 5:
-				icon = 0x82; // Blue
-			break;
-			case 6:
-				icon = 0x83; // Silver
-			break;
-			}
-
-		else if (type == 0x71) // Uncollected Hidden Star icons
-		switch (getStarColor) {
-			default:
-			case 0:
-				icon = 0x71; // Normal
-			break;
-			case 1:
-				icon = 0x87; // Bronze
-			break;
-			case 2:
-				icon = 0x86; // LegacyGreen
-			break;
-			case 3:
-				icon = 0x84; // Red
-			break;
-			case 5:
-				icon = 0x85; // Blue
-			break;
-			case 6:
-				icon = 0x88; // Silver
-			break;
-			}
-
-		MR::addPictureFontCode(txt, icon);
+		MR::addPictureFontCode(pStr, type == 0x37 ? normalStarIcons[starColor] : type == 0x65 ? cometStarIcons[starColor] : type == 0x71 ? hiddenStarIcons[starColor] : 0x52);
 	}
-	
+
+	#if defined (ALL) || defined (NOGLE)
 		kmCall(0x80041E30, getStarIcon); // Normal Star icons
 		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
 		kmCall(0x80041F94, getStarIcon); // Hidden Star icons
 		kmCall(0x80041F48, getStarIcon); // Collected Hidden Star icons
 	#endif
-
+	
 	/*
 	*	Star Ball: Custom Ball and Star Colors
 	*
@@ -216,42 +159,57 @@ namespace pt {
 
 	void TamakoroCustomPowerStarColors(Tamakoro* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
-		s32 colorFrame = 0;
+		s32 colorFrame = -1;
 		
 		// Check Obj_arg1. This will be the scenario ID to check the Power Star Color of.
-		MR::getJMapInfoArg1NoInit(iter, &argScenario);
+		MR::getJMapInfoArg1NoInit(iter, &argScenario);	
+		MR::getJMapInfoArg2NoInit(iter, &colorFrame);
 
-		// If the checked star is already collected, just set the star ball and the star inside to be clear.
-		// If the checked star is not collected, set the animation frame to what pt::getPowerStarColorCurrentStage returns.
-		
-		#if defined (ALL) || defined (NOGLE)
+		if (colorFrame == -1)
 			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
-		#else
-			MR::getJMapInfoArg2NoInit(iter, &colorFrame);
-		#endif
-
-		if (MR::hasPowerStarInCurrentStage(argScenario))
-			colorFrame = 4;
+	
+		if (colorFrame == 1)
+			MR::startBtkAndSetFrameAndStop(actor, "BallStarColor", 1);
 		
 		// BTP and BRK animations are started and set using colorFrame.
 		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);
 		MR::startBrkAndSetFrameAndStop(actor, "BallColor", colorFrame);
+
 	}
 	
-	kmWrite32(0x8044461C, 0x7F84E378);
+	kmWrite32(0x8044461C, 0x7F84E378); // mr r4, r28
 	kmCall(0x80444620, TamakoroCustomPowerStarColors);
 
 
 	// Define new particles.
 	// These will be picked using the Star Ball's current BTP frame.
-	const char* cNewParticles[] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
-	
+	const char* cNewParticles[7] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
 	void TamakoroCustomPowerStarColorsParticles(Tamakoro* actor) {
-		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added.
+		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added to replace it.
 		MR::emitEffect(actor, cNewParticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
 	}
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
+
+	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
+	void greenStarAppearParticleFix(LiveActor* pActor, s32 mColor) {
+		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
+	}
+
+	#if defined (NOGLE) || defined (ALL)
+		kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
+		kmCall(0x802E0870, greenStarAppearParticleFix);
+	#endif;
+
+	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
+	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
+		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
+	}
+
+	#if defined (NOGLE) || defined (ALL)
+		kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
+		kmCall(0x802DFE04, customPowerStarLightColors);
+	#endif
 
 	/*
 	*	Silver Star Colors
@@ -270,4 +228,4 @@ namespace pt {
 
 	kmCall(0x8035F830, SilverStarColors);
 	#endif
-}
+	}

@@ -19,7 +19,12 @@ jobs:
       run: Invoke-WebRequest -Uri https://github.com/Lord-Giganticus/SyatiSetup/releases/download/Auto/syatisetup.exe -OutFile syatisetup.exe
     - uses: actions/setup-python@v4
     - run: python ci.py
-    - uses: actions/upload-artifact@v3
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      if: ${{ github.event_name == 'push' }}
       with:
-        path: |
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "Auto"
+        prerelease: true
+        title: "Auto Build"
+        files: |
             *.zip

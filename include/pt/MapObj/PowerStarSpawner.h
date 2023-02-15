@@ -13,6 +13,7 @@ namespace pt {
 		virtual void movement();
 
 		void spawnStar();
+		bool spawnCondition();
 		void createDisplayStar();
 
 		ActorCameraInfo* mCamInfo;
@@ -21,11 +22,8 @@ namespace pt {
 		s32 mDelay; // Obj_arg2
 		bool mUseSE; // Obj_arg3
 		bool mFromMario; // Obj_arg4
-		s32 mDisplayStarMode; // Obj_arg5
-		s32 mFrame; // Obj_arg6
 		s32 mElapsed;
-		ModelObj* DisplayStar;
-		TVec3f upVec;
 		Mtx DisplayStarMtx;
+		s32 mSpawnCondition; // Obj_arg7
     };
 };

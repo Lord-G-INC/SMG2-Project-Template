@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from datetime import date
 
 
 def err(message: str):
@@ -21,6 +22,11 @@ def dep(path, name):
 def remove_d_files():
     for f in glob.glob("*.d"):
         os.remove(f)
+
+def get_date():
+    now: date = date.today()
+    current = tuple([now.month, now.day, now.year])
+    return current
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -59,6 +65,9 @@ compiler_flags = [
     "-enum int",
     "-DGEKKO",
     "-DMTX_USE_PS",
+    f'-DBUILD_MONTH={get_date()[0]}',
+    f'-DBUILD_DAY={get_date()[1]}',
+    f'-DBUILD_YEAR={get_date()[2]}'
 ]
 
 # Compiler flag for building everything in this workspace

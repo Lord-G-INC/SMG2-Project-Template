@@ -29,8 +29,11 @@
 
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/MapObj/SwitchBox.h"
-#include "pt/MapObj/RedCoinSystem.h"
+#include "pt/MapObj/RedCoinSystem/RedCoin.h"
+#include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
+#include "pt/MapObj/DisplayStar.h"
+#include "pt/Map/CometTimerObj.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -59,11 +62,15 @@ namespace pt {
         return new T(pName);
     }
 
+    template<s32 COLOR>
+    NameObj* createSuperSpinDriverCustomColor(const char *pName) {
+        return new SuperSpinDriver(pName, COLOR);
+    }
+
     struct CreateSceneObjEntry {
         s32 mSlotId;
         NameObj* (*mCreationFunc)(void);
     };
-
 
     /*
     * Extended NameObjFactory
@@ -90,7 +97,7 @@ namespace pt {
         { "Anagon", createExtActor<Anagon> },
         // Enemy
         { "BallBeamer", createExtActor<BallBeamer> },
-        { "CocoSambo", createExtActor<CocoSambo> }, // 10
+        { "CocoSambo", createExtActor<CocoSambo> },
         { "DharmaSambo", createExtActor<DharmaSambo> },
         { "JumpGuarder", createExtActor<JumpGuarder> },
         { "Mogu", createExtActor<Mogu> },
@@ -99,12 +106,14 @@ namespace pt {
         // Map
         { "PlayerSwitchCtrl", createExtActor<PlayerSwitchCtrl> },
         { "SensorDetector", createExtActor<SensorDetector> },
+        { "CometTimerObj", createExtActor<CometTimerObj> },
         { "Banekiti", createExtActor<Banekiti> },
         // MapObj
         { "BlueChip", createExtActor<BlueChip> },
-        { "BlueChipGroup", createExtActor<BlueChipGroup> }, // 20
+        { "BlueChipGroup", createExtActor<BlueChipGroup> },
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
+        { "DisplayStar", createExtActor<DisplayStar> },
         { "FirePressureRadiate", createExtActor<FirePressureRadiate> },
         { "GoldenTurtle", createExtActor<GoldenTurtle> },
         { "HitWallTimerSwitch", createExtActor<HitWallTimerSwitch> },
@@ -112,7 +121,7 @@ namespace pt {
         { "MorphItemCollectionFoo", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemCollectionIce", NameObjFactory::createNameObj<MorphItemCollection> },
         { "MorphItemNeoFoo", createExtActor<MorphItemNeoFoo> },
-        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> }, // 30
+        { "MorphItemNeoIce", createExtActor<MorphItemNeoIce> },
         { "MultipleChoiceDice", createExtActor<MultipleChoiceDice> },
         { "Pompon2Plant", createExtActor<PomponPlant> },
         { "PowerStarSpawner", createExtActor<PowerStarSpawner> },
@@ -120,34 +129,40 @@ namespace pt {
         { "ScrewSwitchReverse", createExtActor<ScrewSwitchReverse> },
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
-        { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
-        { "ValveSwitch", createExtActor<ValveSwitch> }, // 40
+        { "ValveSwitch", createExtActor<ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<WaterLeakPipe>},
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
         { "SwitchBox", createExtActor<SwitchBox> },
         { "RedCoin", createExtActor<RedCoin> },
-        { "RedCoinController", createExtActor<RedCoinController> }, // 46 (SMSS)
+        { "RedCoinController", createExtActor<RedCoinController> },
+        { "RedCoinSwitch", createExtActor<RedCoinSwitch> },
+        // Custom SuperSpinDriver colors
+        { "SuperSpinDriverGreen", createSuperSpinDriverGreen },
+        { "SuperSpinDriverRed", createSuperSpinDriverCustomColor<3> },
+        { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
+        { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
+        { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
 
         #if defined (ALL) || defined (NOGLE)
-        { "WarpArea", createExtActor<WarpArea> }, // 48 (ALL), 47 (NOGLE)
+            { "WarpArea", createExtActor<WarpArea> },
         #endif
 
         #if defined (ALL) || defined (SMG63)
-        { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> }, // 47 SMG63
+            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
+        #endif
+
+        #if defined (ALL) || defined (CA)
+            { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<8> },
+            { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
         #endif
     };
 
 
     /*
     * Extended ProductMapCreator
-    */
-
-    /*
-    * Number of total new class entries. This value has to be adjusted everytime a creation function
-    * is added or removed!
     */
 
     const CreateActorEntry cNewCreateMapObjTable[] = {
@@ -172,14 +187,7 @@ namespace pt {
 
     /*
     * Extended SceneObjHolder
-    */
-
-    /*
-    * Number of total new SceneObj instances. This value has to adjusted everytime a creation func-
-    * tion is added or removed!
-    */
-
-    /*
+    *
     * There is a bunch of free SceneObj slots that we can still use as desired. The following slots
     * are unused as of now: 0x3E, 0x47, 0x48, 0x49, 0x54, 0x5A, 0x68, 0x69 and 0x7B.
     */

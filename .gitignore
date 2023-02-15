@@ -8,5 +8,5 @@ CustomCode*.bin
 /deps/*.exe
 *.zip
 BuildPT.bat
-.vscode/tasks.json
+.vscode
 /deps/Syati

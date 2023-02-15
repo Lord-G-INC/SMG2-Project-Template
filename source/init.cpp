@@ -8,8 +8,13 @@ extern Func __ctor_loc;
 extern Func __ctor_end;
 
 void init() {
-    #ifdef GLE 
-        OSReport("SMG2PT Debug GLE Build\n");
+    OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
+
+    #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)
+        int m = BUILD_MONTH;
+        int d = BUILD_DAY;
+        int y = BUILD_YEAR;
+        OSReport("Built on %d/%d/%d\n",m,d,y);
     #endif
     
     for (Func* f = &__ctor_loc; f < &__ctor_end; f++) {

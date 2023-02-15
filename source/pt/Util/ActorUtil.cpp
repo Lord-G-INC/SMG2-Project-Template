@@ -61,13 +61,43 @@ namespace pt {
 	
 		return 0;
 	}
-	
-	// Simple function to properly set up a custom coin type. Will be used again in the future.
-	void setupCoin(Coin* pCoin) {
-		if (!MR::isExistSceneObj(0x41))
-    	  MR::createCoinRotater();
 
-    	MR::createCoinHolder();
-    	MR::addToCoinHolder(pCoin, pCoin);
+	void* loadFile(const char *pFile) {
+		DVDFileInfo fileHandle;
+
+		// Setup OSFatal colors
+		u32 fg = 0xFFFFFFFF;
+		u32 bg = 0x00000000;
+
+		// Verify that file exists and create file handle
+		int pathID = DVDConvertPathToEntrynum(pFile);
+
+		if (pathID < 0) {
+			OSFatal(&fg, &bg, "ERROR\n\nFailed to locate %s\n", pFile);
+		}
+
+		if (!DVDFastOpen(pathID, &fileHandle)) {
+			OSFatal(&fg, &bg, "ERROR\n\nFailed to create file handle for %s\n", pFile);
+		}
+
+		OSReport("File handle: faddr = %p, fsize = %d\n", fileHandle.mStartAddr, fileHandle.mLength);
+
+		// Read entire binary into MEM2
+		u32 size = fileHandle.mLength;
+		void* rawBinary = (void*)(0x935e0000 - ((size + 31) & ~31));
+
+		DVDReadPrio(&fileHandle, rawBinary, fileHandle.mLength, 0, 2);
+		DVDClose(&fileHandle);
+
+		char* result = new char[size];
+		char* rawchar = (char*)rawBinary;
+		for (int i = 0; i < size; i++)
+			result[i] = rawchar[i];
+		u32 *start = (u32*)rawBinary;
+
+		while (start < (u32*)0x935e0000) {
+			*start++ = 0;
+		}
+		return result;
 	}
 }
