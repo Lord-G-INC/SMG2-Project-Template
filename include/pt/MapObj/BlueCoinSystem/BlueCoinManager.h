@@ -26,4 +26,4 @@ class BlueCoinManager {
     }
 };
 
-static BlueCoinManager gBlueCoinMainager = BlueCoinManager(255);
+static BlueCoinManager gBlueCoinManager = BlueCoinManager(255);
