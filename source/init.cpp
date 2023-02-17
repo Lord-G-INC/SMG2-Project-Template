@@ -1,4 +1,5 @@
 #include "syati.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
 
 /*********************************************************************************************************************/
 /* Call static initializers                                                                                          */
@@ -9,6 +10,8 @@ extern Func __ctor_end;
 
 void init() {
     OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
+
+    gBlueCoinManager = BlueCoinManager(255);
 
     #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)
         int m = BUILD_MONTH;
