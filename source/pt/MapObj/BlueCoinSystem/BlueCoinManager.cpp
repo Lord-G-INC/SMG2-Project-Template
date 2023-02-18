@@ -21,8 +21,7 @@ void BlueCoinManager::SaveData(u8 pSaveID) {
         }
         s32 code = NANDWrite(&info, buffer, size+4);
         if (code == -8) {
-            OSPanic("BlueCoinManager.cpp", 14, "The write to %s failed with code -8, please report this!", 
-            name);
+            OSPanic("BlueCoinManager.cpp", 14, "The write to %s failed with code -8, please report this!", name);
         }
         OSReport("%s's size: %d\n", name, code);
         delete[] buffer;
@@ -38,9 +37,8 @@ void BlueCoinManager::GetData(u8 pSaveID) {
         NANDGetLength(&info, &fullsize);
         u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[fullsize];
         s32 code = NANDRead(&info, buffer, fullsize);
-        if (code != 0 || code != fullsize) {
-            OSPanic("BlueCoinManager.cpp", 35, "The read to %s failed with code %d, please report this!",
-            name, code);
+        if (code != -8) {
+            OSPanic("BlueCoinManager.cpp", 35, "The read to %s failed with code -8, please report this!", name);
         }
         mSize = *(u32*)buffer;
         buffer += 4;
@@ -50,6 +48,7 @@ void BlueCoinManager::GetData(u8 pSaveID) {
         for (int i = 0; i < mSize; i++) {
             mInstances[i] = data[i];
         }
+        delete [] buffer;
     }
     NANDClose(&info);
 }
