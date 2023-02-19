@@ -3,7 +3,6 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
 
 class BlueCoin : public Coin {
-    BlueCoinInstance* mInstance;
     public:
     BlueCoin(const char*);
     virtual void init(const JMapInfoIter&);

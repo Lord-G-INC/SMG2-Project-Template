@@ -1,4 +1,9 @@
 #include "syati.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
+
+u8* datas[3];
+bool resetted = false;
+
 
 /*********************************************************************************************************************/
 /* Call static initializers                                                                                          */
@@ -9,6 +14,12 @@ extern Func __ctor_end;
 
 void init() {
     OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
+
+    for (s32 i = 0; i < 3; i++) {
+        u8* ptr = new u8[510];
+        memset(ptr, 69, 510);
+        datas[i] = ptr;
+    }
 
     #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)
         int m = BUILD_MONTH;

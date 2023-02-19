@@ -12,11 +12,9 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 
 void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mID);
-    mInstance = gBlueCoinManager[mID];
-    OSReport("BlueCoin check: %d, %d", mID, mInstance->mIsCollected);
     
     MR::initDefaultPos(this, rIter);
-    MR::processInitFunction(this, rIter, mInstance->mIsCollected ? "BlueCoinClear" : "BlueCoin", false);
+    MR::processInitFunction(this, rIter, "BlueCoin", false);
     MR::connectToSceneMapObjStrongLight(this);
     MR::calcGravity(this);
     MR::initShadowVolumeCylinder(this, 50.0f);
@@ -42,13 +40,16 @@ bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) 
         collect();
         return true;
     }
+
+    if (mIsCollected && resetted) {
+        OSReport("%u\n", datas[0][1]);
+    }
     return false;
 }
 
 void BlueCoin::collect() {
     mIsCollected = true;
-    mInstance->mIsCollected = true;
-    OSReport("COIN %d: %d\n", mID, gBlueCoinManager[80]->mIsCollected);
+    //OSReport("COIN %d: %d\n", mID, gBlueCoinManager[80]->mIsCollected);
     MR::incCoin(1, this);
     makeActorDead();
 }
