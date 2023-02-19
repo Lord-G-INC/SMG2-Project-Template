@@ -1,16 +1,18 @@
 #pragma once
 #include "syati.h"
 
+class BlueCoin;
+
 struct BlueCoinInstance {
     u8 mID;
     bool mIsCollected;
 };
 
 class BlueCoinManager {
-    u32 mSize;
     BlueCoinInstance* mInstances;
+    u32 mSize;
     public:
-    BlueCoinManager(u32 mSize) : mSize(mSize) { 
+    BlueCoinManager(u32 mSize) : mSize(mSize) {
         OSReport("BlueCoinManager.h: mSize is %d\n", mSize);
         mInstances = new BlueCoinInstance[mSize];
         memset(mInstances, 0, sizeof(BlueCoinInstance)*mSize);
@@ -19,7 +21,9 @@ class BlueCoinManager {
             mInstances[i].mID = (id + 1) == 255 ? 254 : id++;
         }
     }
-    BlueCoinManager() {}
+    BlueCoinManager() {
+        OSReport("This message should not appear!\n");
+    }
     ~BlueCoinManager() {
         delete [] mInstances;
     }
@@ -30,4 +34,9 @@ class BlueCoinManager {
     void GetData(u8);
 };
 
-static BlueCoinManager gBlueCoinManager;
+static BlueCoinManager gBlueCoinManager = BlueCoinManager(255);
+
+namespace BlueCoinUtil {
+    void resetAllBlueCoinsAndSave(u8 fileID);
+    s32 calcFileNum();
+};

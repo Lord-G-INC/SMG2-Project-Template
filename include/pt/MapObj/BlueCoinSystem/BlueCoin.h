@@ -5,8 +5,11 @@
 class BlueCoin : public Coin {
     BlueCoinInstance* mInstance;
     public:
-    u8 mID;
     BlueCoin(const char*);
-    virtual bool receiveMessage(u32, HitSensor *, HitSensor *);
     virtual void init(const JMapInfoIter&);
+    virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
+    void collect();
+
+    s32 mID;
+    bool mIsCollected;
 };

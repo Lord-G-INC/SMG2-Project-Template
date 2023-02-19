@@ -18,6 +18,7 @@ void BlueCoinManager::SaveData(u8 pSaveID) {
         BlueCoinInstance* instances = (BlueCoinInstance*)(buffer+4);
         for (int i = 0; i < mSize; i++) {
             instances[i] = mInstances[i];
+            OSReport("Saving Blue Coin: 0x%x, instances: %d, mInstances: %d\n", i, instances[i].mIsCollected, mInstances[i].mIsCollected);
         }
         s32 code = NANDWrite(&info, buffer, size+4);
         if (code == -8) {
@@ -37,7 +38,7 @@ void BlueCoinManager::GetData(u8 pSaveID) {
         NANDGetLength(&info, &fullsize);
         u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[fullsize];
         s32 code = NANDRead(&info, buffer, fullsize);
-        if (code != -8) {
+        if (code == -8) {
             OSPanic("BlueCoinManager.cpp", 35, "The read to %s failed with code -8, please report this!", name);
         }
         mSize = *(u32*)buffer;
@@ -47,8 +48,56 @@ void BlueCoinManager::GetData(u8 pSaveID) {
         BlueCoinInstance* data = (BlueCoinInstance*)buffer;
         for (int i = 0; i < mSize; i++) {
             mInstances[i] = data[i];
+            OSReport("Loading Blue Coin: 0x%x, data: %d, mInstances: %d\n", i, data[i].mIsCollected, mInstances[i].mIsCollected);
         }
+
         delete [] buffer;
     }
     NANDClose(&info);
 }
+
+// Blue Coin Data binary management patches
+
+namespace BlueCoinUtil {
+    void resetAllBlueCoinsAndSave(u8 fileID) {
+        for (s32 i = 0; i < 254; i++) {
+            gBlueCoinManager[i]->mIsCollected = false;
+        }
+        gBlueCoinManager.SaveData(fileID);
+    }
+
+    s32 calcFileNum() { // someone PLEASE tell me how to get the loaded save file number/ID
+        const char* dataName = GameDataFunction::getSaveDataHandleSequence()->getCurrentUserFile()->getConfigDataName();
+          
+        if (MR::isEqualString(dataName, "user1"))
+            return 1;
+        if (MR::isEqualString(dataName, "user2"))
+            return 2;
+        if (MR::isEqualString(dataName, "user3"))
+            return 3;
+
+        return 0;
+    }
+}
+
+void resetAllBlueCoinOnDeleteFile(SaveDataHandleSequence* pSeq, UserFile* pFile, int fileID) {
+    pSeq->restoreUserFileConfigData(pFile, fileID);
+    BlueCoinUtil::resetAllBlueCoinsAndSave(fileID);
+}
+
+kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
+
+void saveBlueCoinDataOnGameSave(UserFile* pFile) {
+    OSReport("BLUE COINS ARE SAVING\n");
+    gBlueCoinManager.SaveData(2);
+    pFile->setCreated();
+}
+
+kmCall(0x804D9C90, saveBlueCoinDataOnGameSave);
+
+void getBlueCoinData(const char* pName) {
+    gBlueCoinManager.GetData(2);
+    MR::startSystemSE(pName, -1, -1);
+}
+
+kmCall(0x8046D31C, getBlueCoinData);

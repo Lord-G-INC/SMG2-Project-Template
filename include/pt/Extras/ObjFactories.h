@@ -34,6 +34,7 @@
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Map/CometTimerObj.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -111,6 +112,7 @@ namespace pt {
         // MapObj
         { "BlueChip", createExtActor<BlueChip> },
         { "BlueChipGroup", createExtActor<BlueChipGroup> },
+        { "BlueCoin", createExtActor<BlueCoin> },
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
         { "DisplayStar", createExtActor<DisplayStar> },
