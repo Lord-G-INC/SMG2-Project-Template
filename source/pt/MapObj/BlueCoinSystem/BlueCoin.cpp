@@ -3,7 +3,8 @@
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
-    mIsCollected = 0;
+    mIsCollected = false;
+    mIsCollectedSaved = false;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -12,9 +13,12 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 
 void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mID);
+    mIsCollectedSaved = gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID];
+    OSReport("COIN INIT %d: %d, FILE NUM: %d\n", mID, gBlueCoinData[1][mID], BlueCoinUtil::getCurrentFileNum());
     
     MR::initDefaultPos(this, rIter);
-    MR::processInitFunction(this, rIter, "BlueCoin", false);
+    MR::processInitFunction(this, rIter, mIsCollectedSaved ? "BlueCoinClear" : "BlueCoin", false);
+    initEffectKeeper(2, "Coin", 0);
     MR::connectToSceneMapObjStrongLight(this);
     MR::calcGravity(this);
     MR::initShadowVolumeCylinder(this, 50.0f);
@@ -41,15 +45,14 @@ bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) 
         return true;
     }
 
-    if (mIsCollected && resetted) {
-        OSReport("%u\n", gBlueCoinData[0][1]);
-    }
     return false;
 }
 
 void BlueCoin::collect() {
     mIsCollected = true;
-    //OSReport("COIN %d: %d\n", mID, gBlueCoinManager[80]->mIsCollected);
+    gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID] = true;
+    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");
+    BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
     MR::incCoin(1, this);
     makeActorDead();
 }

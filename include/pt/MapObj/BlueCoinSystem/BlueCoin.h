@@ -11,4 +11,5 @@ class BlueCoin : public Coin {
 
     s32 mID;
     bool mIsCollected;
+    bool mIsCollectedSaved;
 };

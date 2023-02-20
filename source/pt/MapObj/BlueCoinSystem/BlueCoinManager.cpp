@@ -17,6 +17,7 @@ namespace BlueCoinUtil {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
                     gBlueCoinData[i][j] = *buffer++;
+                    OSReport("Getting Coin: 0x%x, Collected: %d\n", i, gBlueCoinData[i][j]);
                 }
             }
             delete [] buffer;
@@ -35,6 +36,7 @@ namespace BlueCoinUtil {
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 255; j++) {
                         buffer[idx++] = gBlueCoinData[i][j];
+                        OSReport("Saving Coin: 0x%x, Collected: %d\n", i, gBlueCoinData[i][j]);
                     }
                 }
                 code = NANDWrite(&info, buffer, 765);
@@ -46,22 +48,47 @@ namespace BlueCoinUtil {
             NANDClose(&info);
         }
     }
-}
 
+    s32 getCurrentFileNum() { // Thank you AwesomeTMC
+        SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
+        s32 *valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
+        return *valuePtr - 1;
+    }
 
-void test() {
-    GameSystemFunction::prepareResetSystem();
+    void setBlueCoinGotOnCurrentFile(u8 id, bool collected) {
+        gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][id] = collected;
+    }
 
-    if (resetted) {
-        OSReport("%u\n", gBlueCoinData[0][1]);
+    void resetAllBlueCoin(u8 file) {
+        memset(gBlueCoinData[file - 1], 0, 255);
+        SaveData();
+    }
+
+    bool isBlueCoinGot(u8 file, u8 id) {
+        return gBlueCoinData[file][id];
     }
 }
 
-kmCall(0x804B99F4, test);
-
-void onReset(LiveActor* pActor) {
-    pActor->initHitSensor(1);
-    resetted = true;
+// Delete all blue coins in a save file.
+void resetAllBlueCoinOnDeleteFile(SaveDataHandleSequence* pSeq, UserFile* pFile, int fileID) {
+    pSeq->restoreUserFileConfigData(pFile, fileID);
+    BlueCoinUtil::resetAllBlueCoin(fileID);
 }
 
-kmCall(0x8024F358, onReset);
+kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
+
+// Save gBlueCoinData to file.
+void saveBlueCoinDataOnGameSave(UserFile* pFile) {
+    pFile->setCreated(); // Restore original call
+    BlueCoinUtil::SaveData();
+}
+
+kmCall(0x804D9C90, saveBlueCoinDataOnGameSave);
+
+// Read blue coin binary on title screen load.
+void onTitleScreenLoad(LiveActor* pActor) {
+    pActor->initHitSensor(1); // Restore original call
+    BlueCoinUtil::GetData();
+}
+
+kmCall(0x8024F358, onTitleScreenLoad);
