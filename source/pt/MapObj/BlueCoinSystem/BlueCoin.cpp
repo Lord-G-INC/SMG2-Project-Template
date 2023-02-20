@@ -42,7 +42,7 @@ bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) 
     }
 
     if (mIsCollected && resetted) {
-        OSReport("%u\n", datas[0][1]);
+        OSReport("%u\n", gBlueCoinData[0][1]);
     }
     return false;
 }

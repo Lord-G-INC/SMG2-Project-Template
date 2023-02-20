@@ -2,7 +2,7 @@
 #include "syati.h"
 
 extern bool** gBlueCoinData;
-bool resetted = false;
+static bool resetted = false;
 
 namespace BlueCoinUtil {
     void GetData(u8);
