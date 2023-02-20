@@ -8,7 +8,7 @@ void test() {
     GameSystemFunction::prepareResetSystem();
 
     if (resetted) {
-        OSReport("%u\n", datas[0][1]);
+        OSReport("%u\n", gBlueCoinData[0][1]);
     }
 }
 

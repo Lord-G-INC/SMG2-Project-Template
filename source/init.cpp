@@ -1,8 +1,7 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
 
-u8* datas[3];
-bool resetted = false;
+bool** gBlueCoinData;
 
 
 /*********************************************************************************************************************/
@@ -15,10 +14,10 @@ extern Func __ctor_end;
 void init() {
     OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
 
-    for (s32 i = 0; i < 3; i++) {
-        u8* ptr = new u8[510];
-        memset(ptr, 69, 510);
-        datas[i] = ptr;
+    gBlueCoinData = new bool*[3];
+    for (int i = 0; i < 3; i++) {
+        gBlueCoinData[i] = new bool[255];
+        memset(gBlueCoinData[i], 0, 255);
     }
 
     #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)
