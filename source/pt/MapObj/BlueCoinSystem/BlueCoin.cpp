@@ -3,6 +3,7 @@
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
+    mLaunchVelocity = 300.0f;
     mIsCollected = false;
     mIsCollectedSaved = false;
 
@@ -13,15 +14,12 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 
 void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mID);
+    MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
     mIsCollectedSaved = gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID];
-    OSReport("COIN INIT %d: %d, FILE NUM: %d\n", mID, gBlueCoinData[1][mID], BlueCoinUtil::getCurrentFileNum());
     
-    MR::initDefaultPos(this, rIter);
     MR::processInitFunction(this, rIter, mIsCollectedSaved ? "BlueCoinClear" : "BlueCoin", false);
     initEffectKeeper(2, "Coin", 0);
-    MR::connectToSceneMapObjStrongLight(this);
     MR::calcGravity(this);
-    MR::initShadowVolumeCylinder(this, 50.0f);
 
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -39,6 +37,18 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::useStageSwitchSyncAppear(this, rIter);
 }
 
+void BlueCoin::initAfterPlacement() {
+    if (MR::isValidSwitchB(this)) {
+        MR::hideModel(this);
+        MR::invalidateHitSensors(this);
+    }
+}
+
+void BlueCoin::control() {
+    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this))
+        appearAndMove();
+}
+
 bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) {
     if (MR::isMsgItemGet(msg) && !mIsCollected) {
         collect();
@@ -48,11 +58,24 @@ bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) 
     return false;
 }
 
+void BlueCoin::appearAndMove() {
+    // I need a better way to calculate the gravity
+    TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
+    coinVelocity.scale(coinVelocity.y, mGravity);
+    
+    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
+    setCannotTime(300);
+    MR::validateHitSensors(this);
+}
+
 void BlueCoin::collect() {
     mIsCollected = true;
-    gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID] = true;
-    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");
     BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
+    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");
     MR::incCoin(1, this);
+
+    if (MR::isValidSwitchA(this))
+        MR::onSwitchA(this);
+
     makeActorDead();
 }

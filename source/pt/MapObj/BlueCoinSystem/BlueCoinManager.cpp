@@ -11,19 +11,20 @@ namespace BlueCoinUtil {
         if (code == 0) {
             bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[765];
             code = NANDRead(&info, buffer, 765);
-            if (code == -8) {
-                OSPanic("BlueCoinManager.cpp", 13, "NANDRead failed! Please report this!");
+            if (code != 0) {
+                OSPanic("BlueCoinManager.cpp", __LINE__, "NANDRead failed! with code %d.\n", code);
             }
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
                     gBlueCoinData[i][j] = *buffer++;
-                    OSReport("Getting Coin: 0x%x, Collected: %d\n", i, gBlueCoinData[i][j]);
                 }
             }
             delete [] buffer;
         }
         NANDClose(&info);
+        OSReport("BlueCoinData.bin successfully read.\n");
     }
+
     void SaveData() {
         s32 code = NANDCreate("BlueCoinData.bin", NAND_PERM_READ_WRITE, 0);
         if (code == 0 || code == -6) {
@@ -36,16 +37,16 @@ namespace BlueCoinUtil {
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 255; j++) {
                         buffer[idx++] = gBlueCoinData[i][j];
-                        OSReport("Saving Coin: 0x%x, Collected: %d\n", i, gBlueCoinData[i][j]);
                     }
                 }
                 code = NANDWrite(&info, buffer, 765);
-                if (code == -8) {
-                    OSPanic("BlueCoinManager.cpp", 39, "NANDWrite failed! Please report this!");
+                if (code != 0) {
+                    OSPanic("BlueCoinManager.cpp", __LINE__, "NANDWrite failed with code %d.", code);
                 }
                 delete [] buffer;
             }
             NANDClose(&info);
+            OSReport("BlueCoinData.bin successfully saved.\n");
         }
     }
 
@@ -69,9 +70,11 @@ namespace BlueCoinUtil {
     }
 }
 
+// Blue coin binary management
+
 // Delete all blue coins in a save file.
 void resetAllBlueCoinOnDeleteFile(SaveDataHandleSequence* pSeq, UserFile* pFile, int fileID) {
-    pSeq->restoreUserFileConfigData(pFile, fileID);
+    pSeq->restoreUserFileConfigData(pFile, fileID); // Restore original call
     BlueCoinUtil::resetAllBlueCoin(fileID);
 }
 
