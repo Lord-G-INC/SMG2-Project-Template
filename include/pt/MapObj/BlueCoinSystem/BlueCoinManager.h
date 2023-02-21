@@ -10,4 +10,6 @@ namespace BlueCoinUtil {
     void setBlueCoinGotOnCurrentFile(u8 id, bool collected);
     bool isBlueCoinGot(u8 file, u8 id);
     void resetAllBlueCoin(u8 file);
+    s32 getTotalBlueCoinNum(u8 file);
+    s32 getTotalBlueCoinRangeNumFromBcsv(u8 file, const char* pStageName);
 }

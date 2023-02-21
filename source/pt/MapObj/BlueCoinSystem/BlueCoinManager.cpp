@@ -1,8 +1,11 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
+#include "pt/Util/ActorUtil.h"
 
 const char* SaveNames[3] = {"BlueCoinData1.bin", "BlueCoinData2.bin", "BlueCoinData3.bin"};
 
 extern "C" s32 NANDSeek(NANDFileInfo*, s32, s32);
+
+void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
     void GetData() {
@@ -11,7 +14,7 @@ namespace BlueCoinUtil {
         if (code == 0) {
             bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[765];
             code = NANDRead(&info, buffer, 765);
-            if (code != 0) {
+            if (code != 0 && code != 765) {
                 OSPanic("BlueCoinManager.cpp", __LINE__, "NANDRead failed! with code %d.\n", code);
             }
             for (int i = 0; i < 3; i++) {
@@ -40,7 +43,7 @@ namespace BlueCoinUtil {
                     }
                 }
                 code = NANDWrite(&info, buffer, 765);
-                if (code != 0) {
+                if (code != 0 && code != 765) {
                     OSPanic("BlueCoinManager.cpp", __LINE__, "NANDWrite failed with code %d.", code);
                 }
                 delete [] buffer;
@@ -68,6 +71,48 @@ namespace BlueCoinUtil {
     bool isBlueCoinGot(u8 file, u8 id) {
         return gBlueCoinData[file][id];
     }
+
+    s32 getTotalBlueCoinNum(u8 file) {
+        u8 total = 0;
+        for (s32 i = 0; i < 255; i++) {
+            if (gBlueCoinData[file][i])
+                total++;
+        }
+        return total;
+    }
+
+    s32 getTotalBlueCoinRangeNumFromBcsv(u8 file, const char* pStageName) {
+        JMapInfo table = JMapInfo();
+        table.attach(blueCoinBcsvTable);
+
+        const char* tableStageName;
+        s32 targetLine = -1;
+
+        for (u8 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
+            MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
+
+            if (MR::isEqualString(pStageName, tableStageName)) {
+                targetLine = i;
+                break;
+            }
+        }
+        
+        if (targetLine >= 0) {
+            s32 rangeMin;
+            s32 rangeMax;
+            s32 count = 0;
+
+            MR::getCsvDataS32(&rangeMin, &table, "BlueCoinRangeMin", targetLine);
+            MR::getCsvDataS32(&rangeMax, &table, "BlueCoinRangeMax", targetLine);
+
+            for (s32 i = rangeMin; i < rangeMax + 1; i++) {
+                if (gBlueCoinData[file][i])
+                    count++;
+            }
+            return count;
+        }
+        return 0;
+    }
 }
 
 // Blue coin binary management
@@ -91,6 +136,11 @@ kmCall(0x804D9C90, saveBlueCoinDataOnGameSave);
 // Read blue coin binary on title screen load.
 void onTitleScreenLoad(LiveActor* pActor) {
     pActor->initHitSensor(1); // Restore original call
+
+    for (int i = 0; i < 3; i++) {
+        memset(gBlueCoinData[i], 0, 255);
+    }
+    
     BlueCoinUtil::GetData();
 }
 
