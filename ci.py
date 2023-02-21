@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from zipfile import ZipFile, ZIP_LZMA
+from zipfile import ZipFile
 from glob import glob
 
 def err(message: str):
@@ -56,13 +56,13 @@ def no_gle():
 
     subprocess.run("python buildloader.py")
 
-    with ZipFile(ZIP, "w", ZIP_LZMA) as w:
+    with ZipFile(ZIP, "w") as w:
         os.chdir("loader")
         files = glob("*.xml")
         for file in files:
             p = Path(file)
             w.write(p.absolute(), p.name)
-        files = glob("*.bin")
+        files = glob("Loader*.bin")
         for file in files:
             p = Path(file)
             w.write(p.absolute(), p.name)
@@ -74,7 +74,7 @@ def no_gle():
                     idx = str(file).index("\\")
                     name = str(file)[idx+1:]
                     w.write(file, name)
-        files = glob("*.bin")
+        files = glob("CustomCode*.bin")
         for file in files:
             p = Path(file)
             w.write(p.absolute(), f"CustomCode\\{p.name}")
@@ -94,7 +94,7 @@ def with_gle():
 
     subprocess.run("python buildloader.py")
 
-    with ZipFile(ZIP.with_name("PT Debug with GLE.zip"), "w", ZIP_LZMA) as w:
+    with ZipFile(ZIP.with_name("PT Debug with GLE.zip"), "w") as w:
         os.chdir("loader")
         files = glob("*.xml")
         for file in files:
@@ -103,7 +103,7 @@ def with_gle():
                 continue
             p = Path(file)
             w.write(p.absolute(), p.name)
-        files = glob("*.bin")
+        files = glob("Loader*.bin")
         for file in files:
             # GLE does not currently support Korean or Tiawan regions.
             if "K" in file or "W" in file:
@@ -121,7 +121,7 @@ def with_gle():
                     idx = str(file).index("\\")
                     name = str(file)[idx+1:]
                     w.write(file, name)
-        files = glob("*.bin")
+        files = glob("CustomCode*.bin")
         for file in files:
             # GLE does not currently support Korean or Tiawan regions.
             if "KOR" in file or "TWN" in file:
