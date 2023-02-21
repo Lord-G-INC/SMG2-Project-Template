@@ -53,14 +53,14 @@ void RedCoinController::movement() {
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
 
-        if (mElapsed == 120)
-            MR::startAnim(mRedCoinCounter, "End", 0);
+    if (mElapsed == 120)
+        MR::startAnim(mRedCoinCounter, "End", 0);
 
-        if (mElapsed == 140) {
-            MR::hideLayout(mRedCoinCounter);
-            MR::onSwitchA(this);
-            makeActorDead();
-        }
+    if (mElapsed == 140) {
+        MR::hideLayout(mRedCoinCounter);
+        MR::onSwitchA(this);
+        makeActorDead();
+    }
 }
 
 // This function is unused, but there are plans for
@@ -108,10 +108,11 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
 
 /* --- RED COIN UTIL  --- */
 
+namespace RedCoinUtil {
+
 // Iterates through the group actors, until it finds an actor in the group named "RedCoinController".
 // If the actor name matches, then the actor is returned.
 
-namespace RedCoinUtil {
 RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
     LiveActorGroup* group = MR::getGroupFromArray(actor);
 
@@ -124,4 +125,5 @@ RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
 
     return 0;
 }
+
 }

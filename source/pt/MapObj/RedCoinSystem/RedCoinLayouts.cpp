@@ -39,7 +39,6 @@ void RedCoinCounter::calcVisibility() {
     }
 }
 
-
 void RedCoinCounter::appearIfHidden() { 
     if (MR::isHiddenLayout(this)) {
         MR::showLayout(this);

@@ -283,7 +283,13 @@ namespace pt {
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 
-	#if defined(CA) || defined (ALL)
+	#if defined(CA)
+	// No HipDropSwitch timer ticking
 	kmWrite32(0x802B0468, 0x60000000);
+
+	// Increase maximum coin count
+	kmWrite32(0x804DE0C8, 0x38A07FFF);
+	kmWrite32(0x804DE0EC, 0x38A07FFF);
+	kmWrite32(0x804D87B0, 0x23637FFF);
 	#endif
 } 

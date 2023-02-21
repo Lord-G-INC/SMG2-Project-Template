@@ -89,12 +89,12 @@ void RedCoin::control() {
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
         mElapsed++;
         
-        if (mElapsed >= mAppearDelay)
-            appearAndMove();
+    if (mElapsed >= mAppearDelay)
+        appearAndMove();
     }
 
     if (mIsCollected)
-        mVelocity = TVec3f(0.0f, 0.0f, 0.0f);
+        MR::zeroVelocity(this);
 }
 
 void RedCoin::calcAndSetBaseMtx() {
@@ -107,9 +107,12 @@ void RedCoin::calcAndSetBaseMtx() {
 }
 
 bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	if (MR::isMsgItemGet(msg) && !mIsCollected)
+	if (MR::isMsgItemGet(msg) && !mIsCollected) {
 		collect();
-		return false;
+        return true;
+    }
+
+	return false;
 }
 
 void RedCoin::initAirBubble() {
@@ -122,14 +125,13 @@ void RedCoin::initAirBubble() {
 }
 
 void RedCoin::appearAndMove() {
-    MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
-
-    // I seriously need a better way to do this...
+    // I need a better way to calculate the gravity
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
     coinVelocity.scale(coinVelocity.y, mGravity);
     
     appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
     setCannotTime(300);
+    MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
     MR::validateHitSensors(this);
 }
 
@@ -146,10 +148,11 @@ void RedCoin::collect() {
     MR::startSystemSE(RedCoinUtil::getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
+
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
+    MR::incPlayerLife(1);
     MR::invalidateHitSensors(this);
     MR::invalidateShadowAll(this);
     MR::emitEffect(this, "RedCoinGet");
-    MR::incPlayerLife(1);
     MR::hideModel(this);
 }
