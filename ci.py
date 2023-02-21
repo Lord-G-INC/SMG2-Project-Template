@@ -62,7 +62,7 @@ def no_gle():
         for file in files:
             p = Path(file)
             w.write(p.absolute(), p.name)
-        files = glob("*.bin")
+        files = glob("Loader*.bin")
         for file in files:
             p = Path(file)
             w.write(p.absolute(), p.name)
@@ -74,7 +74,7 @@ def no_gle():
                     idx = str(file).index("\\")
                     name = str(file)[idx+1:]
                     w.write(file, name)
-        files = glob("*.bin")
+        files = glob("CustomCode*.bin")
         for file in files:
             p = Path(file)
             w.write(p.absolute(), f"CustomCode\\{p.name}")
@@ -103,7 +103,7 @@ def with_gle():
                 continue
             p = Path(file)
             w.write(p.absolute(), p.name)
-        files = glob("*.bin")
+        files = glob("Loader*.bin")
         for file in files:
             # GLE does not currently support Korean or Tiawan regions.
             if "K" in file or "W" in file:
@@ -121,7 +121,7 @@ def with_gle():
                     idx = str(file).index("\\")
                     name = str(file)[idx+1:]
                     w.write(file, name)
-        files = glob("*.bin")
+        files = glob("CustomCode*.bin")
         for file in files:
             # GLE does not currently support Korean or Tiawan regions.
             if "KOR" in file or "TWN" in file:
