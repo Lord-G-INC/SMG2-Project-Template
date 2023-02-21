@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from zipfile import ZipFile, ZIP_LZMA
+from zipfile import ZipFile
 from glob import glob
 
 def err(message: str):
@@ -56,7 +56,7 @@ def no_gle():
 
     subprocess.run("python buildloader.py")
 
-    with ZipFile(ZIP, "w", ZIP_LZMA) as w:
+    with ZipFile(ZIP, "w") as w:
         os.chdir("loader")
         files = glob("*.xml")
         for file in files:
@@ -94,7 +94,7 @@ def with_gle():
 
     subprocess.run("python buildloader.py")
 
-    with ZipFile(ZIP.with_name("PT Debug with GLE.zip"), "w", ZIP_LZMA) as w:
+    with ZipFile(ZIP.with_name("PT Debug with GLE.zip"), "w") as w:
         os.chdir("loader")
         files = glob("*.xml")
         for file in files:
