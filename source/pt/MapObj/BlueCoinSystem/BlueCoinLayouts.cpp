@@ -2,7 +2,8 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {}
+BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {
+}
 
 void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("BlueCoinCounterInStage", 2);
@@ -12,10 +13,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
 
     OSReport("Blue Coin Range Value: %d\n", BlueCoinUtil::getTotalBlueCoinRangeNumFromBcsv(BlueCoinUtil::getCurrentFileNum(), MR::getCurrentStageName()));
 
-    if (BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()) > 0)
-        MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()));
-    else
-        MR::setTextBoxNumberRecursive(this, "ShaNumber", 0);
+    MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()));
 
     MR::registerDemoSimpleCastAll(this);
     MR::connectToSceneLayout(this);
@@ -25,27 +23,62 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     mPaneRumbler->reset();
 }
 
+void BlueCoinCounter::control() {
+    mPaneRumbler->update();
+}
+
+void BlueCoinCounter::exeAppear() {
+    MR::showLayout(this);
+    MR::startAnim(this, "Appear", 0);
+    MR::startAnim(this, "Wait", 1);
+    appear();
+}
+
+void BlueCoinCounter::exeDisappear() {
+    MR::startAnim(this, "End", 0);
+    bool die = true;
+}
+
+void BlueCoinCounter::incCounter() {
+    if (MR::isHiddenLayout(this)) {
+        MR::startAnim(this, "Appear", 0);
+        MR::startAnim(this, "Wait", 1);
+    }
+
+    MR::showLayout(this);
+    MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()));
+    MR::startPaneAnim(this, "Counter", "Flash", 0);
+    mPaneRumbler->start();
+}
+
 kmWrite32(0x80471780, 0x38600050);
 
 void initBlueCoinLayoutInStage(CounterLayoutController* pController) {
     MR::connectToSceneLayout(pController);
 
-    pController->mPTDBlueCoinCounter = new BlueCoinCounter("BCoinCounter");
-    pController->mPTDBlueCoinCounter->initWithoutIter();
+    pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
+    
+    if (!MR::isEqualStageName("FileSelect")) {
+        pController->mPTDBlueCoinCounter->initWithoutIter();
+    }
 }
 
 kmCall(0x804657A0, initBlueCoinLayoutInStage);
 
 void appearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->appear();
+    if (!MR::isEqualStageName("FileSelect")) {
+    ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->exeAppear();
     pController->showAllLayout();
+    }
 }
 
 kmCall(0x80466128, appearBlueCoinLayout);
 
 void disappearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->kill();
+    if (!MR::isEqualStageName("FileSelect")) {
+    ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->exeDisappear();
     pController->hideAllLayout();
+    }
 }
 
 kmCall(0x80466198, disappearBlueCoinLayout);

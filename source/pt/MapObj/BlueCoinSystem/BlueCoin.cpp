@@ -1,4 +1,5 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/MapObj/CoinHolder.h"
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
@@ -71,6 +72,7 @@ void BlueCoin::appearAndMove() {
 void BlueCoin::collect() {
     mIsCollected = true;
     BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
+    ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->incCounter();
     MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");
     MR::incCoin(1, this);
 

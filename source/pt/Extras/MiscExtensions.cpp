@@ -276,7 +276,7 @@ namespace pt {
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
-	 void smssKillSamboHeadIfInWater(LiveActor* pActor) {
+	void smssKillSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
         pActor->kill();
     }

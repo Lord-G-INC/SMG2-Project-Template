@@ -3,8 +3,6 @@
 
 const char* SaveNames[3] = {"BlueCoinData1.bin", "BlueCoinData2.bin", "BlueCoinData3.bin"};
 
-extern "C" s32 NANDSeek(NANDFileInfo*, s32, s32);
-
 void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
@@ -23,9 +21,9 @@ namespace BlueCoinUtil {
                 }
             }
             delete [] buffer;
+            OSReport("BlueCoinData.bin successfully read.\n");
         }
         NANDClose(&info);
-        OSReport("BlueCoinData.bin successfully read.\n");
     }
 
     void SaveData() {
@@ -47,20 +45,20 @@ namespace BlueCoinUtil {
                     OSPanic("BlueCoinManager.cpp", __LINE__, "NANDWrite failed with code %d.", code);
                 }
                 delete [] buffer;
+                OSReport("BlueCoinData.bin successfully saved.\n");
             }
             NANDClose(&info);
-            OSReport("BlueCoinData.bin successfully saved.\n");
         }
     }
 
     s32 getCurrentFileNum() { // Thank you AwesomeTMC
         SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
-        s32 *valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
+        s32* valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
         return *valuePtr - 1;
     }
 
     void setBlueCoinGotOnCurrentFile(u8 id, bool collected) {
-        gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][id] = collected;
+        gBlueCoinData[getCurrentFileNum()][id] = collected;
     }
 
     void resetAllBlueCoin(u8 file) {
@@ -68,8 +66,18 @@ namespace BlueCoinUtil {
         SaveData();
     }
 
+    void resetAllBlueCoinAllFileNoSave() {
+        for (int i = 0; i < 3; i++) {
+            memset(gBlueCoinData[i], 0, 255);
+        }
+    }
+
     bool isBlueCoinGot(u8 file, u8 id) {
         return gBlueCoinData[file][id];
+    }
+
+    bool isBlueCoinGotCurrentFile(u8 id) {
+        return gBlueCoinData[getCurrentFileNum()][id];
     }
 
     s32 getTotalBlueCoinNum(u8 file) {
@@ -79,6 +87,10 @@ namespace BlueCoinUtil {
                 total++;
         }
         return total;
+    }
+
+    s32 getTotalBlueCoinNumCurrentFile() {
+        return getTotalBlueCoinNum(getCurrentFileNum());
     }
 
     s32 getTotalBlueCoinRangeNumFromBcsv(u8 file, const char* pStageName) {
@@ -105,13 +117,15 @@ namespace BlueCoinUtil {
             MR::getCsvDataS32(&rangeMin, &table, "BlueCoinRangeMin", targetLine);
             MR::getCsvDataS32(&rangeMax, &table, "BlueCoinRangeMax", targetLine);
 
-            for (s32 i = rangeMin; i < rangeMax + 1; i++) {
-                if (gBlueCoinData[file][i])
+            for (u8 i = rangeMin; i < rangeMax + 1; i++) {
+                if (isBlueCoinGot(file, i))
                     count++;
             }
+            OSReport("%s found in table! Count: %d, Min: %d, Max: %d\n", tableStageName, count, rangeMin, rangeMax);
             return count;
         }
-        return 0;
+        OSReport("%s not found in table. -1 returned!\n", pStageName);
+        return -1;
     }
 }
 
@@ -137,9 +151,7 @@ kmCall(0x804D9C90, saveBlueCoinDataOnGameSave);
 void onTitleScreenLoad(LiveActor* pActor) {
     pActor->initHitSensor(1); // Restore original call
 
-    for (int i = 0; i < 3; i++) {
-        memset(gBlueCoinData[i], 0, 255);
-    }
+    BlueCoinUtil::resetAllBlueCoinAllFileNoSave();
     
     BlueCoinUtil::GetData();
 }
