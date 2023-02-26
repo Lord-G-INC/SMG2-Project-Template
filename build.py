@@ -32,7 +32,7 @@ def get_date():
 # ----------------------------------------------------------------------------------------------------------------------
 # Define paths and check dependencies
 # ----------------------------------------------------------------------------------------------------------------------
-REGIONS = ["PAL", "USA", "JAP", "TWN", "KOR"]
+REGIONS = ["PAL", "USA", "JPN", "TWN", "KOR"]
 
 MWCCEPPC = dep("deps/CodeWarrior/mwcceppc.exe", "CodeWarrior compiler")
 MWASMEPPC = dep("deps/CodeWarrior/mwasmeppc.exe", "CodeWarrior assembler")
