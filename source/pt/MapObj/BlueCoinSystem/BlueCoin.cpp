@@ -4,9 +4,10 @@
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
-    mLaunchVelocity = 300.0f;
+    mLaunchVelocity = 175.0f;
     mIsCollected = false;
     mIsCollectedSaved = false;
+    mUseConnection = false;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -16,6 +17,7 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mID);
     MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
+
     mIsCollectedSaved = gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID];
     
     MR::processInitFunction(this, rIter, mIsCollectedSaved ? "BlueCoinClear" : "BlueCoin", false);
@@ -29,13 +31,13 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
-    mConnector = new MapObjConnector(this);
-    mConnector->attach(mTranslation);
-
     makeActorAppeared();
 
     // Can't use ActorInfo for this one...
     MR::useStageSwitchSyncAppear(this, rIter);
+
+    setShadowAndPoseModeFromJMapIter(rIter);
+    initShadow(rIter);
 }
 
 void BlueCoin::initAfterPlacement() {
@@ -62,15 +64,16 @@ bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) 
 void BlueCoin::appearAndMove() {
     // I need a better way to calculate the gravity
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
-    coinVelocity.scale(coinVelocity.y, mGravity);
+    coinVelocity.scale(coinVelocity.y, -mGravity);
+
+    MR::startSystemSE("SE_SY_PURPLE_COIN_APPEAR", -1, -1);
     
-    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
-    setCannotTime(300);
-    MR::validateHitSensors(this);
+    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 60);
 }
 
 void BlueCoin::collect() {
     mIsCollected = true;
+    MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1);
     BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
     ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->incCounter();
     MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");

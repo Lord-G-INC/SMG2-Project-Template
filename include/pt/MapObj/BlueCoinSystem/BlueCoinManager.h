@@ -14,5 +14,6 @@ namespace BlueCoinUtil {
     void resetAllBlueCoinAllFileNoSave();
     s32 getTotalBlueCoinNum(u8 file);
     s32 getTotalBlueCoinNumCurrentFile();
-    s32 getTotalBlueCoinRangeNumFromBcsv(u8 file, const char* pStageName);
+    s32 getTotalBlueCoinRangeNumFromBcsv(const char* pStageName);
+    void calcBlueCoinTexFromBcsv(LayoutActor* lyt, const char* pStageName);
 }

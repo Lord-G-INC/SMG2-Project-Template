@@ -16,4 +16,5 @@ class BlueCoin : public Coin {
     f32 mLaunchVelocity;
     bool mIsCollected;
     bool mIsCollectedSaved;
+    bool mUseConnection;
 };

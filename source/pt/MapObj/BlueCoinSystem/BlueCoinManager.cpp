@@ -1,8 +1,6 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
 #include "pt/Util/ActorUtil.h"
 
-const char* SaveNames[3] = {"BlueCoinData1.bin", "BlueCoinData2.bin", "BlueCoinData3.bin"};
-
 void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
@@ -93,14 +91,14 @@ namespace BlueCoinUtil {
         return getTotalBlueCoinNum(getCurrentFileNum());
     }
 
-    s32 getTotalBlueCoinRangeNumFromBcsv(u8 file, const char* pStageName) {
+    s32 getTotalBlueCoinRangeNumFromBcsv(const char* pStageName) {
         JMapInfo table = JMapInfo();
         table.attach(blueCoinBcsvTable);
 
         const char* tableStageName;
         s32 targetLine = -1;
 
-        for (u8 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
+        for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
             MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
 
             if (MR::isEqualString(pStageName, tableStageName)) {
@@ -109,7 +107,7 @@ namespace BlueCoinUtil {
             }
         }
         
-        if (targetLine >= 0) {
+        if (targetLine > -1) {
             s32 rangeMin;
             s32 rangeMax;
             s32 count = 0;
@@ -117,15 +115,41 @@ namespace BlueCoinUtil {
             MR::getCsvDataS32(&rangeMin, &table, "BlueCoinRangeMin", targetLine);
             MR::getCsvDataS32(&rangeMax, &table, "BlueCoinRangeMax", targetLine);
 
-            for (u8 i = rangeMin; i < rangeMax + 1; i++) {
-                if (isBlueCoinGot(file, i))
+            for (s32 i = rangeMin; i < rangeMax + 1; i++) {
+                if (isBlueCoinGotCurrentFile(i))
                     count++;
             }
-            OSReport("%s found in table! Count: %d, Min: %d, Max: %d\n", tableStageName, count, rangeMin, rangeMax);
             return count;
         }
-        OSReport("%s not found in table. -1 returned!\n", pStageName);
+
         return -1;
+    }
+
+    void calcBlueCoinTexFromBcsv(LayoutActor* lyt, const char* pStageName) {
+        JMapInfo table = JMapInfo();
+        table.attach(blueCoinBcsvTable);
+
+        const char* tableStageName;
+        s32 targetLine = -1;
+
+        for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
+            MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
+
+            if (MR::isEqualString(pStageName, tableStageName)) {
+                targetLine = i;
+                break;
+            }
+        }
+
+        if (targetLine > -1) {
+            s32 num = 10;
+            MR::getCsvDataS32(&num, &table, "TexID", targetLine);
+
+            char name[0xA];
+            snprintf(name, 0xA, "ShaCoin%d", num);
+            MR::showPaneRecursive(lyt, name);
+            OSReport("%s\n", name);
+        }
     }
 }
 
@@ -140,19 +164,19 @@ void resetAllBlueCoinOnDeleteFile(SaveDataHandleSequence* pSeq, UserFile* pFile,
 kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
 
 // Save gBlueCoinData to file.
-void saveBlueCoinDataOnGameSave(UserFile* pFile) {
-    pFile->setCreated(); // Restore original call
-    BlueCoinUtil::SaveData();
-}
 
-kmCall(0x804D9C90, saveBlueCoinDataOnGameSave);
+void saveBlueCoinDataOnGameSave(const char* pName) {
+    MR::startSystemSE(pName, -1, -1);
+    BlueCoinUtil::SaveData();
+    
+}
+kmCall(0x804DAFD0, saveBlueCoinDataOnGameSave);
 
 // Read blue coin binary on title screen load.
 void onTitleScreenLoad(LiveActor* pActor) {
     pActor->initHitSensor(1); // Restore original call
 
     BlueCoinUtil::resetAllBlueCoinAllFileNoSave();
-    
     BlueCoinUtil::GetData();
 }
 
