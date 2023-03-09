@@ -1,4 +1,5 @@
 #include "pt/Map/CollectSwitchCtrl.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
 /*
 * Authors: Aurum, Evanbowl
@@ -72,6 +73,9 @@ namespace pt {
 		}
 		else if (mItem == 3) {
 			count = MR::getPowerStarNum();
+		}
+		else if (mItem == 4) {
+			count = BlueCoinUtil::getTotalBlueCoinNumCurrentFile();
 		}
 
 		// Compare actual count with expected count

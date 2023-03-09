@@ -112,7 +112,6 @@ namespace pt {
         // MapObj
         { "BlueChip", createExtActor<BlueChip> },
         { "BlueChipGroup", createExtActor<BlueChipGroup> },
-        { "BlueCoin", createExtActor<BlueCoin> },
         { "CrystalSwitch", createExtActor<CrystalSwitch> },
         { "DeadLeaves", createExtActor<DeadLeaves> },
         { "DisplayStar", createExtActor<DisplayStar> },
@@ -147,6 +146,10 @@ namespace pt {
         { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
         { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
         { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
+
+        #if defined (ALL) || defined (SMSS)
+        { "BlueCoin", createExtActor<BlueCoin> },
+        #endif
 
         #if defined (ALL) || defined (NOGLE)
             { "WarpArea", createExtActor<WarpArea> },

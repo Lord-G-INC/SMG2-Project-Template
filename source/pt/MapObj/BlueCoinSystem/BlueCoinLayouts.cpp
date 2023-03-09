@@ -1,4 +1,5 @@
-#include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
+#if defined (ALL) || defined (SMSS)
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
@@ -40,12 +41,14 @@ void BlueCoinCounter::exeDisappear() {
 }
 
 void BlueCoinCounter::incCounter() {
-    if (MR::isHiddenLayout(this)) {
-        MR::startAnim(this, "Appear", 0);
-        MR::startAnim(this, "Wait", 1);
-    }
+    //if (MR::isHiddenLayout(this)) {
+    //    MR::startAnim(this, "Appear", 0);
+    //    MR::startAnim(this, "Wait", 1);
+    //}
 
-    MR::showLayout(this);
+    if (!MR::isActiveDefaultGameLayout())
+        MR::activateDefaultGameLayout();
+
     MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()));
     MR::startPaneAnim(this, "Counter", "Flash", 0);
     mPaneRumbler->start();
@@ -93,12 +96,15 @@ void killBlueCoinCounter(CounterLayoutController* pController) {
 }
 kmCall(0x8046590C, killBlueCoinCounter);
 
-const wchar_t counterPictureFonts[] = {
-0x000E, 0x0003, 0x0055, 0x0002, 0x005A, // Blue Coin Icon
-0x000E, 0x0003, 0x0010, 0x0002, 0x0010, // X Icon
-0x000E, 0x0006, 0x0001, 0x0008, 0x0000, // Counter
-0x0000, 0x0000, 0x0000, 0x0000
-};
+
+/* 
+/    BLUE COIN COUNTERS
+/
+/    Pause Menu Stage Counter
+/    Pause Menu Total Counter
+/    Galaxy Banner Stage Counter
+/    File Select Info Total Counter
+*/
 
 void initBlueCoinCounters(LayoutActor* actor) {
     MR::connectToSceneLayoutOnPause(actor);
@@ -120,7 +126,7 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     
         MR::showPane(actor, "StageInfo");
         MR::showPaneRecursive(actor, "ShaBlueCoinStage");
-        BlueCoinUtil::calcBlueCoinTexFromBcsv(actor, MR::getCurrentStageName());
+        BlueCoinUtil::showAmountPaneFromBcsv(actor, MR::getCurrentStageName());
     }
     else
         MR::hidePaneRecursive(actor, "ShaBlueCoinStage");
@@ -128,28 +134,58 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
 
 kmCall(0x80487188, setPauseMenuBlueCoinCount);
 
-void initGalaxyInfoBlueCoinCount(LayoutActor* actor) {\
+#ifdef ALL
+void initGalaxyInfoBlueCoinCount(LayoutActor* actor) {
     MR::registerDemoSimpleCastAll(actor);
-    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinStage", counterPictureFonts);
+    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalaxyInfo", counterPictureFonts);
 }
 
 kmCall(0x804A952C, initGalaxyInfoBlueCoinCount);
-
-// Modifies GalaxyInfo to add the Blue Coin Counter to it.
-// Works on vanilla but not the GLE.
+#endif
 
 void setGalaxyInfoBlueCoinCount(LayoutActor* actor, const char* pGalaxyName, const wchar_t* pWStr) {
-    MR::setTextBoxMessageRecursive(actor, "GalaxyName", pWStr);
-    s32 rangeNum = BlueCoinUtil::getTotalBlueCoinRangeNumFromBcsv(pGalaxyName);
+
+    #ifdef SMSS
+    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalaxyInfo", counterPictureFonts);
+    #endif
+
     MR::hidePaneRecursive(actor, "BlueCoin");
+    s32 rangeNum = BlueCoinUtil::getTotalBlueCoinRangeNumFromBcsv(pGalaxyName);
 
     if (rangeNum > -1) {
         MR::showPane(actor, "BlueCoin");
-        MR::showPaneRecursive(actor, "ShaBlueCoinStage");
-        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeNum, 0);
-        BlueCoinUtil::calcBlueCoinTexFromBcsv(actor, pGalaxyName);
+        MR::showPaneRecursive(actor, "ShaBlueCoinGalaxyInfo");
+        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinGalaxyInfo", rangeNum, 0);
+        BlueCoinUtil::showAmountPaneFromBcsv(actor, pGalaxyName);
     }
+
+    MR::setTextBoxMessageRecursive(actor, "GalaxyName", pWStr);
 }
 
+#ifdef ALL
 kmWrite32(0x804A95E4, 0x809B003C);
 kmCall(0x804A95E8, setGalaxyInfoBlueCoinCount);
+#endif
+
+#ifdef SMSS
+kmWrite32(0x804E0BE4, 0x809B003C);
+kmCall(0x804E0BE8, setGalaxyInfoBlueCoinCount);
+#endif
+
+void initBlueCoinCounterFileInfo(LayoutActor* pLayout) {
+    MR::connectToSceneLayout(pLayout);
+    MR::setTextBoxFormatRecursive(pLayout, "ShaBlueCoinFileInfo", counterPictureFonts);
+}
+
+kmCall(0x8046D908, initBlueCoinCounterFileInfo);
+
+void setBlueCoinCounterFileInfo(LayoutActor* pLayout, const Nerve* pNerve) {
+    s32 fileID = 1;
+    asm("lwz %0, 0x2C(r31)" : "=r" (fileID));
+
+    MR::setTextBoxArgNumberRecursive(pLayout, "ShaBlueCoinFileInfo", BlueCoinUtil::getTotalBlueCoinNum(fileID - 1), 0);
+    pLayout->setNerve(pNerve);
+}
+
+kmCall(0x8046D9BC, setBlueCoinCounterFileInfo);
+#endif

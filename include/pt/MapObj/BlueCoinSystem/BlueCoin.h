@@ -1,6 +1,7 @@
+#if defined (ALL) || defined (SMSS)
 #pragma once
 #include "syati.h"
-#include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
 class BlueCoin : public Coin {
     public:
@@ -18,3 +19,4 @@ class BlueCoin : public Coin {
     bool mIsCollectedSaved;
     bool mUseConnection;
 };
+#endif

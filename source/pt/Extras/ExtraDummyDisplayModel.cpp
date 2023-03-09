@@ -1,5 +1,5 @@
 #include "syati.h"
-#include "pt/MapObj/BlueCoinSystem/BlueCoinManager.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
 namespace pt {
     /*
@@ -20,8 +20,10 @@ namespace pt {
         /* 22 */ { "PowerUpRock",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 23 */ { "PowerUpInvincible", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 24 */ { "RedCoin", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
+        #if defined (ALL) || defined (SMSS)
         /* 25 */ { "BlueCoin", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 26 */ { "BlueCoinClear", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
+        #endif
     };
 
     DummyDisplayModel* tryCreateNewDummyModel(LiveActor *pHost, const JMapInfoIter &rIter, s32 defaultId, int v4) {
@@ -41,10 +43,12 @@ namespace pt {
             MR::getJMapInfoArg6NoInit(rIter, &colorId);
         }
 
+        #if defined (ALL) || defined (SMSS)
         if (modelId == 25) {
             if (BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
                 modelId = 26;
         }
+        #endif
 
         DummyDisplayModelInfo *pInfo = &cNewDummyDisplayModels[modelId - 15];
         DummyDisplayModel *pModel = new DummyDisplayModel(pHost, pInfo, v4, modelId, colorId);

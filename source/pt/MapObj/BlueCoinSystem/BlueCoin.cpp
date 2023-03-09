@@ -1,3 +1,4 @@
+#if defined (ALL) || defined (SMSS)
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/MapObj/CoinHolder.h"
@@ -74,13 +75,18 @@ void BlueCoin::appearAndMove() {
 void BlueCoin::collect() {
     mIsCollected = true;
     MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1);
-    BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
-    ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->incCounter();
-    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");
-    MR::incCoin(1, this);
-
+    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");  
+    
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
 
+    if (!BlueCoinUtil::isBlueCoinGotCurrentFile(mID)) {
+        BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
+        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->incCounter();
+    }
+
+    MR::incCoin(1, this);
+
     makeActorDead();
 }
+#endif
