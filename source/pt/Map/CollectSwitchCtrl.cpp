@@ -74,9 +74,12 @@ namespace pt {
 		else if (mItem == 3) {
 			count = MR::getPowerStarNum();
 		}
+		
+		#if defined (ALL) || defined (SMSS)
 		else if (mItem == 4) {
 			count = BlueCoinUtil::getTotalBlueCoinNumCurrentFile();
 		}
+		#endif
 
 		// Compare actual count with expected count
 		bool state = false;
