@@ -53,6 +53,8 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     initHitSensor(1);
     MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
+    MR::invalidateClipping(this);
+    
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
     mConnector = new MapObjConnector(this);
@@ -129,10 +131,8 @@ void RedCoin::appearAndMove() {
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
     coinVelocity.scale(coinVelocity.y, mGravity);
     
-    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 0);
-    setCannotTime(300);
+    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 60);
     MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
-    MR::validateHitSensors(this);
 }
 
 void RedCoin::collect() {

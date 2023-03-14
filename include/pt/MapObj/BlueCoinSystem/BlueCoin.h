@@ -1,4 +1,4 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
 #pragma once
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
@@ -9,6 +9,7 @@ class BlueCoin : public Coin {
     virtual void init(const JMapInfoIter&);
     virtual void initAfterPlacement();
     virtual void control();
+    virtual void calcAndSetBaseMtx();
     virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
     void appearAndMove();
     void collect();
@@ -16,7 +17,6 @@ class BlueCoin : public Coin {
     s32 mID;
     f32 mLaunchVelocity;
     bool mIsCollected;
-    bool mIsCollectedSaved;
     bool mUseConnection;
 };
-#endif
+//#endif

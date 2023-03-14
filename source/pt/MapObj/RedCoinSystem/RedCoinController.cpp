@@ -59,7 +59,7 @@ void RedCoinController::movement() {
     if (mElapsed == 140) {
         MR::hideLayout(mRedCoinCounter);
         MR::onSwitchA(this);
-        makeActorDead();
+        MR::getGroupFromArray(this)->killAll();
     }
 }
 

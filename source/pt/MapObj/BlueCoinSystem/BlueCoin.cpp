@@ -1,13 +1,15 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
+
+/*
+*/
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/MapObj/CoinHolder.h"
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
-    mLaunchVelocity = 175.0f;
+    mLaunchVelocity = 250.0f;
     mIsCollected = false;
-    mIsCollectedSaved = false;
     mUseConnection = false;
 
     MR::createCoinRotater();
@@ -18,10 +20,9 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mID);
     MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
-
-    mIsCollectedSaved = gBlueCoinData[BlueCoinUtil::getCurrentFileNum()][mID];
+    MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
     
-    MR::processInitFunction(this, rIter, mIsCollectedSaved ? "BlueCoinClear" : "BlueCoin", false);
+    MR::processInitFunction(this, rIter, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
     initEffectKeeper(2, "Coin", 0);
     MR::calcGravity(this);
 
@@ -30,15 +31,21 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     initHitSensor(1);
     MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
+    MR::initShadowVolumeSphere(this, 50);
+    
+    mConnector = new MapObjConnector(this);
+
     mFlashingCtrl = new FlashingCtrl(this, 1);
+
+    if (mUseConnection)
+        MR::invalidateClipping(this);
+    else
+        MR::setClippingFarMax(this);
 
     makeActorAppeared();
 
     // Can't use ActorInfo for this one...
     MR::useStageSwitchSyncAppear(this, rIter);
-
-    setShadowAndPoseModeFromJMapIter(rIter);
-    initShadow(rIter);
 }
 
 void BlueCoin::initAfterPlacement() {
@@ -51,6 +58,15 @@ void BlueCoin::initAfterPlacement() {
 void BlueCoin::control() {
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this))
         appearAndMove();
+}
+
+void BlueCoin::calcAndSetBaseMtx() {
+    if (mUseConnection) {
+        mConnector->connect();
+        mConnector->attachToUnder();
+    }
+
+    Coin::calcAndSetBaseMtx();
 }
 
 bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) {
@@ -75,7 +91,7 @@ void BlueCoin::appearAndMove() {
 void BlueCoin::collect() {
     mIsCollected = true;
     MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1);
-    MR::emitEffect(this, mIsCollectedSaved ? "BlueCoinClearGet" : "BlueCoinGet");  
+    MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet");  
     
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
@@ -89,4 +105,4 @@ void BlueCoin::collect() {
 
     makeActorDead();
 }
-#endif
+//#endif

@@ -1,4 +1,4 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
 #pragma once
 #include "syati.h"
 
@@ -20,4 +20,4 @@ namespace BlueCoinUtil {
     s32 getTotalBlueCoinRangeNumFromBcsv(const char* pStageName);
     void showAmountPaneFromBcsv(LayoutActor* lyt, const char* pStageName);
 }
-#endif
+//#endif

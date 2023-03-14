@@ -140,6 +140,7 @@ namespace pt {
 		MR::addPictureFontCode(pStr, type == 0x37 ? normalStarIcons[starColor] : type == 0x65 ? cometStarIcons[starColor] : type == 0x71 ? hiddenStarIcons[starColor] : 0x52);
 	}
 
+
 	#if defined (ALL) || defined (NOGLE)
 		kmCall(0x80041E30, getStarIcon); // Normal Star icons
 		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
@@ -173,8 +174,7 @@ namespace pt {
 		
 		// BTP and BRK animations are started and set using colorFrame.
 		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);
-		MR::startBrkAndSetFrameAndStop(actor, "BallColor", colorFrame);
-
+		MR::startBrkAndSetFrameAndStop(actor, "Normal", colorFrame);
 	}
 	
 	kmWrite32(0x8044461C, 0x7F84E378); // mr r4, r28

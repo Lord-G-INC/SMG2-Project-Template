@@ -1,10 +1,11 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/Util/ActorUtil.h"
 
-void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
+    void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
+
     void LoadBlueCoinData() {
         OSReport("(BlueCoinUtil) Attempting BlueCoinData.bin read.\n");
         NANDFileInfo info;
@@ -203,4 +204,4 @@ void onTitleScreenLoad(LiveActor* pActor) {
 }
 
 kmCall(0x8024F358, onTitleScreenLoad);
-#endif
+//#endif

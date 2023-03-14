@@ -1,4 +1,4 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
 #pragma once
 
 #include "syati.h"
@@ -20,8 +20,16 @@ public:
         virtual void control();
         void exeAppear();
         void exeDisappear();
+        void updateCounter();
         void incCounter();
 
+        CounterLayoutAppearer* mAppearer;
         CountUpPaneRumbler* mPaneRumbler;
 };
-#endif
+
+namespace NrvBlueCoinCounter {
+	NERVE(NrvShow);
+	NERVE(NrvHide);
+        NERVE(NrvUpdateCounter);
+};
+//#endif
