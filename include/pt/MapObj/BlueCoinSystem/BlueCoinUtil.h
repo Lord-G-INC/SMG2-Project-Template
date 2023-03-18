@@ -5,11 +5,11 @@
 extern bool** gBlueCoinData; // the one the only
 
 namespace BlueCoinUtil {
-    void LoadBlueCoinData();
-    void SaveBlueCoinData();
+    void loadBlueCoinData();
+    void saveBlueCoinData();
     void initBlueCoinArray();
     s32 getCurrentFileNum();
-    void setBlueCoinGotOnCurrentFile(u8 id, bool collected);
+    void setBlueCoinGotCurrentFile(u8 id);
     bool isBlueCoinGot(u8 file, u8 id);
     bool isBlueCoinGotCurrentFile(u8 id);
     bool isBlueCoinGot240(u8 fileID);

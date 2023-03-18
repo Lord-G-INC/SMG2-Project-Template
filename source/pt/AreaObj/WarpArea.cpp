@@ -19,7 +19,6 @@ WarpArea::WarpArea(const char* pName) : AreaObj(pName) {
 	mElapsed = 0;
 	mCanWarp = false;
 	mPos.set(0.0f, 0.0f, 0.0f);
-	mStageTable = new WarpAreaStageTable(true); // BCSV table for going to galaxies.
 	mErrorLayout = new ErrorLayout(); // Error layout used for displaying messages on screen if a WarpArea function fails.
 }
 
@@ -44,7 +43,7 @@ void WarpArea::movement() {
 		if (mElapsed == 10) {
 			MR::offPlayerControl();
 			MR::disableStarPointerShootStarPiece();
-			mStageTable->selectWipeClose(mFadeCloseType, mFadeCloseTime);
+			WarpAreaStageTable::selectWipeClose(mFadeCloseType, mFadeCloseTime);
 		
 		if (mPosID < 0) { // If the player is warping to a galaxy, fade out all music.
 			MR::stopSubBGM(45);
@@ -65,7 +64,7 @@ void WarpArea::movement() {
 				}
 			}
 			else {
-				mStageTable->readTable(mIndex, mPrintErrors); // If no general position is specified, set up a galaxy transition by reading the BCSV.
+				WarpAreaStageTable::readTable(mIndex, mPrintErrors);
 				NameObjFunction::requestMovementOff(this);
 			}
 		}
@@ -73,7 +72,7 @@ void WarpArea::movement() {
 		// Phase 3: Open the wipe and restore player control.
 		if (mElapsed == mFadeCloseTime + 90) {
 			if (mPosID >= 0) {
-				mStageTable->selectWipeOpen(mFadeOpenType, mFadeOpenTime);
+				WarpAreaStageTable::selectWipeOpen(mFadeOpenType, mFadeOpenType);
 				MR::onPlayerControl(1);
 				mElapsed = 0;
 				mCanWarp = false;
@@ -88,8 +87,8 @@ void WarpArea::movement() {
 		}
 	}
 
-const char* WarpArea::getManagerName() const {
-	return "BindEnd";
-}
+	const char* WarpArea::getManagerName() const {
+		return "BindEnd";
+	}
 }
 #endif

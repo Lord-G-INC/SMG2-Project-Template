@@ -2,14 +2,18 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/Util/ActorUtil.h"
 
+void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
-    void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
-
-    void LoadBlueCoinData() {
+    void loadBlueCoinData() {
         OSReport("(BlueCoinUtil) Attempting BlueCoinData.bin read.\n");
         NANDFileInfo info;
         s32 code = NANDOpen("BlueCoinData.bin", &info, 3);
+        
+        if (code == -12) {
+            OSReport("(BlueCoinUtil) BlueCoinData.bin not found. A new one will be created at save time.\n");
+        }
+
         if (code == 0) {
             u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[765];
             code = NANDRead(&info, buffer, 765);
@@ -27,7 +31,7 @@ namespace BlueCoinUtil {
         NANDClose(&info);
     }
 
-    void SaveBlueCoinData() {
+    void saveBlueCoinData() {
         s32 code = NANDCreate("BlueCoinData.bin", NAND_PERM_READ_WRITE, 0);
         if (code == 0 || code == -6) {
             NANDFileInfo info;
@@ -52,7 +56,7 @@ namespace BlueCoinUtil {
         }
     }
 
-    void initBlueCoinArray() {  
+    void initBlueCoinArray() {
         OSReport("(BlueCoinUtil) Initalizing Blue Coin array.\n");
         gBlueCoinData = new bool*[3];
         for (int i = 0; i < 3; i++) {
@@ -61,20 +65,19 @@ namespace BlueCoinUtil {
         }
         OSReport("(BlueCoinUtil) Blue Coin array initalization success.\n");
     }
-
     s32 getCurrentFileNum() { // Thank you AwesomeTMC
         SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
         s32* valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
         return *valuePtr - 1;
     }
 
-    void setBlueCoinGotOnCurrentFile(u8 id, bool collected) {
-        gBlueCoinData[getCurrentFileNum()][id] = collected;
+    void setBlueCoinGotCurrentFile(u8 id) {
+        gBlueCoinData[getCurrentFileNum()][id] = true;
     }
 
     void resetAllBlueCoin(u8 file) {
         memset(gBlueCoinData[file - 1], 0, 255);
-        SaveBlueCoinData();
+        saveBlueCoinData();
     }
 
     void resetAllBlueCoinAllFileNoSave() {
@@ -91,11 +94,6 @@ namespace BlueCoinUtil {
         return gBlueCoinData[getCurrentFileNum()][id];
     }
 
-    bool isBlueCoinGot240(u8 fileID) {
-        OSReport("Total count: %d\n", getTotalBlueCoinNum(fileID));
-        return getTotalBlueCoinNum(fileID) == 69 ? true : false;
-    }
-
     s32 getTotalBlueCoinNum(u8 file) {
         s32 total = 0;
         for (s32 i = 0; i < 255; i++) {
@@ -105,11 +103,17 @@ namespace BlueCoinUtil {
         return total;
     }
 
+    bool isBlueCoinGot240(u8 fileID) {
+        OSReport("Total count: %d\n", getTotalBlueCoinNum(fileID));
+        return getTotalBlueCoinNum(fileID) == 69 ? true : false;
+    }
+
     s32 getTotalBlueCoinNumCurrentFile() {
         return getTotalBlueCoinNum(getCurrentFileNum());
     }
 
     s32 getTotalBlueCoinRangeNumFromBcsv(const char* pStageName) {
+        //return 9999;
         JMapInfo table = JMapInfo();
         table.attach(blueCoinBcsvTable);
 
@@ -147,6 +151,7 @@ namespace BlueCoinUtil {
     }
 
     void showAmountPaneFromBcsv(LayoutActor* lyt, const char* pStageName) {
+        //return;
         JMapInfo table = JMapInfo();
         table.attach(blueCoinBcsvTable);
 
@@ -190,7 +195,7 @@ kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
 
 void saveBlueCoinDataOnGameSave(const char* pName) {
     MR::startSystemSE(pName, -1, -1);
-    BlueCoinUtil::SaveBlueCoinData();
+    BlueCoinUtil::saveBlueCoinData();
     
 }
 kmCall(0x804DAFD0, saveBlueCoinDataOnGameSave);
@@ -200,8 +205,9 @@ void onTitleScreenLoad(LiveActor* pActor) {
     pActor->initHitSensor(1); // Restore original call
 
     BlueCoinUtil::resetAllBlueCoinAllFileNoSave();
-    BlueCoinUtil::LoadBlueCoinData();
+    BlueCoinUtil::loadBlueCoinData();
 }
 
 kmCall(0x8024F358, onTitleScreenLoad);
+
 //#endif

@@ -4,9 +4,6 @@
 #include "Game/System/GameSequenceInGame.h"
 #include "c_stdlib.h"
 
-#if defined (ALL) || defined (NOGLE)
-namespace pt {
-
 /*
 * Authors: Evanbowl
 * 
@@ -21,84 +18,72 @@ namespace pt {
 * This feature is disabled on GLE builds.
 */
 
-	WarpAreaStageTable::WarpAreaStageTable(bool init) {
-		mDestStageName; // Destination Stage Name
-		mDestScenarioNo = 0; // Destionation Scenario Number
-		mDestGreenScenarioNo = 0; // Green Star Scenario Number
-		mBCSVWipeType = 0; // Wipe Fade In Type (to be copied to "WipeType")
-		mBCSVWipeTime = 0; // Wipe Fade In Time (to be copied to "WipeTime")
-		mIndex = 0; // BCSV Index
-		mCanWarp = true; // Boolean that prevents the warparea transition from happening if it was not set up correctly.
-		mErrorLayout = new ErrorLayout();
+#if defined (ALL) || defined (NOGLE)
 
-		if (init)
-			mErrorLayout->initWithoutIter();
-	}
+void* sWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
+static s32 gLastTableIndex = -1;
 
-	bool mWarpAreaUsed;
-	s32 mWipeType;
-	s32 mWipeTime;
+namespace WarpAreaStageTable {
+	void readTable(s32 selectedindex, bool useErrors) {
 
-	void* WarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
+		JMapInfo table = JMapInfo();
+		table.attach(sWarpAreaStageTableBCSV);
+		s32 elementNum = MR::getCsvDataElementNum(&table);
+		s32 targetLine = -1;
+		s32 index;
 
-	void WarpAreaStageTable::readTable(s32 selectedindex, bool useErrors) {
+		for (s32 i = 0; i < elementNum; i++) {
+			MR::getCsvDataS32(&index, &table, "Index", i);
 
-		JMapInfo* StageTable = new JMapInfo();
-		StageTable->attach(WarpAreaStageTableBCSV);
-
-		for (s32 i = 0; i < MR::getCsvDataElementNum(StageTable); i++) {
-			MR::getCsvDataStr(&mDestStageName, StageTable, "StageName", i);
-			MR::getCsvDataS32(&mDestScenarioNo, StageTable, "ScenarioNo", i);
-			MR::getCsvDataS32(&mDestGreenScenarioNo, StageTable, "GreenStarScenarioNo", i);
-			MR::getCsvDataS32(&mBCSVWipeType, StageTable, "WipeType", i);
-			MR::getCsvDataS32(&mBCSVWipeTime, StageTable, "WipeTime", i);
-			MR::getCsvDataS32(&mIndex, StageTable, "Index", i);
-
-		if (selectedindex == mIndex) {
-
-			// Check if the scenario number is valid, if not then disable warping
-			if (mDestScenarioNo < 1 || mDestScenarioNo > 8) {
-				mErrorLayout->printf(useErrors, "Failed. %d is not a valid scenario.\n", mDestScenarioNo); //Print a message on screen if an invalid scenario number is input.
-				mCanWarp = false;
-			}
-
-			// Check if the green star scenario number is valid, if not then disable warping
-			if (mDestGreenScenarioNo < -1 || mDestGreenScenarioNo > 4 || mDestGreenScenarioNo == 0) {
-				mErrorLayout->printf(useErrors, "Failed. %d is not a valid green star scenario.\n",  mDestGreenScenarioNo); //Print a message if an invalid green star scenario is input
-				mCanWarp = false; 
-			}
-
-			// Check if the folder of the destination stage exists, if not then disable warping
-			char str[128];
-			sprintf(str, "/StageData/%s/%sMap.arc", mDestStageName, mDestStageName);
-
-			if (!MR::isFileExist(str, false)) {
-				mErrorLayout->printf(useErrors, "Failed. Galaxy \"%s\" does not exist.\n",  mDestStageName); //Print a message if an invalid galaxy is input
-				mCanWarp = false; 
-			}
-			
-			mWipeType = mBCSVWipeType; // Separate variables are used to prevent the needed values from being overwritten by the next row in the BCSV.
-			mWipeTime = mBCSVWipeTime; // Awful and janky, but it works.
- 
-			if (mDestGreenScenarioNo > 0) // Green stars in the WarpAreaStageTable work nicely. Just input a 2, for example, and you'll go to Green Star 2!
-				mDestGreenScenarioNo += 3;
-
-			if (mCanWarp) { // If the selected BCSV index is set up correctly, go to the galaxy specified by destStage.
-				GameSequenceFunction::changeToScenarioSelect(mDestStageName);
-				GameSequenceFunction::changeSceneStage(mDestStageName, mDestScenarioNo, mDestGreenScenarioNo, 0);
-				mWarpAreaUsed = true;
-				mErrorLayout->kill(); // Make the layout dead since it is not needed anymore.
-			}
-			else { // Open up the wipe and restore player control if the galaxy transition fails
-				MR::openSystemWipeCircle(45);
-				MR::onPlayerControl(1);
+			if (selectedindex == index) {
+				targetLine = i;
+				break;
 			}
 		}
-	}
-	delete StageTable;
-}
 
-	void WarpAreaStageTable::selectWipeClose(s32 type, s32 fadeTime) {
+		if (targetLine == -1) {
+		}
+
+		const char* stageName;
+		s32 scenarioNo;
+		s32 greenStarNo;
+		
+		MR::getCsvDataStr(&stageName, &table, "StageName", targetLine);
+		MR::getCsvDataS32(&scenarioNo, &table, "ScenarioNo", targetLine);
+		MR::getCsvDataS32(&greenStarNo, &table, "GreenStarScenarioNo", targetLine);
+
+		bool canWarp = true;
+
+		if (scenarioNo < 1 || scenarioNo > 8) {		
+			canWarp = false;
+		}
+
+		if (greenStarNo < -1 || greenStarNo > 4 || greenStarNo == 0) {
+			canWarp = false; 
+		}
+		else
+			greenStarNo + 3;
+
+		char str[128];
+		sprintf(str, "/StageData/%s/%sMap.arc", stageName, stageName);
+
+		if (!MR::isFileExist(str, false)) {
+			canWarp = false; 
+		}
+
+
+		if (canWarp) {
+			gLastTableIndex = targetLine;
+			GameSequenceFunction::changeToScenarioSelect(stageName);
+			GameSequenceFunction::changeSceneStage(stageName, scenarioNo, greenStarNo, 0);
+		}
+		else {
+			MR::openSystemWipeCircle(45);
+			MR::onPlayerControl(1);
+		}
+	}
+
+	void selectWipeClose(s32 type, s32 fadeTime) {
 	if (fadeTime == -1)
 		fadeTime = 45;
 
@@ -125,7 +110,7 @@ namespace pt {
 		}
 	}
 
-	void WarpAreaStageTable::selectWipeOpen(s32 type, s32 fadeTime) {
+	void selectWipeOpen(s32 type, s32 fadeTime) {
 	if (fadeTime == -1)
 		fadeTime = 45;
 
@@ -145,23 +130,30 @@ namespace pt {
 		}
 	}
 
-	void setWipeOnStageLoad() {
-		WarpAreaStageTable* StageTable = new WarpAreaStageTable(false);
 
-		if (mWarpAreaUsed == true) {//Checks if the WarpArea was used to enter a galaxy.
-			StageTable->selectWipeOpen(mWipeType, mWipeTime); //If yes, change the opening Wipe to what is set in the selected index's BCSV entry.
-			mWarpAreaUsed = false;
-			delete StageTable;
+	// Doesn't work
+	void setWipeOnStageLoad() {
+		JMapInfo table = JMapInfo();
+		table.attach(sWarpAreaStageTableBCSV);
+
+		s32 wipeType = 0;
+		s32 wipeTime = 0;
+
+		if (gLastTableIndex > -1) {
+			MR::getCsvDataS32(&wipeType, &table, "WipeType", gLastTableIndex);
+			MR::getCsvDataS32(&wipeType, &table, "WipeTime", gLastTableIndex);
+			selectWipeOpen(wipeType, wipeTime);
+			gLastTableIndex = -1;
 		}
 		else
 			MR::openSystemWipeWhiteFade(90); //If no, use the default wipe and wipe time.
-
 	}
 
 	kmCall(0x804B44D0, setWipeOnStageLoad); //sub_804B4490 + 0x40
 	
 
 	// Error Layout Code
+}
 
 	ErrorLayout::ErrorLayout() : LayoutActor("WarpAreaErrorLayout", 0) {}
 
@@ -187,5 +179,4 @@ namespace pt {
 			MR::setTextBoxFormatRecursive(this, "ShaText", L"%s", string);
 		}
 	}
-}
 #endif

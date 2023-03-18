@@ -9,7 +9,6 @@
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
     mLaunchVelocity = 250.0f;
-    mIsCollected = false;
     mUseConnection = false;
 
     MR::createCoinRotater();
@@ -30,9 +29,8 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     initHitSensor(1);
     MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
+    Coin::initShadow(rIter);
 
-    MR::initShadowVolumeSphere(this, 50);
-    
     mConnector = new MapObjConnector(this);
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
@@ -70,7 +68,7 @@ void BlueCoin::calcAndSetBaseMtx() {
 }
 
 bool BlueCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReciver) {
-    if (MR::isMsgItemGet(msg) && !mIsCollected) {
+    if (MR::isMsgItemGet(msg)) {
         collect();
         return true;
     }
@@ -89,7 +87,6 @@ void BlueCoin::appearAndMove() {
 }
 
 void BlueCoin::collect() {
-    mIsCollected = true;
     MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1);
     MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet");  
     
@@ -97,8 +94,8 @@ void BlueCoin::collect() {
         MR::onSwitchA(this);
 
     if (!BlueCoinUtil::isBlueCoinGotCurrentFile(mID)) {
-        BlueCoinUtil::setBlueCoinGotOnCurrentFile(mID, true);
-        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->incCounter();
+        BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
+        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
     }
 
     MR::incCoin(1, this);

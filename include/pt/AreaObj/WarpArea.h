@@ -16,7 +16,6 @@ namespace pt {
 		s32 mElapsed;
 		bool mCanWarp;
 		TVec3f mPos;
-		WarpAreaStageTable* mStageTable;
 		ErrorLayout* mErrorLayout;
 
 		#define mPosID mObjArg0

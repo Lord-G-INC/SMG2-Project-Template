@@ -15,7 +15,7 @@ void init() {
     OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
 
     #if defined (ALL) || defined (SMSS)
-    BlueCoinUtil::initBlueCoinArray();
+        BlueCoinUtil::initBlueCoinArray();
     #endif
     
     #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)

@@ -20,16 +20,19 @@ public:
         virtual void control();
         void exeAppear();
         void exeDisappear();
-        void updateCounter();
+        void exeWait();
+        void startCountUp();
         void incCounter();
+        void exeAppearAndUpdate();
 
         CounterLayoutAppearer* mAppearer;
         CountUpPaneRumbler* mPaneRumbler;
+        s32 mWaitTime;
 };
 
 namespace NrvBlueCoinCounter {
-	NERVE(NrvShow);
-	NERVE(NrvHide);
-        NERVE(NrvUpdateCounter);
+	NERVE(NrvAppear);
+        NERVE(NrvDisappear);
+        NERVE(NrvAppearAndUpdate);
 };
 //#endif

@@ -3,17 +3,17 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {}
+BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {
+    mWaitTime = 120;
+}
 
 void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     initLayoutManager("BlueCoinCounterInStage", 2);
     initEffectKeeper(0, 0, 0);
-
-    MR::createAndAddPaneCtrl(this, "Counter", 1);
-
-    MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNum(BlueCoinUtil::getCurrentFileNum()));
-
     MR::registerDemoSimpleCastAll(this);
+    MR::connectToSceneLayout(this);
+    MR::createAndAddPaneCtrl(this, "Counter", 1);
+    MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNumCurrentFile());
 
     mAppearer = new CounterLayoutAppearer(this, TVec2f(-50.0f, 0.0f));
 
@@ -21,9 +21,8 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     mPaneRumbler->mRumbleCalculator->mRumbleStrength = 8.0f;
     mPaneRumbler->reset();
 
-    MR::connectToSceneLayout(this);
     appear();
-    initNerve(&NrvBlueCoinCounter::NrvHide::sInstance);
+    initNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     MR::hideLayout(this);
 }
 
@@ -33,41 +32,46 @@ void BlueCoinCounter::control() {
 }
 
 void BlueCoinCounter::exeAppear() {
-    if (MR::isFirstStep(this)) {
+    if (MR::isFirstStep(this) && MR::isHiddenLayout(this)) {
         MR::showLayout(this);
-
-        if (!isNerve(&NrvBlueCoinCounter::NrvUpdateCounter::sInstance)) {
-            mAppearer->appear(TVec2f(0.0f, 0.0f));
-            MR::startAnim(this, "Wait", 1);
-        }
+        mAppearer->appear(TVec2f(0.0f, 0.0f));
+        MR::startAnim(this, "Wait", 1);
     }
 }
-
+  
 void BlueCoinCounter::exeDisappear() {
+
     if (MR::isFirstStep(this))
         mAppearer->disappear();
 
-    if (MR::isStep(this, 10))
+    if (MR::isStep(this, 10)) {
         MR::hideLayout(this);
+        mWaitTime = 120;
+    }
+}
+
+void BlueCoinCounter::startCountUp() {
+    mWaitTime + 15;
+
+    if (mAppearer->isAppeared())
+        incCounter();
+    else
+        setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
+}
+
+void BlueCoinCounter::exeAppearAndUpdate() {
+    exeAppear();
+
+    if (MR::isStep(this, 15))
+        incCounter();
+
+    MR::setNerveAtStep(this, &NrvBlueCoinCounter::NrvDisappear::sInstance, mWaitTime);
 }
 
 void BlueCoinCounter::incCounter() {
     MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNumCurrentFile());
     MR::startPaneAnim(this, "Counter", "Flash", 0);
     mPaneRumbler->start();
-
-    if (isNerve(&NrvBlueCoinCounter::NrvHide::sInstance))
-        setNerve(&NrvBlueCoinCounter::NrvUpdateCounter::sInstance);
-}
-
-void BlueCoinCounter::updateCounter() {
-    if (MR::isFirstStep(this)) {
-        MR::showLayout(this);
-        mAppearer->appear(TVec2f(0.0f, 0.0f));
-    }
-
-    if (MR::isStep(this, 120))
-        setNerve(&NrvBlueCoinCounter::NrvHide::sInstance);
 }
 
 // Add 0x4 to CounterLayoutController for BlueCoinCounter ptr
@@ -76,24 +80,24 @@ kmWrite32(0x80471780, 0x38600050);
 // Blue Coin Counter nerves
 
 namespace NrvBlueCoinCounter {
-	void NrvShow::execute(Spine* pSpine) const {
+	void NrvAppear::execute(Spine* pSpine) const {
 		BlueCoinCounter* pActor = (BlueCoinCounter*)pSpine->mExecutor;
         pActor->exeAppear();
 	}
 
-	void NrvHide::execute(Spine* pSpine) const {
+	void NrvDisappear::execute(Spine* pSpine) const {
 		BlueCoinCounter* pActor = (BlueCoinCounter*)pSpine->mExecutor;
         pActor->exeDisappear();
 	}
 
-	void NrvUpdateCounter::execute(Spine* pSpine) const {
+	void NrvAppearAndUpdate::execute(Spine* pSpine) const {
 		BlueCoinCounter* pActor = (BlueCoinCounter*)pSpine->mExecutor;
-        pActor->updateCounter();
+        pActor->exeAppearAndUpdate();
 	}
 
-	NrvShow(NrvShow::sInstance);
-    NrvHide(NrvHide::sInstance);
-    NrvUpdateCounter(NrvUpdateCounter::sInstance);
+	NrvAppear(NrvAppear::sInstance);
+    NrvDisappear(NrvDisappear::sInstance);
+    NrvAppearAndUpdate(NrvAppearAndUpdate::sInstance);
 }
 
 // BlueCoinCounter hooks
@@ -109,21 +113,24 @@ void initBlueCoinLayout(CounterLayoutController* pController) {
 kmCall(0x804657A0, initBlueCoinLayout);
 
 void appearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvShow::sInstance);
+    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
     pController->showAllLayout();
 }
 
 kmCall(0x880466128, appearBlueCoinLayout);
 
 void disappearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvHide::sInstance);
+    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     pController->hideAllLayout();
 }
 
 kmCall(0x80466198, disappearBlueCoinLayout);
 
 void killBlueCoinCounter(CounterLayoutController* pController) {
-    MR::hideLayout(pController->mPTDBlueCoinCounter);
+    LayoutActor* pLayout = pController->mPTDBlueCoinCounter;
+
+    MR::hideLayout(pLayout);
+    pLayout->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     pController->killAllCoounter();
 }
 kmCall(0x8046590C, killBlueCoinCounter);
@@ -134,7 +141,6 @@ kmCall(0x8046590C, killBlueCoinCounter);
 /
 /    Pause Menu Stage Counter
 /    Pause Menu Total Counter
-/    Galaxy Banner Stage Counter
 /    File Select Info Total Counter
 */
 
@@ -165,47 +171,6 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
 }
 
 kmCall(0x80487188, setPauseMenuBlueCoinCount);
-
-
-// Disabled since GLE does not want to play nice
-
-//#ifdef ALL
-//void initGalaxyInfoBlueCoinCount(LayoutActor* actor) {
-//    MR::registerDemoSimpleCastAll(actor);
-//    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalaxyInfo", counterPictureFonts);
-//}
-//
-//kmCall(0x804A952C, initGalaxyInfoBlueCoinCount);
-//#endif
-//
-//void setGalaxyInfoBlueCoinCount(LayoutActor* actor, const char* pGalaxyName, const wchar_t* pWStr) {
-//
-//    #ifdef SMSS
-//    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalaxyInfo", counterPictureFonts);
-//    #endif
-//
-//    MR::hidePaneRecursive(actor, "BlueCoin");
-//    s32 rangeNum = BlueCoinUtil::getTotalBlueCoinRangeNumFromBcsv(pGalaxyName);
-//
-//    if (rangeNum > -1) {
-//        MR::showPane(actor, "BlueCoin");
-//        MR::showPaneRecursive(actor, "ShaBlueCoinGalaxyInfo");
-//        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinGalaxyInfo", rangeNum, 0);
-//        BlueCoinUtil::showAmountPaneFromBcsv(actor, pGalaxyName);
-//    }
-//
-//    MR::setTextBoxMessageRecursive(actor, "GalaxyName", pWStr);
-//}
-//
-//#ifdef ALL
-//kmWrite32(0x804A95E4, 0x809B003C);
-//kmCall(0x804A95E8, setGalaxyInfoBlueCoinCount);
-//#endif
-//
-//#ifdef SMSS
-//kmWrite32(0x804E0BE4, 0x809B003C);
-//kmCall(0x804E0BE8, setGalaxyInfoBlueCoinCount);
-//#endif
 
 void initBlueCoinCounterFileInfo(LayoutActor* pLayout) {
     MR::connectToSceneLayout(pLayout);
