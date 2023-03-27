@@ -2,123 +2,121 @@
 #include "Game/Util.h"
 
 /*
- One of the older SMG2PT objects.
- SwitchBox's development was started by me after PTimerSwitch was finished.
- SwitchBox was originally scrapped due to the particle BTI images being removed from the game.
- I used PyJPC, a really old particle tool, to add the SMG1 JPA files into 2, which is easy.
- Though, it could not add BTI images without destroying the game's existing particles.
- However, Aurum made pygapa, a tool which makes particle adding easy.
-
- And so, this is a rewrite of SMG1's SwitchBox added into 2 with even more options.
+ Attempted decomp of SwitchBox from SMG1 Korean
 */
 
-namespace pt {
-
-SwitchBox::SwitchBox(const char* pName) : LiveActor(pName) {
-	mTimer = 0;
-	mUseRespawn = false;
-	mUseTimerSe = false;
-}
+SwitchBox::SwitchBox(const char* pName) : LiveActor(pName) {}
 
 void SwitchBox::init(const JMapInfoIter& rIter) {
-	MR::processInitFunction(this, rIter, false);
-	initHitSensor(1); // Initializes the HitSensor.
+	// float stuff here
+	MR::initDefaultPos(this, rIter);
+	initModelManagerWithAnm("SwitchBox", 0, 0, false);
+	MR::connectToSceneMapObjNoCalcAnim(this);
+	initSound(2, "SwitchBox", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
+	initNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance, 0);
+	initEffectKeeper(3, 0, false);
+	initHitSensor(1);
+	MR::addHitSensorMapObj(this, "body", 8, 0.0f, mTranslation);
 
-	MR::addHitSensorMapObj(this, "SwitchBox", 1, 75.0f, TVec3f(0.0f, 150.0f, 0.0f));
+	// checks for... something
+	// also gets obj arg1
 
-    initSound(2, "SwitchBox", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
+	setNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance);
+	MR::initCollisionParts(this, "SwitchBox", getSensor("body"), 0);
+	MR::validateClipping(this);
 
-	MR::getJMapInfoArg0NoInit(rIter, &mTimer); // Gets Obj_arg0
-	MR::getJMapInfoArg1NoInit(rIter, &mUseRespawn); // Gets Obj_arg1
-	MR::getJMapInfoArg2NoInit(rIter, &mUseTimerSe); // Gets Obj_arg2
-	MR::getJMapInfoArg3NoInit(rIter, &mDisableP2); // Gets Obj_arg3
-	MR::validateCollisionParts(this); // Validates collision
+	// more checks
+	// Shadow Volume box is removed in smg2
 
-	initNerve(&NrvSwitchBox::NrvWait::sInstance, 0); // Sets nerve state to Wait
-	makeActorAppeared(); // Makes the object appear
+	MR::setShadowVolumeStartDropOffset(this, 0, 77.0f);
+	MR::setShadowVolumeEndDropOffset(this, 0, 150.0f);
+	MR::onShadowVolumeCutDropLength(this, 0);
+	MR::excludeCalcShadowToMyCollision(this, 0);
+	MR::onCalcGravity(this);
+	MR::onCalcShadowOneTime(this, 0);
+	
+	MR::addToAttributeGroupSearchTurtle(this);
+
+	if (MR::useStageSwitchReadAppear(this, rIter))
+		MR::useStageSwitchSyncAppear(this, rIter);
+
+	MR::needStageSwitchWriteDead(this, rIter);
+
+	// more float stuff
 }
 
-void SwitchBox::exeOn() {
-	if (MR::isValidSwitchDead(this)) { // Checks if the SW_DEAD was set correctly.
-		MR::onSwitchDead(this); // Activates SW_DEAD.
-		MR::hideModel(this); // Makes the SwitchBox invisible.
-		MR::invalidateCollisionParts(this); // Makes the SwitchBox intangible.
-		MR::invalidateHitSensor(this, "SwitchBox"); // Invalidates all HitSensors.
-		MR::invalidateClipping(this); // Makes the SwitchBox never unload when activated.
+// initAfterPlacement ignored- it is a BLR and nothing more
 
-		MR::isInWater(mTranslation) ? MR::startLevelSound(this, "OjSBoxBreakWater", -1, -1, -1) : MR::startLevelSound(this, "OjSBoxBreak", -1, -1, -1);
-		MR::isInWater(mTranslation) ? MR::emitEffect(this, "BreakWater") : MR::emitEffect(this, "Break");
+void SwitchBox::exeWait() {
+	// what are we comparing???
+	setNerve(&NrvSwitchBox::SwitchBoxNrvHit::sInstance);
+}
 
-	if (mTimer >= 1 && mUseRespawn == 1)
-		initNerve(&NrvSwitchBox::NrvReturn::sInstance, 0); // Initalizes nerve "Return".
+// Done
+void SwitchBox::exeHit() {
+	if (getNerveStep() == 0)
+		getSensor("body")->invalidate();
+
+	if (getNerveStep() == 5)
+		MR::hideModel(this);
+
+	if (getNerveStep() == 15)
+		appear();
+}
+
+void SwitchBox::appear() {
+	MR::offSwitchDead(this);
+	// stuff here
+	LiveActor::appear();
+	MR::showModel(this);
+	setNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance);
+}
+
+// Done
+void SwitchBox::kill() {
+	MR::onSwitchDead(this);
+	LiveActor::kill();
+}
+
+void SwitchBox::doHit(HitSensor* sensor1, HitSensor* sensor2) {
+	// idk
+	// compares 0x90
+	MR::invalidateCollisionParts(this);
+
+	// not mTranslation
+	if (MR::isInWater(this, mTranslation)) {
+		MR::startSound(this, "SE_OJ_S_BLOCK_BREAK_W", -1, -1);
+		MR::emitEffect(this, "BreakWater");
 	}
-
-    if (!mUseRespawn)
-        makeActorDead();
-    
-}
-
-void SwitchBox::exeReturn() { // This function creates a timer sound if Obj_arg 1 and Obj_arg2 are set.
-	s32 step = getNerveStep();
-
-	if (step <= mTimer) {
-		if (!MR::isPlayerDead() && !MR::isPowerStarGetDemoActive()) {
-			if (mTimer == step)
-				MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
-			else if ((step % 60) == 0) {
-				if (step >= (mTimer - 120))
-					MR::startSystemSE("SE_SY_TIMER_A_1", -1, -1);
-				else
-					MR::startSystemSE("SE_SY_TIMER_A_2", -1, -1);
-			}
-		}
-	}
-
-	if (MR::isStep(this, mTimer)) { // Checks if the set time has run out.
-		MR::offSwitchDead(this); // Deactivates SW_DEAD.
-
-	if (mUseRespawn == 1) {
-		MR::showModel(this); // Makes the SwitchBox visible.
-		MR::validateCollisionParts(this); // Makes the SwitchBox tangible.
-		MR::validateHitSensor(this, "SwitchBox"); // Validates all HitSensors.
-		MR::emitEffect(this, "Return"); // Displays a particle effect.
-		MR::validateClipping(this); // Allows the SwitchBox to be unloaded when deactive.
-
-		initNerve(&NrvSwitchBox::NrvWait::sInstance, 0); // Sets the nerve to "Wait".
-		}
+	else {
+		MR::startSound(this, "SE_OJ_S_BLOCK_BREAK", -1, -1);
+		MR::emitEffect(this, "Break");
 	}
 }
 
-bool SwitchBox::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	if (MR::isMsgPlayerHipDrop(msg) || MR::isMsgPlayerHitAll(msg) || MR::isMsgYoshiEat(msg)) // Checks to see if the HitSensor has recieved a message,
-		initNerve(&NrvSwitchBox::NrvBreak::sInstance, 0); // Sets the nerve to "Break".
-		return false;
+
+bool receiveMsgPlayerAttack(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
+	return 0;
 }
 
-void SwitchBox::exe2P() {
-	if (!mDisableP2)
-		MR::attachSupportTicoToTarget(this); // Allows P2 to target the SwitchBox.
+
+bool receiveMsgEnemyAttack(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
+	return 0;
+}
+
+bool receiveOtherMsg(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
+	return 0;
 }
 
 namespace NrvSwitchBox {
-	void NrvWait::execute(Spine* pSpine) const {
-		SwitchBox* pActor = (SwitchBox*)pSpine->mExecutor;
-		pActor->exe2P();
+	void SwitchBoxNrvWait::execute(Spine* pSpine) const {
+		((SwitchBox*)pSpine->mExecutor)->exeWait();
 	}
 
-	void NrvBreak::execute(Spine* pSpine) const {
-		SwitchBox* pActor = (SwitchBox*)pSpine->mExecutor;
-		pActor->exeOn();
+	void SwitchBoxNrvHit::execute(Spine* pSpine) const {
+		((SwitchBox*)pSpine->mExecutor)->exeHit();
 	}
 
-	void NrvReturn::execute(Spine* pSpine) const {
-		SwitchBox* pActor = (SwitchBox*)pSpine->mExecutor;
-		pActor->exeReturn();
-	}
-
-	NrvWait(NrvWait::sInstance);
-	NrvBreak(NrvBreak::sInstance);
-	NrvReturn(NrvReturn::sInstance);
-}
-
+	SwitchBoxNrvWait(SwitchBoxNrvWait::sInstance);
+	SwitchBoxNrvHit(SwitchBoxNrvHit::sInstance);
 }
