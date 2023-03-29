@@ -62,6 +62,11 @@ namespace pt {
 		return 0;
 	}
 
+	void initShadowVolumeBox(LiveActor* pActor, const TVec3f& rPos) {
+		pActor->initShadowControllerList(1);
+		MR::addShadowVolumeBox(pActor, "ボリューム影(ボックス)", rPos, (MtxPtr)pActor->getBaseMtx());
+	}
+
 	// Works, but unneeded.
 	//void* loadFile(const char *pFile) {
 	//	DVDFileInfo fileHandle;

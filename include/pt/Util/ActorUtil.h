@@ -18,4 +18,6 @@ namespace pt {
 
 	void* loadArcAndFile(const char *pArc, const char *pFile);
 	//void* loadFile(const char* pFile);
+
+	void initShadowVolumeBox(LiveActor* pActor, const TVec3f& rPos);
 };
