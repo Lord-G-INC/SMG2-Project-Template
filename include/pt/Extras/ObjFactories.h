@@ -35,6 +35,7 @@
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Map/CometTimerObj.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
+#include "pt/MapObj/PTimerSwitch.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -146,6 +147,8 @@ namespace pt {
         { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
         { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
         { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
+
+        { "PTimerSwitch", createExtActor<PTimerSwitch> },
 
         #if defined (ALL) || defined (SMSS)
         { "BlueCoin", createExtActor<BlueCoin> },
