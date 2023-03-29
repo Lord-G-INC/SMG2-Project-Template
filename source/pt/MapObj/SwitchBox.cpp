@@ -1,122 +1,168 @@
 #include "pt/MapObj/SwitchBox.h"
-#include "Game/Util.h"
+#include "pt/Util/ActorUtil.h"
+#include "JSystem/JGeometry/TVec.h"
 
-/*
- Attempted decomp of SwitchBox from SMG1 Korean
-*/
+SwitchBox::SwitchBox(const char *pName) : LiveActor(pName) {
+	initShadows = true;
+}
 
-SwitchBox::SwitchBox(const char* pName) : LiveActor(pName) {}
-
-void SwitchBox::init(const JMapInfoIter& rIter) {
-	// float stuff here
+void SwitchBox::init(const JMapInfoIter &rIter) {
 	MR::initDefaultPos(this, rIter);
-	initModelManagerWithAnm("SwitchBox", 0, 0, false);
-	MR::connectToSceneMapObjNoCalcAnim(this);
-	initSound(2, "SwitchBox", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
+	MR::processInitFunction(this, rIter, false);
 	initNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance, 0);
-	initEffectKeeper(3, 0, false);
-	initHitSensor(1);
-	MR::addHitSensorMapObj(this, "body", 8, 0.0f, mTranslation);
+	f32 newScale = mScale.x * 90.0f;
+	initHitSensor(2);
+	TVec3f sensorOffset = TVec3f(0.0f, 0.0f, 0.0f);
+	sensorOffset.set(0.0f, newScale, 0.0f);
+	MR::addHitSensorMapObj(this, "body", 8, newScale, sensorOffset);
 
-	// checks for... something
-	// also gets obj arg1
+	MR::getJMapInfoArg1NoInit(rIter, &initShadows);
 
 	setNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance);
 	MR::initCollisionParts(this, "SwitchBox", getSensor("body"), 0);
 	MR::validateClipping(this);
 
-	// more checks
-	// Shadow Volume box is removed in smg2
+	if (initShadows) {
+		pt::initShadowVolumeBox(this, TVec3f(150.0f, 150.0f, 150.0f));
+		MR::setShadowVolumeStartDropOffset(this, 0, 77.0f);
+		MR::setShadowVolumeEndDropOffset(this, 0, 150.0f);
+		MR::excludeCalcShadowToMyCollision(this, 0);
+		MR::onShadowVolumeCutDropLength(this, 0);
+		MR::onCalcGravity(this);
+		MR::onCalcShadowOneTime(this, 0);
+	}
 
-	MR::setShadowVolumeStartDropOffset(this, 0, 77.0f);
-	MR::setShadowVolumeEndDropOffset(this, 0, 150.0f);
-	MR::onShadowVolumeCutDropLength(this, 0);
-	MR::excludeCalcShadowToMyCollision(this, 0);
-	MR::onCalcGravity(this);
-	MR::onCalcShadowOneTime(this, 0);
-	
 	MR::addToAttributeGroupSearchTurtle(this);
 
-	if (MR::useStageSwitchReadAppear(this, rIter))
-		MR::useStageSwitchSyncAppear(this, rIter);
+	if (MR::useStageSwitchReadAppear(this, rIter)) {
+		MR::syncStageSwitchAppear(this);
+	}
 
-	MR::needStageSwitchWriteDead(this, rIter);
-
-	// more float stuff
+	appear();
 }
-
-// initAfterPlacement ignored- it is a BLR and nothing more
 
 void SwitchBox::exeWait() {
-	// what are we comparing???
-	setNerve(&NrvSwitchBox::SwitchBoxNrvHit::sInstance);
+	if (_8C != 0) {
+		--_8C;
+	}
+
+	if (_8E != 0) {
+		--_8E;
+		if (_8E == 0) {
+			_90 = 1;
+		}
+	}
+
+	if (_90 == 0) {
+		setNerve(&NrvSwitchBox::SwitchBoxNrvHit::sInstance);
+	}
 }
 
-// Done
 void SwitchBox::exeHit() {
-	if (getNerveStep() == 0)
+	if (MR::isFirstStep(this))
 		getSensor("body")->invalidate();
 
-	if (getNerveStep() == 5)
+	if (MR::isStep(this, 5))
 		MR::hideModel(this);
 
-	if (getNerveStep() == 15)
-		appear();
+	if (MR::isStep(this, 15))
+		kill();
 }
 
 void SwitchBox::appear() {
 	MR::offSwitchDead(this);
-	// stuff here
+
+	_90 = 1;
+	_8E = 0;
+	_8C = 0;
+
 	LiveActor::appear();
 	MR::showModel(this);
 	setNerve(&NrvSwitchBox::SwitchBoxNrvWait::sInstance);
 }
 
-// Done
 void SwitchBox::kill() {
 	MR::onSwitchDead(this);
 	LiveActor::kill();
 }
 
-void SwitchBox::doHit(HitSensor* sensor1, HitSensor* sensor2) {
-	// idk
-	// compares 0x90
-	MR::invalidateCollisionParts(this);
+void SwitchBox::doHit() {
+	if (_90 != 0)
+		--_90;
 
-	// not mTranslation
-	if (MR::isInWater(this, mTranslation)) {
+	if (_90 == 0)
+		MR::invalidateCollisionParts(this);
+
+	_8E = 30;
+
+	if (MR::isInWater(this, TVec3f(0.0f, 0.0f, 0.0f))) {
 		MR::startSound(this, "SE_OJ_S_BLOCK_BREAK_W", -1, -1);
 		MR::emitEffect(this, "BreakWater");
-	}
-	else {
+	} else {
 		MR::startSound(this, "SE_OJ_S_BLOCK_BREAK", -1, -1);
 		MR::emitEffect(this, "Break");
 	}
 }
 
+bool SwitchBox::receiveMsgPlayerAttack(u32 msg, HitSensor *pSender, HitSensor *pReceiver) {
+	if (MR::isMsgPlayerUpperPunch(msg) && _90 != 0) {
+		doHit();
+		pSender->receiveMessage(ACTMES_REFLECT_V, pReceiver);
+		return true;
+	}
 
-bool receiveMsgPlayerAttack(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	return 0;
+	if (MR::isMsgPlayerHitAll(msg) && _90 != 0) {
+		doHit();
+		return true;
+	}
+
+	if (MR::isMsgPlayerHipDrop(msg) || MR::isMsgPlayerHipDropFloor(msg)) {
+		if (_8C != 0) {
+			doHit();
+			return true;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
+bool SwitchBox::receiveMsgEnemyAttack(u32 msg, HitSensor *pSender, HitSensor *pReceiver) {
+	if (_90 != 0) {
+		doHit();
+		return true;
+	}
 
-bool receiveMsgEnemyAttack(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	return 0;
+	return false;
 }
 
-bool receiveOtherMsg(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	return 0;
+bool SwitchBox::receiveOtherMsg(u32 msg, HitSensor *pSender, HitSensor *pReceiver) {
+	//if (msg == 0x1B) message 0x1B in smg2 is what?
+	//	return _90;
+
+	if (MR::isMsgPlayerUpperPunch(msg))
+		return _90;
+
+	if (MR::isMsgBallDashWall(msg))
+		return !_90;
+
+	if (MR::isMsgFloorTouch(msg)) {
+		_8C = 2;
+	}
+
+	return false;
 }
 
 namespace NrvSwitchBox {
-	void SwitchBoxNrvWait::execute(Spine* pSpine) const {
-		((SwitchBox*)pSpine->mExecutor)->exeWait();
-	}
-
-	void SwitchBoxNrvHit::execute(Spine* pSpine) const {
+	void SwitchBoxNrvHit::execute(Spine *pSpine) const {
 		((SwitchBox*)pSpine->mExecutor)->exeHit();
 	}
 
-	SwitchBoxNrvWait(SwitchBoxNrvWait::sInstance);
+	void SwitchBoxNrvWait::execute(Spine *pSpine) const {
+		((SwitchBox*)pSpine->mExecutor)->exeWait();
+	}
+
 	SwitchBoxNrvHit(SwitchBoxNrvHit::sInstance);
-}
+	SwitchBoxNrvWait(SwitchBoxNrvWait::sInstance);
+};
