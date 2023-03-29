@@ -12,18 +12,19 @@ void PTimerSwitch::reset() {
     setNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance);
     MR::validateCollisionParts(mCollisionParts);
     MR::startBck(this, "Wait", 0);
+    _94 = 0;
+    _98 = false;
 }
 
 void PTimerSwitch::init(const JMapInfoIter& rIter) {
-    OSReport("Init\n");
     MR::initDefaultPos(this, rIter);
     MR::processInitFunction(this, rIter, false);
     MR::connectToSceneMapObj(this);
     initHitSensor(2);
     MR::addHitSensorMapObj(this, "body", 0x10, 0.0f, TVec3f(0.0f, 0.0f, 0.0f));
-    MR::addHitSensor(this, "hit", 0x4F, 0x10, 120.0f, TVec3f(0.0f, 0.0f, 50.0f));
+    MR::addHitSensor(this, "hit", 0x49, 0x10, 120.0f, TVec3f(0.0f, 0.0f, 50.0f));
     MR::initCollisionParts(this, "PTimerSwitch", getSensor("body"), 0);
-    mCollisionParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), (MR::CollisionScaleType)2);
+    mCollisionParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), MR::CollisionScaleType_2);
     initSound(4, "PTimerSwitch", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
     MR::needStageSwitchWriteA(this, rIter);
     initNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance, 0);
@@ -43,7 +44,7 @@ void PTimerSwitch::appear() {
 
 void PTimerSwitch::kill() {
     LiveActor::kill();
-    MR::tryEmitEffect(this, "Delete");
+    MR::emitEffect(this, "Delete");
     MR::invalidateCollisionParts(mCollisionParts);
 }
 
@@ -57,7 +58,7 @@ void PTimerSwitch::calcAnim() {
 void PTimerSwitch::control() {
     if (_98)
         ++_94;
-    else if (_94 == 0)
+    else if (_94 > 0)
         --_94;
 
     _98 = false;
@@ -73,17 +74,21 @@ bool PTimerSwitch::receiveOtherMsg(u32 msg, HitSensor* pSender, HitSensor* pRece
 }
 
 bool PTimerSwitch::receiveMsgPlayerAttack(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-    if (msg == 0x5D) {
-        if (isNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance)) {
-            _98 = true;
-            return true;
-        }
-    }
-    return false;
+    if (!MR::isMsgPlayerTrample(msg)) 
+        return false;
+
+    if (pReceiver->mSensorType != 0x49)
+        return false;
+
+    if (!isNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance))
+        return false;
+
+    _98 = true;
+    return true;
 }
 
 bool PTimerSwitch::trySwitchDown() {
-    if (_94 == 0) {
+    if (_94 > 0) {
         setNerve(&NrvPTimerSwitch::PTimerSwitchNrvSwitchDown::sInstance);
         return true;
     }
