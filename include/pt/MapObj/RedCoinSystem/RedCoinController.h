@@ -1,7 +1,7 @@
 	#pragma once
 
 	#include "syati.h"
-    #include "pt/MapObj/RedCoinSystem/RedCoinLayouts.h"
+    #include "pt/MapObj/RedCoinSystem/RedCoinCounter.h"
     #include "pt/MapObj/RedCoinSystem/RedCoin.h"
 
     class RedCoinController : public LiveActor {

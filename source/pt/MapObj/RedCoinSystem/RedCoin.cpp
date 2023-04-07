@@ -60,8 +60,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     mConnector = new MapObjConnector(this);
     mConnector->attach(mTranslation);
 
-    mCoinCounterPlayer = new RedCoinCounterPlayer("RedCoinCounterPlayer");
-    mCoinCounterPlayer->initWithoutIter();
+    mCoinCounterPlayer = MR::createSimpleLayout("RedCoinCounterPlayer", "RedCoinCounterPlayer", 1);
+    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", 0);
+    MR::registerDemoSimpleCastAll(mCoinCounterPlayer);
 
     makeActorAppeared();
 
@@ -86,8 +87,8 @@ void RedCoin::initAfterPlacement() {
 
 
 void RedCoin::control() {
-    mCoinCounterPlayer->calcScreenPos(mCounterPlayerPos ? (LiveActor*)MarioAccess::getPlayerActor() : this, mCounterPlayerPos);
-    
+    calcCounterPlayerPos();
+
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
         mElapsed++;
         
@@ -97,6 +98,26 @@ void RedCoin::control() {
 
     if (mIsCollected)
         MR::zeroVelocity(this);
+}
+
+void RedCoin::calcCounterPlayerPos() {
+    TVec3f pos = mGravity;
+    TVec3f pos2 = mTranslation;
+    f32 heightAdd = 150.0f;
+
+    if (mCounterPlayerPos) {
+        pos = *MarioAccess::getPlayerActor()->getGravityVec();
+        pos2 = *MR::getPlayerPos();
+        heightAdd = 250.0f;
+    }
+
+    TVec2f screenPos;
+    TVec3f newPos;
+
+    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pos2, (Vec*)&newPos, -heightAdd);
+    
+    MR::calcScreenPosition(&screenPos, newPos);
+    mCoinCounterPlayer->setTrans(screenPos);
 }
 
 void RedCoin::calcAndSetBaseMtx() {
@@ -148,6 +169,10 @@ void RedCoin::collect() {
     MR::startSystemSE(RedCoinUtil::getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     mIsCollected = true;
+
+    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", RedCoinUtil::getRedCoinControllerFromGroup(this)->mNumCoins);
+    MR::startAnim(mCoinCounterPlayer, "Appear", 0);
+    mCoinCounterPlayer->appear();
 
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
     MR::incPlayerLife(1);

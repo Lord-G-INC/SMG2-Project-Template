@@ -2,7 +2,7 @@
 
 #include "syati.h"
 #include "pt/MapObj/RedCoinSystem/RedCoinController.h"
-#include "pt/MapObj/RedCoinSystem/RedCoinLayouts.h"
+#include "pt/MapObj/RedCoinSystem/RedCoinCounter.h"
 #include "revolution.h"
 #include "Game/MapObj/Coin.h"
 #include "Game/LiveActor/FlashingCtrl.h"
@@ -19,12 +19,13 @@
         virtual void control();
         virtual void calcAndSetBaseMtx();
         virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
-    
+
+        void calcCounterPlayerPos();
         void collect();
         void appearAndMove();
         void initAirBubble();
     
-        RedCoinCounterPlayer* mCoinCounterPlayer;
+        LayoutActor* mCoinCounterPlayer;
         LiveActorGroup* mGroup;
         f32 mLaunchVelocity; // Obj_arg0
         s32 mAppearDelay; // Obj_arg3

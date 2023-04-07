@@ -17,13 +17,3 @@
         CountUpPaneRumbler* mPaneRumbler;
         bool mIsValidAppear;
     };
-    
-    class RedCoinCounterPlayer : public LayoutActor {
-    public:
-        RedCoinCounterPlayer(const char* pName);
-        
-        virtual void init(const JMapInfoIter& rIter);
-        virtual void control();
-        void calcScreenPos(LiveActor* pActor, bool type);
-        void updateCounter(s32 count);
-    };

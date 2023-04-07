@@ -97,7 +97,6 @@ void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
-    coin->mCoinCounterPlayer->updateCounter(mNumCoins);
     
     // Only ever increment coins once.
     if (!coin->mHasRewardedCoins) {
