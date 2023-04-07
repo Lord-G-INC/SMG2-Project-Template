@@ -1,8 +1,9 @@
-//#if defined (ALL) || defined (SMSS)
+#ifdef SMSS
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/Util/ActorUtil.h"
 
-void* blueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
+bool** gBlueCoinData;
+void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -10,12 +11,11 @@ namespace BlueCoinUtil {
         NANDFileInfo info;
         s32 code = NANDOpen("BlueCoinData.bin", &info, 3);
         
-        if (code == -12) {
+        if (code == -12)
             OSReport("(BlueCoinUtil) BlueCoinData.bin not found. A new one will be created at save time.\n");
-        }
 
         if (code == 0) {
-            u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[765];
+            bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[765];
             code = NANDRead(&info, buffer, 765);
             if (code != 0 && code != 765) {
                 OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin read failed! NANDRead code: %d\n", code);
@@ -45,10 +45,12 @@ namespace BlueCoinUtil {
                         buffer[idx++] = gBlueCoinData[i][j];
                     }
                 }
+
                 code = NANDWrite(&info, buffer, 765);
-                if (code != 0 && code != 765) {
+
+                if (code != 0 && code != 765)
                     OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin write failed! NANDWrite code: %d\n\n", code);
-                }
+
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
             }
@@ -65,6 +67,7 @@ namespace BlueCoinUtil {
         }
         OSReport("(BlueCoinUtil) Blue Coin array initalization success.\n");
     }
+    
     s32 getCurrentFileNum() { // Thank you AwesomeTMC
         SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
         s32* valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
@@ -104,21 +107,22 @@ namespace BlueCoinUtil {
     }
 
     bool isBlueCoinGot240(u8 fileID) {
-        OSReport("Total count: %d\n", getTotalBlueCoinNum(fileID));
-        return getTotalBlueCoinNum(fileID) == 69 ? true : false;
+        return getTotalBlueCoinNum(fileID) == 240 ? true : false;
     }
 
     s32 getTotalBlueCoinNumCurrentFile() {
         return getTotalBlueCoinNum(getCurrentFileNum());
     }
 
-    s32 getTotalBlueCoinRangeNumFromBcsv(const char* pStageName) {
-        //return 9999;
+    s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly) {
         JMapInfo table = JMapInfo();
-        table.attach(blueCoinBcsvTable);
+        table.attach(gBlueCoinBcsvTable);
 
         const char* tableStageName;
         s32 targetLine = -1;
+
+        if (!pStageName)
+            pStageName = MR::getCurrentStageName();
 
         for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
             MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
@@ -138,46 +142,20 @@ namespace BlueCoinUtil {
             MR::getCsvDataS32(&rangeMax, &table, "BlueCoinRangeMax", targetLine);
 
             for (u32 i = rangeMin; i < rangeMax + 1; i++) {
-                if (isBlueCoinGotCurrentFile(i))
+                if (collectedCoinsOnly) {
+                    if (isBlueCoinGotCurrentFile(i))
+                        count++;
+                }
+                else
                     count++;
             }
 
-            OSReport("(BlueCoinIDRangeTable) Stage name: \"%s\", Range: %d through %d, Line: %d, Total: %d\n", pStageName, rangeMin, rangeMax, targetLine, count);
+            OSReport("(BlueCoinIDRangeTable) Stage name: \"%s\", Range: %d through %d, Line: %d, Collected Coins Only: %d, Total: %d\n", pStageName, rangeMin, rangeMax, targetLine, collectedCoinsOnly, count);
             return count;
         }
         
         OSReport("(BlueCoinIDRangeTable) Stage name \"%s\" not found in table. -1 returned!\n", pStageName);
         return -1;
-    }
-
-    void showAmountPaneFromBcsv(LayoutActor* lyt, const char* pStageName) {
-        //return;
-        JMapInfo table = JMapInfo();
-        table.attach(blueCoinBcsvTable);
-
-        const char* tableStageName;
-        s32 targetLine = -1;
-
-        for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
-            MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
-
-            if (MR::isEqualString(pStageName, tableStageName)) {
-                targetLine = i;
-                break;
-            }
-        }
-
-        if (targetLine > -1) {
-            s32 fieldTexID = 10;
-            MR::getCsvDataS32(&fieldTexID, &table, "TexID", targetLine);
-
-            char name[0xA];
-            snprintf(name, 0xA, "ShaCoin%d", fieldTexID);
-            MR::showPaneRecursive(lyt, name);
-            OSReport("(BlueCoinIDRangeTable) Layout Name: %s, Stage Name: \"%s\", TexID: %d, Line: %d, Shown Pane: \"%s\"\n", lyt->mName, tableStageName, fieldTexID, targetLine, name);
-        }
-        else
-            OSReport("(BlueCoinIDRangeTable) Stage name \"%s\" not found in table, no pane shown.\n", tableStageName);
     }
 }
 
@@ -210,4 +188,4 @@ void onTitleScreenLoad(LiveActor* pActor) {
 
 kmCall(0x8024F358, onTitleScreenLoad);
 
-//#endif
+#endif

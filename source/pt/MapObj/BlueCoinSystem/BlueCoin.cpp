@@ -1,4 +1,4 @@
-//#if defined (ALL) || defined (SMSS)
+#ifdef SMSS
 
 /*
 */
@@ -29,7 +29,9 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     initHitSensor(1);
     MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
-    Coin::initShadow(rIter);
+    
+    MR::initShadowVolumeCylinder(this, 50.0f);
+    MR::setShadowDropPositionPtr(this, 0, &mTranslation);
 
     mConnector = new MapObjConnector(this);
 
@@ -98,8 +100,19 @@ void BlueCoin::collect() {
         ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
     }
 
-    MR::incCoin(1, this);
+    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(1);
+
+    if (MR::isGalaxyDarkCometAppearInCurrentStage())
+        MR::incPlayerLife(1);
 
     makeActorDead();
 }
-//#endif
+
+void appearCustomCoinOnDarkComet(LiveActor* pActor) {
+    OSReport("%s\n", pActor->mName);
+    if (!MR::isEqualString(pActor->mName, "RedCoin") || !MR::isEqualString(pActor->mName, "BlueCoin"))
+        pActor->makeActorDead();
+}
+
+//kmCall(0x8028C2EC, appearCustomCoinOnDarkComet);
+#endif

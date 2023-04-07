@@ -1,10 +1,12 @@
-//#if defined (ALL) || defined (SMSS)
+#ifdef SMSS
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
+// HUD
+
 BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {
-    mWaitTime = 120;
+    mWaitTime = -1;
 }
 
 void BlueCoinCounter::init(const JMapInfoIter& rIter) {
@@ -29,6 +31,14 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
 void BlueCoinCounter::control() {
     mAppearer->updateNerve();
     mPaneRumbler->update();
+
+    if (mWaitTime > 0)
+        --mWaitTime;
+
+    if (mWaitTime == 0) {
+        setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+        mWaitTime = -1;
+    }
 }
 
 void BlueCoinCounter::exeAppear() {
@@ -40,35 +50,32 @@ void BlueCoinCounter::exeAppear() {
 }
   
 void BlueCoinCounter::exeDisappear() {
-
+    if (mWaitTime < 1) {
     if (MR::isFirstStep(this))
         mAppearer->disappear();
 
-    if (MR::isStep(this, 10)) {
+    if (MR::isStep(this, 10))
         MR::hideLayout(this);
-        mWaitTime = 120;
     }
 }
 
 void BlueCoinCounter::startCountUp() {
-    mWaitTime + 15;
-
     if (mAppearer->isAppeared())
-        incCounter();
-    else
+        updateCounter();
+    else {
+        mWaitTime = 120;
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
+    }
 }
 
 void BlueCoinCounter::exeAppearAndUpdate() {
     exeAppear();
 
     if (MR::isStep(this, 15))
-        incCounter();
-
-    MR::setNerveAtStep(this, &NrvBlueCoinCounter::NrvDisappear::sInstance, mWaitTime);
+        updateCounter();
 }
 
-void BlueCoinCounter::incCounter() {
+void BlueCoinCounter::updateCounter() {
     MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNumCurrentFile());
     MR::startPaneAnim(this, "Counter", "Flash", 0);
     mPaneRumbler->start();
@@ -76,8 +83,6 @@ void BlueCoinCounter::incCounter() {
 
 // Add 0x4 to CounterLayoutController for BlueCoinCounter ptr
 kmWrite32(0x80471780, 0x38600050);
-
-// Blue Coin Counter nerves
 
 namespace NrvBlueCoinCounter {
 	void NrvAppear::execute(Spine* pSpine) const {
@@ -100,8 +105,6 @@ namespace NrvBlueCoinCounter {
     NrvAppearAndUpdate(NrvAppearAndUpdate::sInstance);
 }
 
-// BlueCoinCounter hooks
-
 void initBlueCoinLayout(CounterLayoutController* pController) {
     MR::connectToSceneLayout(pController);
 
@@ -114,6 +117,7 @@ kmCall(0x804657A0, initBlueCoinLayout);
 
 void appearBlueCoinLayout(CounterLayoutController* pController) {
     pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
+    ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->mWaitTime = -1;
     pController->showAllLayout();
 }
 
@@ -133,16 +137,10 @@ void killBlueCoinCounter(CounterLayoutController* pController) {
     pLayout->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     pController->killAllCoounter();
 }
+
 kmCall(0x8046590C, killBlueCoinCounter);
 
-
-/* 
-/    BLUE COIN COUNTERS
-/
-/    Pause Menu Stage Counter
-/    Pause Menu Total Counter
-/    File Select Info Total Counter
-*/
+// PAUSE MENU
 
 void initBlueCoinCounters(LayoutActor* actor) {
     MR::connectToSceneLayoutOnPause(actor);
@@ -155,22 +153,30 @@ kmCall(0x80486D60, initBlueCoinCounters);
 
 void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     MR::setTextBoxArgNumberRecursive(actor, pStr, l, 0);
-    s32 rangeCount = BlueCoinUtil::getTotalBlueCoinRangeNumFromBcsv(MR::getCurrentStageName());
+    s32 rangeCollected = BlueCoinUtil::getBlueCoinRangeData(0, true);
+    s32 rangeAvailable = BlueCoinUtil::getBlueCoinRangeData(0, false);
 
     MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinTotal", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(), 0);
 
-    if (rangeCount > -1) {
-        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeCount, 0);
+    if (rangeCollected > -1) {
+        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeCollected, 0);
     
         MR::showPane(actor, "StageInfo");
         MR::showPaneRecursive(actor, "ShaBlueCoinStage");
-        BlueCoinUtil::showAmountPaneFromBcsv(actor, MR::getCurrentStageName());
+
+        if (rangeAvailable > -1) {
+            char paneName[0xA];
+            snprintf(paneName, 0xA, "ShaCoin%d", rangeAvailable);
+            MR::showPaneRecursive(actor, paneName);
+        }
     }
     else
         MR::hidePaneRecursive(actor, "ShaBlueCoinStage");
 }
 
 kmCall(0x80487188, setPauseMenuBlueCoinCount);
+
+// FILE INFO
 
 void initBlueCoinCounterFileInfo(LayoutActor* pLayout) {
     MR::connectToSceneLayout(pLayout);
@@ -188,4 +194,4 @@ void setBlueCoinCounterFileInfo(LayoutActor* pLayout, const Nerve* pNerve) {
 }
 
 kmCall(0x8046D9BC, setBlueCoinCounterFileInfo);
-//#endif
+#endif

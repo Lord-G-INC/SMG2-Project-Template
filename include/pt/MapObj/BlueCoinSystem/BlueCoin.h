@@ -1,4 +1,4 @@
-//#if defined (ALL) || defined (SMSS)
+#ifdef SMSS
 #pragma once
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
@@ -18,4 +18,4 @@ class BlueCoin : public Coin {
     f32 mLaunchVelocity;
     bool mUseConnection;
 };
-//#endif
+#endif

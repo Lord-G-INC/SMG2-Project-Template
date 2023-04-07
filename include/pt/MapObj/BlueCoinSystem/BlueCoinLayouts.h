@@ -1,4 +1,4 @@
-//#if defined (ALL) || defined (SMSS)
+#ifdef SMSS
 #pragma once
 
 #include "syati.h"
@@ -22,7 +22,7 @@ public:
         void exeDisappear();
         void exeWait();
         void startCountUp();
-        void incCounter();
+        void updateCounter();
         void exeAppearAndUpdate();
 
         CounterLayoutAppearer* mAppearer;
@@ -35,4 +35,4 @@ namespace NrvBlueCoinCounter {
         NERVE(NrvDisappear);
         NERVE(NrvAppearAndUpdate);
 };
-//#endif
+#endif
