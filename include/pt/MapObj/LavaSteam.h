@@ -1,5 +1,5 @@
+#ifdef ALL
 #pragma once
-
 #include "syati.h"
 
 class LavaSteam : public LiveActor {
@@ -24,3 +24,4 @@ namespace NrvLavaSteam {
     NERVE(HostTypeWait);
     NERVE(HostTypeWaitForSwitchOn);
 };
+#endif

@@ -1,7 +1,8 @@
+#ifdef ALL
 #include "pt/MapObj/LavaSteam.h"
 
 LavaSteam::LavaSteam(const char* pName) : LiveActor(pName) {
-    _90 = TVec3f(0.0f, 1.0f, 0.0f);;
+    _90 = TVec3f(0.0f, 1.0f, 0.0f);
     _9C = TVec3f(1.0f, 1.0f, 1.0f);
 }
 
@@ -31,11 +32,11 @@ void LavaSteam::init(const JMapInfoIter& rIter) {
 }
 
 void LavaSteam::initAfterPlacement() {
-    
+
 }
 
 void LavaSteam::attackSensor(HitSensor* pSender, HitSensor* pReceiver) {
-    
+
 }
 
 void LavaSteam::startClipped() {
@@ -106,3 +107,4 @@ namespace NrvLavaSteam {
     HostTypeWait(HostTypeWait::sInstance);
     HostTypeWaitForSwitchOn(HostTypeWaitForSwitchOn::sInstance);
 }
+#endif
