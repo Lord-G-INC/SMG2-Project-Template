@@ -10,7 +10,7 @@
     
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
-        void incCountAndUpdateLayouts(LiveActor* pActor);
+        void incCountAndUpdateLayouts();
         void resetAllRedCoins();
     
         RedCoinCounter* mRedCoinCounter;
@@ -21,7 +21,3 @@
         bool mShouldNotRewardCoins; // Obj_arg0
         bool mHasAllRedCoins;
     };
-    
-    namespace RedCoinUtil {
-    RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor);
-    }

@@ -21,7 +21,7 @@
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsCollected = false;
-    mLaunchVelocity = 300.0f;
+    mLaunchVelocity = 250.0f;
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
@@ -87,7 +87,8 @@ void RedCoin::initAfterPlacement() {
 
 
 void RedCoin::control() {
-    calcCounterPlayerPos();
+    if (mIsCollected)
+        calcCounterPlayerPos();
 
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
         mElapsed++;
@@ -95,6 +96,9 @@ void RedCoin::control() {
     if (mElapsed >= mAppearDelay)
         appearAndMove();
     }
+
+    if (MR::isOnSwitchB(this))
+        mLifeTime = 0x7FFFFFFF;
 
     if (mIsCollected)
         MR::zeroVelocity(this);
@@ -121,7 +125,7 @@ void RedCoin::calcCounterPlayerPos() {
 }
 
 void RedCoin::calcAndSetBaseMtx() {
-    if (mUseConnection) {
+    if (mUseConnection && !mIsCollected) {
         mConnector->connect();
         mConnector->attachToUnder();
     }
@@ -134,7 +138,7 @@ bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) 
 		collect();
         return true;
     }
-
+    
 	return false;
 }
 
@@ -150,13 +154,25 @@ void RedCoin::initAirBubble() {
 void RedCoin::appearAndMove() {
     // I need a better way to calculate the gravity
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
-    coinVelocity.scale(coinVelocity.y, mGravity);
+    coinVelocity.scale(coinVelocity.y, -mGravity);
     
-    appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 60);
+    appearMove(mTranslation, coinVelocity, 300, 60);
     MR::startSystemSE("SE_SY_RED_COIN_APPEAR", -1, -1);
 }
 
 void RedCoin::collect() {
+    mIsCollected = true;
+
+    RedCoinController* pController;
+    LiveActorGroup* group = MR::getGroupFromArray(this);
+
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (!strcmp(group->getActor(i)->mName, "RedCoinController")) {
+            pController = (RedCoinController*)group->getActor(i);
+            break;
+        }
+    }
+
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
     
@@ -164,13 +180,17 @@ void RedCoin::collect() {
         MR::emitEffect(mAirBubble, "RecoveryBubbleBreak");
         mAirBubble->kill();
     }
-    
-    RedCoinUtil::getRedCoinControllerFromGroup(this)->incCountAndUpdateLayouts(this);
-    MR::startSystemSE(RedCoinUtil::getRedCoinControllerFromGroup(this)->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
+  
+    // Only ever increment coins once.
+    if (!mHasRewardedCoins) {
+        GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(pController->mShouldNotRewardCoins ? 0 : 2);
+        mHasRewardedCoins = true;
+    }
 
-    mIsCollected = true;
+    pController->incCountAndUpdateLayouts();
+    MR::startSystemSE(pController->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
-    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", RedCoinUtil::getRedCoinControllerFromGroup(this)->mNumCoins);
+    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", pController->mNumCoins);
     MR::startAnim(mCoinCounterPlayer, "Appear", 0);
     mCoinCounterPlayer->appear();
 

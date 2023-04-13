@@ -52,7 +52,7 @@ void RedCoinCounter::updateCounter(s32 count, bool hasAllCoins) {
         mIsValidAppear = true;
         appearIfHidden();
     }
-
+    
     MR::setTextBoxNumberRecursive(this, "Counter", count);
     MR::startPaneAnim(this, "Counter", hasAllCoins ? "FlashLoop" : "Flash", 0);
     MR::emitEffect(this, "RedCoinCounterLight");

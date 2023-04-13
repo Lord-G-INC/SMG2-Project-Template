@@ -90,39 +90,10 @@ void RedCoinController::resetAllRedCoins() {
 }
 
 // Increases both layouts by 1
-void RedCoinController::incCountAndUpdateLayouts(LiveActor* pActor) {
-    RedCoin* coin = (RedCoin*)pActor;
+void RedCoinController::incCountAndUpdateLayouts() {
     mNumCoins++;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
-
-    mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
     
-    // Only ever increment coins once.
-    if (!coin->mHasRewardedCoins) {
-        GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(mShouldNotRewardCoins ? 0 : 2);
-        coin->mHasRewardedCoins = true;
-    }
-}
-
-/* --- RED COIN UTIL  --- */
-
-namespace RedCoinUtil {
-
-// Iterates through the group actors, until it finds an actor in the group named "RedCoinController".
-// If the actor name matches, then the actor is returned.
-
-RedCoinController* getRedCoinControllerFromGroup(LiveActor* actor) {
-    LiveActorGroup* group = MR::getGroupFromArray(actor);
-
-    if (group) {
-        for (s32 i = 0; i < group->mNumObjs; i++) {
-            if (!strcmp(group->getActor(i)->mName, "RedCoinController"))
-                return (RedCoinController*)group->getActor(i);
-        }
-    }
-
-    return 0;
-}
-
+    mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
 }
