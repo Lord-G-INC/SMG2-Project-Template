@@ -48,6 +48,9 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinController::movement() {
+    if (MR::isOnSwitchB(this))
+        resetAllRedCoins();
+
     mRedCoinCounter->calcVisibility();
 
     if (mHasAllRedCoins)
@@ -75,7 +78,11 @@ void RedCoinController::resetAllRedCoins() {
             MR::showModel(coin);
             MR::validateShadowAll(coin);
             MR::validateHitSensors(coin);
+            MR::hideLayout(coin->mCoinCounterPlayer);
+            MR::stopAnim(coin->mCoinCounterPlayer, 0);
             coin->mIsCollected = false;
+            mHasAllRedCoins = false;
+            mElapsed = 0;
 
             if (coin->mIsInAirBubble)
                 coin->mAirBubble->makeActorAppeared();

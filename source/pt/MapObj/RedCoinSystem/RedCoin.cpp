@@ -167,7 +167,7 @@ void RedCoin::collect() {
     LiveActorGroup* group = MR::getGroupFromArray(this);
 
     for (s32 i = 0; i < group->mNumObjs; i++) {
-        if (!strcmp(group->getActor(i)->mName, "RedCoinController")) {
+        if (MR::isEqualString(group->getActor(i)->mName, "RedCoinController")) {
             pController = (RedCoinController*)group->getActor(i);
             break;
         }
@@ -192,6 +192,7 @@ void RedCoin::collect() {
 
     MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", pController->mNumCoins);
     MR::startAnim(mCoinCounterPlayer, "Appear", 0);
+    MR::showLayout(mCoinCounterPlayer);
     mCoinCounterPlayer->appear();
 
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
