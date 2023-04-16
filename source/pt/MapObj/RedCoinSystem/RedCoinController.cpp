@@ -23,6 +23,7 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mShouldNotRewardCoins = false;
     mPowerStarCheck = 0;
     mIconID = 0x37;
+    mIsValidCounterAppear = false;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -41,17 +42,28 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
     // Initialize the RedCoinCounter
-    mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
-    mRedCoinCounter->initWithoutIter();
+    mRedCoinCounter = MR::createSimpleLayout("counter", "RedCoinCounter", 2);
+    mRedCoinCounter->initEffectKeeper(0, 0, 0);
     mRedCoinCounter->appear();
-    mRedCoinCounter->updateStarIndicator(mPowerStarCheck, mIconID);
+    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
+    MR::hideLayout(mRedCoinCounter);
+
+    wchar_t str;
+    MR::addPictureFontCode(&str, MR::hasPowerStarInCurrentStage(mPowerStarCheck) ? mIconID : 0x52);
+    MR::setTextBoxFormatRecursive(mRedCoinCounter, "TxtCount", &str);
+
+    mRumbler = new CountUpPaneRumbler(mRedCoinCounter, "Counter");
+    mRumbler->mRumbleCalculator->mRumbleStrength = 8.0f;
+    mRumbler->reset();
 }
 
 void RedCoinController::movement() {
+    mRumbler->update();
+
     if (MR::isOnSwitchB(this))
         resetAllRedCoins();
 
-    mRedCoinCounter->calcVisibility();
+    calcCounterVisibility();
 
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
@@ -80,6 +92,7 @@ void RedCoinController::resetAllRedCoins() {
             MR::validateHitSensors(coin);
             MR::hideLayout(coin->mCoinCounterPlayer);
             MR::stopAnim(coin->mCoinCounterPlayer, 0);
+            MR::stopAnim(mRedCoinCounter, 0);
             coin->mIsCollected = false;
             mHasAllRedCoins = false;
             mElapsed = 0;
@@ -91,7 +104,7 @@ void RedCoinController::resetAllRedCoins() {
 
     mNumCoins = 0;
     MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
-    mRedCoinCounter->mIsValidAppear = false;
+    mIsValidCounterAppear = false;
     MR::hideLayout(mRedCoinCounter);
     MR::offSwitchB(this);
 }
@@ -102,5 +115,35 @@ void RedCoinController::incCountAndUpdateLayouts() {
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
     
-    mRedCoinCounter->updateCounter(mNumCoins, mHasAllRedCoins);
+    updateCounter();
+}
+
+void RedCoinController::updateCounter() {
+    if (mNumCoins == 1) {
+        mIsValidCounterAppear = true;
+        appearCounterIfHidden();
+    }
+    
+    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", mNumCoins);
+    MR::startPaneAnim(mRedCoinCounter, "Counter", mHasAllRedCoins ? "FlashLoop" : "Flash", 0);
+    MR::emitEffect(mRedCoinCounter, "RedCoinCounterLight");
+    mRumbler->start();
+}
+
+void RedCoinController::calcCounterVisibility() {
+    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking())
+        MR::hideLayout(mRedCoinCounter);
+    else {
+        if (mIsValidCounterAppear)
+            appearCounterIfHidden();
+    }   
+}
+
+void RedCoinController::appearCounterIfHidden() {
+    if (MR::isHiddenLayout(mRedCoinCounter)) {
+        MR::showLayout(mRedCoinCounter);
+        MR::startAnim(mRedCoinCounter, "Appear", 0);
+        OSReport("bruh\n");
+        MR::startAnim(mRedCoinCounter, "Wait", 1);
+    }
 }
