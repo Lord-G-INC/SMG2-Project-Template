@@ -2,7 +2,6 @@
 
 #include "syati.h"
 #include "pt/MapObj/RedCoinSystem/RedCoinController.h"
-#include "pt/MapObj/RedCoinSystem/RedCoinCounter.h"
 #include "revolution.h"
 #include "Game/MapObj/Coin.h"
 #include "Game/LiveActor/FlashingCtrl.h"
