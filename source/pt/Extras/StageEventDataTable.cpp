@@ -7,7 +7,7 @@
 #include "Game/System.h"
 #include "Game/LiveActor.h"
 
-#if defined (ALL) || defined (NOGLE)
+#ifdef NOGLE
 
 namespace pt {
 

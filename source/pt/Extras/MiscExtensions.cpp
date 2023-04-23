@@ -46,7 +46,7 @@ namespace pt {
 	* Support for new BRK frames may be added in the future.
 	*/
 
-	#if defined (CA) || defined (ALL)
+	#ifdef CA
 		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
 	#else
 		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
@@ -254,6 +254,19 @@ namespace pt {
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
 
+
+	#if defined (ALL) || defined (SMG63)
+	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
+		MR::needStageSwitchWriteA(actor, iter);
+
+		f32 frame = 0;
+		MR::getJMapInfoArg1NoInit(iter, &frame);
+		MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
+	}
+	
+	kmCall(0x802AF524, customHipDropSwitchColors);
+	#endif
+	
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
 	* 
@@ -283,7 +296,47 @@ namespace pt {
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 
-	#if defined(CA)
+	//void pattanInit(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
+	//	MR::processInitFunction(pActor, rIter, pStr, false);
+//
+	//	MR::initDefaultPos(pActor, rIter);
+	//	MR::connectToSceneEnemy(pActor);
+	//}
+//
+	//kmCall(0x801E6DB8, pattanInit);
+//
+	//void pattanShow(LiveActor* pActor) {
+	//	MR::invalidateClipping(pActor);
+	//	pActor->makeActorAppeared();
+	//}
+//
+	//kmCall(0x801E6E68, pattanShow);
+
+	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr, LayoutActor* pLayout) {
+		MR::processInitFunction(pActor, rIter, pStr, false);
+
+		pLayout = MR::createSimpleLayout("testaraetegasgb", "WarpAreaErrorLayout", 0);
+		pLayout->initWithoutIter();
+		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"this message is a test");
+
+		asm("stw %0, 0x9C(%1)" : "=r" (pLayout) : "=r" (pActor)); // YEah
+	}
+
+	kmWrite32(0x8033FC44, 0x386000A0);
+
+	kmWrite32(0x802F175C, 0x80DF009C);
+	kmCall(0x802F1778, restartObjInitMessage);
+
+	void restartObjActivateMessage(LiveActor* pActor, LayoutActor* pLayout) {
+		MR::startLevelSound(pActor, "Get", -1, -1, -1);
+		pLayout->appear();
+	}
+
+	kmWrite32(0x802F1968, 0x809F009C);
+	kmCall(0x802F1978, restartObjActivateMessage);
+
+
+	#ifdef CA
 	// No HipDropSwitch timer ticking
 	kmWrite32(0x802B0468, 0x60000000);
 
@@ -291,5 +344,13 @@ namespace pt {
 	kmWrite32(0x804DE0C8, 0x38A07FFF);
 	kmWrite32(0x804DE0EC, 0x38A07FFF);
 	kmWrite32(0x804D87B0, 0x23637FFF);
+	
+	// Increase maximum star bit count
+	kmWrite32(0x803162A8,0x2C037FFF);
+	kmWrite32(0x804D3BB8,0x2C037FFF);
+	kmWrite32(0x804DE078,0x38A07FFF);
+	kmWrite32(0x805DE088,0x38A07FFF);
 	#endif
+
+	kmWrite32(0x8029783C, 0x60000000);
 } 

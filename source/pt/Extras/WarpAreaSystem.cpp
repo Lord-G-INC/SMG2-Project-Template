@@ -18,7 +18,7 @@
 * This feature is disabled on GLE builds.
 */
 
-#if defined (ALL) || defined (NOGLE)
+#ifdef NOGLE
 
 void* sWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
 static s32 gLastTableIndex = -1;
@@ -160,8 +160,7 @@ namespace WarpAreaStageTable {
 	void ErrorLayout::init(const JMapInfoIter& rIter) {
 		MR::connectToSceneLayout(this);
 		initLayoutManager("WarpAreaErrorLayout", 0);
-		MR::setTextBoxFormatRecursive(this, "TxtText", L"");
-		MR::setTextBoxFormatRecursive(this, "ShaText", L"");
+		MR::setTextBoxFormatRecursive(this, "Text00", L"");
 		appear();
 	}
 
@@ -174,9 +173,7 @@ namespace WarpAreaStageTable {
 		vsnprintf(string, sizeof(string), format, arg);
 		va_end(arg);
 
-		if (canPrint) {
-			MR::setTextBoxFormatRecursive(this, "TxtText", L"%s", string);
-			MR::setTextBoxFormatRecursive(this, "ShaText", L"%s", string);
-		}
+		if (canPrint)
+			MR::setTextBoxFormatRecursive(this, "Text00", L"%s", string);
 	}
 #endif
