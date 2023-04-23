@@ -22,9 +22,10 @@ public:
     void exeSwitchDown();
     void exeOn();
 
-    MapObjConnector* mConnector;
-    s32 _94;
-    bool _98;
+    CollisionParts* mParts; // 90
+    MapObjConnector* mConnector; // 94
+    s32 mActionTimer; // 98
+    bool mStartHit; // 9C
 };
 
 namespace NrvPTimerSwitch {

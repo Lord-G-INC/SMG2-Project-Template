@@ -1,19 +1,19 @@
 #include "pt/MapObj/PTimerSwitch.h"
 
 PTimerSwitch::PTimerSwitch(const char* pName) : LiveActor(pName) {
-    mCollisionParts = 0;
+    mParts = 0;
     mConnector = 0;
-    _94 = 0;
-    _98 = false;
+    mActionTimer = 0;
+    mStartHit = false;
 }
 
 void PTimerSwitch::reset() {
     LiveActor::appear();
     setNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance);
-    MR::validateCollisionParts(mCollisionParts);
+    MR::validateCollisionParts(mParts);
     MR::startBck(this, "Wait", 0);
-    _94 = 0;
-    _98 = false;
+    mActionTimer = 0;
+    mStartHit = false;
 }
 
 void PTimerSwitch::init(const JMapInfoIter& rIter) {
@@ -24,7 +24,7 @@ void PTimerSwitch::init(const JMapInfoIter& rIter) {
     MR::addHitSensorMapObj(this, "body", 0x10, 0.0f, TVec3f(0.0f, 0.0f, 0.0f));
     MR::addHitSensor(this, "hit", 0x49, 0x10, 120.0f, TVec3f(0.0f, 0.0f, 50.0f));
     MR::initCollisionParts(this, "PTimerSwitch", getSensor("body"), 0);
-    mCollisionParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), MR::CollisionScaleType_2);
+    mParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), MR::CollisionScaleType_2);
     initSound(4, "PTimerSwitch", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
     MR::needStageSwitchWriteA(this, rIter);
     initNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance, 0);
@@ -45,23 +45,23 @@ void PTimerSwitch::appear() {
 void PTimerSwitch::kill() {
     LiveActor::kill();
     MR::emitEffect(this, "Delete");
-    MR::invalidateCollisionParts(mCollisionParts);
+    MR::invalidateCollisionParts(mParts);
 }
 
 void PTimerSwitch::calcAnim() {
 	LiveActor::calcAnim();
 	TMtx34f mtx;
 	PSMTXCopy(MR::getJointMtx(this, "Move"), mtx);
-	mCollisionParts->setMtx(mtx);
+	mParts->setMtx(mtx);
 }
 
 void PTimerSwitch::control() {
-    if (_98)
-        ++_94;
-    else if (_94 > 0)
-        --_94;
+    if (mStartHit)
+        ++mActionTimer;
+    else if (mActionTimer > 0)
+        --mActionTimer;
 
-    _98 = false;
+    mStartHit = false;
 }
 
 void PTimerSwitch::calcAndSetBaseMtx() {
@@ -83,12 +83,12 @@ bool PTimerSwitch::receiveMsgPlayerAttack(u32 msg, HitSensor* pSender, HitSensor
     if (!isNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance))
         return false;
 
-    _98 = true;
+    mStartHit = true;
     return true;
 }
 
 bool PTimerSwitch::trySwitchDown() {
-    if (_94 > 0) {
+    if (mActionTimer > 0) {
         setNerve(&NrvPTimerSwitch::PTimerSwitchNrvSwitchDown::sInstance);
         return true;
     }
@@ -108,7 +108,9 @@ void PTimerSwitch::exeOff() {
         MR::validateClipping(this);
         MR::offSwitchA(this);
     }
-    trySwitchDown();
+    
+    if (!trySwitchDown());
+        return;
 }
 
 void PTimerSwitch::exeSwitchDown() {
@@ -116,7 +118,9 @@ void PTimerSwitch::exeSwitchDown() {
         MR::startBck(this, "On", 0);
         MR::invalidateClipping(this);
     }
-    tryOn();
+    
+    if (!tryOn())
+        return;
 }
 
 void PTimerSwitch::exeOn() {
