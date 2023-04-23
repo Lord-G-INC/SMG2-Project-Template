@@ -29,9 +29,9 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     initHitSensor(1);
     MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
-    
-    MR::initShadowVolumeCylinder(this, 50.0f);
-    MR::setShadowDropPositionPtr(this, 0, &mTranslation);
+
+    setShadowAndPoseModeFromJMapIter(rIter);
+    initShadow(rIter);
 
     mConnector = new MapObjConnector(this);
 
@@ -100,19 +100,22 @@ void BlueCoin::collect() {
         ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
     }
 
-    GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(1);
-
-    if (MR::isGalaxyDarkCometAppearInCurrentStage())
-        MR::incPlayerLife(1);
+    if (!MR::isGalaxyDarkCometAppearInCurrentStage())
+        MR::incCoin(1, this);
 
     makeActorDead();
 }
 
-void appearCustomCoinOnDarkComet(LiveActor* pActor) {
-    OSReport("%s\n", pActor->mName);
-    if (!MR::isEqualString(pActor->mName, "RedCoin") || !MR::isEqualString(pActor->mName, "BlueCoin"))
-        pActor->makeActorDead();
+bool appearCustomCoinOnDarkComet() {
+    const char* name;
+
+    asm("lwz %0, 0x4(r31)" : "=r" (name));
+
+    if (MR::isGalaxyDarkCometAppearInCurrentStage() && !MR::isEqualString(name, "RedCoin") && !MR::isEqualString(name, "BlueCoin"))
+        return true;
+    
+    return false;
 }
 
-//kmCall(0x8028C2EC, appearCustomCoinOnDarkComet);
+kmCall(0x8028C2EC, appearCustomCoinOnDarkComet);
 #endif

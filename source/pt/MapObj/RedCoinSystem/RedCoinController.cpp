@@ -40,11 +40,11 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::initDefaultPos(this, rIter);
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
     MR::registerDemoSimpleCastAll(this);
-
+    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
     MR::useStageSwitchWriteA(this, rIter);
     MR::useStageSwitchReadB(this, rIter);
+
 
     // Get Obj_args
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
@@ -74,18 +74,22 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 
     if (mIsTimerMode)
         MR::showPaneRecursive(mRedCoinCounter, "ShaTime");
+
+    LiveActorGroup* group = MR::getGroupFromArray(this);
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        OSReport("Coin group: %s, Entry %d/%d\n", group->getActor(i)->mName, i + 1, group->mNumObjs);
+    }
 }
 
 void RedCoinController::movement() {
     mRumbler->update();
 
-    if (mIsTimerMode && MR::isOnSwitchB(this) && !mHasAllRedCoins) {
-        calcCounterTimer();
-
-        appearCounterIfHidden();
-    }
-
     calcCounterVisibility();
+
+    if (mIsTimerMode && MR::isOnSwitchB(this) && !mHasAllRedCoins) {
+        appearCounterIfHidden();
+        calcCounterTimer();
+    }
 
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
@@ -119,14 +123,14 @@ void RedCoinController::calcCounterTimer() {
                 mTimerMinutes--;
         }
     }
-    else 
+    else {
         resetAllRedCoins();
+        mTimerMilliseconds = -1;
+    }
 
 
     if (mTimerMinutes == 0 && mTimerSeconds == 0 && mTimerMilliseconds == 0)
         mIsUp = true;
-
-    OSReport("Time: %d:%02d:%02d\n", mTimerMinutes, mTimerSeconds, mTimerMilliseconds);
 
     MR::setTextBoxFormatRecursive(mRedCoinCounter, "ShaTime", L"%02d:%02d", mTimerMinutes, mTimerSeconds);
 }
@@ -152,14 +156,16 @@ void RedCoinController::resetAllRedCoins() {
         }
     }
 
-    MR::hideLayout(mRedCoinCounter);
+
     mTimerMinutes = mTimerModeMinutes;
     mTimerSeconds = mTimerModeSeconds;
     mTimerMilliseconds = 0;
     mNumCoins = 0;
     mIsUp = false;
-    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
     mIsValidCounterAppear = false;
+    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
+    MR::hideLayout(mRedCoinCounter);
+    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
 }
 
 // Increases both layouts by 1

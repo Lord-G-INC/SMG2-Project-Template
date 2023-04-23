@@ -152,12 +152,16 @@ namespace BlueCoinUtil {
 
             OSReport("(BlueCoinIDRangeTable) Stage name: \"%s\", Range: %d through %d, Line: %d, Collected Coins Only: %d, Total: %d\n", pStageName, rangeMin, rangeMax, targetLine, collectedCoinsOnly, count);
             return count;
+
+
         }
         
         OSReport("(BlueCoinIDRangeTable) Stage name \"%s\" not found in table. -1 returned!\n", pStageName);
         return -1;
     }
 }
+
+// rework above function and add getTexID function
 
 // Blue coin binary management
 
