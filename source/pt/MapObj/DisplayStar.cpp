@@ -66,7 +66,7 @@ void DisplayStar::control() {
 void DisplayStar::setupColor(s32 scenario) {
     if (!MR::hasPowerStarInCurrentStage(mScenario)) { // Checks if you have the specified star. If not, set up the color by setting animation frames.
 		
-	#if defined (ALL) || defined (NOGLE)
+	#ifdef NOGLE
 		if (mFrame == -1)
 			mFrame = pt::getPowerStarColorCurrentStage(mScenario);
 	#endif

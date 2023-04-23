@@ -20,7 +20,7 @@ namespace pt {
         /* 22 */ { "PowerUpRock",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 23 */ { "PowerUpInvincible", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 24 */ { "RedCoin", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        #if defined (ALL) || defined (SMSS)
+        #ifdef SMSS
         /* 25 */ { "BlueCoin", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         /* 26 */ { "BlueCoinClear", "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
         #endif
@@ -43,7 +43,7 @@ namespace pt {
             MR::getJMapInfoArg6NoInit(rIter, &colorId);
         }
 
-        #if defined (ALL) || defined (SMSS)
+        #ifdef SMSS
         if (modelId == 25) {
             if (BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
                 modelId = 26;

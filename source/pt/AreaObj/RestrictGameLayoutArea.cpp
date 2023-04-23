@@ -1,6 +1,6 @@
 #include "pt/AreaObj/RestrictGameLayoutArea.h"
 
-#if defined (ALL) || defined (SMG63)
+#ifdef SMG63
 RestrictGameLayoutArea::RestrictGameLayoutArea(const char* pName) : AreaObj(pName) {
 }
 

@@ -1,7 +1,7 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
-bool** gBlueCoinData;
+//bool** gBlueCoinData;
 
 
 /*********************************************************************************************************************/
@@ -12,19 +12,28 @@ extern Func __ctor_loc;
 extern Func __ctor_end;
 
 void init() {
-    OSReport("SMG2 PT Debug by Evanbowl and the Lord-G INC team.\n");
+    const char* name = "Unknown"; 
 
-    #if defined (ALL) || defined (SMSS)
+    #ifdef ALL
+    name = "ALL";
+    #elif SMSS
+    name = "SMSS (GLE)";
+    #elif CA
+    name = "CA (GLE)";
+    #elif SMG63
+    name = "SMG63 (GLE)";
+    #elif GLE
+    name = "GLE";
+    #elif NOGLE
+    name = "NOGLE";
+    #endif
+
+    OSReport("SMG2PTD INIT: Created by Evanbowl and the Lord-G Inc Team\nBuilt: %s, %s\nTarget: %s\n", __DATE__, __TIME__, name);
+
+    #ifdef SMSS
         BlueCoinUtil::initBlueCoinArray();
     #endif
-    
-    #if defined(BUILD_MONTH) && defined(BUILD_DAY) && defined(BUILD_YEAR)
-        int m = BUILD_MONTH;
-        int d = BUILD_DAY;
-        int y = BUILD_YEAR;
-        OSReport("Built on %d/%d/%d\n",m,d,y);
-    #endif
-    
+
     for (Func* f = &__ctor_loc; f < &__ctor_end; f++) {
         (*f)();
     }

@@ -2,7 +2,7 @@
 
 #include "syati.h"
 
-#if defined (ALL) || defined (NOGLE)
+#ifdef NOGLE
 	class ErrorLayout : public LayoutActor {
 	public:
 		ErrorLayout();

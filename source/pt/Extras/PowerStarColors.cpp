@@ -1,7 +1,7 @@
 #include "pt/Extras/PowerStarColors.h"
 #include "pt/Util/ActorUtil.h"
-#include "Game/MapObj/Tamakoro.h"
 
+#ifdef NOGLE
 /*
 * Authors: Aurum
 * 
@@ -57,7 +57,7 @@ namespace pt {
 		return getPowerStarColor(MR::getCurrentStageName(), scenarioId);
 	}
 
-	#if defined (ALL) || defined (NOGLE) // GLE has its own Star Color system, so we can disable ours.
+	#ifdef NOGLE // GLE has its own Star Color system, so we can disable ours.
 	/*
 	* At the given address in PowerStar::initMapToolInfo, there is a check which always results true, allowing us to
 	* rewrite these instructions. Here, we load the color ID based on the PowerStarType setting in ScenarioData.bcsv.
@@ -119,7 +119,7 @@ namespace pt {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
 
-	#if defined (ALL) || defined (NOGLE)
+	#ifdef NOGLE
 		kmCall(0x804B8048, loadPTPictureFont);
 	#endif
 
@@ -141,7 +141,7 @@ namespace pt {
 	}
 
 
-	#if defined (ALL) || defined (NOGLE)
+	#ifdef NOGLE
 		kmCall(0x80041E30, getStarIcon); // Normal Star icons
 		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
 		kmCall(0x80041F94, getStarIcon); // Hidden Star icons
@@ -158,7 +158,7 @@ namespace pt {
 	*	Not really useful, but is neat.
 	*/
 
-	void TamakoroCustomPowerStarColors(Tamakoro* actor, const JMapInfoIter& iter) {		
+	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
 		s32 colorFrame = -1;
 		
@@ -184,9 +184,9 @@ namespace pt {
 	// Define new particles.
 	// These will be picked using the Star Ball's current BTP frame.
 	const char* cNewParticles[7] = {"BreakYellow", "BreakBronze", "BreakGreen", "BreakRed", "BreakClear", "BreakBlue", "BreakSilver"};
-	void TamakoroCustomPowerStarColorsParticles(Tamakoro* actor) {
-		MR::emitEffect(actor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added to replace it.
-		MR::emitEffect(actor, cNewParticles[(s32)MR::getBtpFrame(actor)]); // Emit custom crystal particles picked by the current BTP frame.
+	void TamakoroCustomPowerStarColorsParticles(LiveActor* pActor) {
+		MR::emitEffect(pActor, "Break"); // Emit the original particle. The crystal particles were removed so custom ones can be added to replace it.
+		MR::emitEffect(pActor, cNewParticles[(s32)MR::getBtpFrame(pActor)]); // Emit custom crystal particles picked by the current BTP frame.
 	}
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
@@ -196,7 +196,7 @@ namespace pt {
 		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
 	}
 
-	#if defined (NOGLE) || defined (ALL)
+	#ifdef NOGLE
 		kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 		kmCall(0x802E0870, greenStarAppearParticleFix);
 	#endif;
@@ -206,7 +206,7 @@ namespace pt {
 		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
 	}
 
-	#if defined (NOGLE) || defined (ALL)
+	#ifdef NOGLE
 		kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
 		kmCall(0x802DFE04, customPowerStarLightColors);
 	#endif
@@ -229,3 +229,4 @@ namespace pt {
 	kmCall(0x8035F830, SilverStarColors);
 	#endif
 	}
+#endif

@@ -3,7 +3,7 @@
 #include "syati.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-#if defined (ALL) || defined (SMG63)
+#ifdef SMG63
 class RestrictGameLayoutArea : public AreaObj {
 public:
     RestrictGameLayoutArea(const char* pName);
