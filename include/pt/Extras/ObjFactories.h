@@ -36,6 +36,9 @@
 #include "pt/Map/CometTimerObj.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/PTimerSwitch.h"
+#include "pt/MapObj/LavaSteam.h"
+
+#include "pt/AreaObj/MarioDisappointmentArea.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -57,6 +60,7 @@ class Shellfish;
 class SimpleEnvironmentObj;
 class SimpleTextureSwitchChangeObj;
 class WoodBox;
+#include "Game/MapObj/Pattan.h"
 
 namespace pt {
     template<typename T>
@@ -67,6 +71,10 @@ namespace pt {
     template<s32 COLOR>
     NameObj* createSuperSpinDriverCustomColor(const char *pName) {
         return new SuperSpinDriver(pName, COLOR);
+    }
+
+    NameObj* createPattan(const char *pName) {
+        return new Pattan(pName);
     }
 
     struct CreateSceneObjEntry {
@@ -147,22 +155,27 @@ namespace pt {
         { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
         { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
         { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
-
         { "PTimerSwitch", createExtActor<PTimerSwitch> },
+        { "Pattan", createExtActor<Pattan> },
 
-        #if defined (ALL) || defined (SMSS)
-        { "BlueCoin", createExtActor<BlueCoin> },
+        #ifdef ALL
+            { "LavaSteam", createExtActor<LavaSteam> },
         #endif
 
-        #if defined (ALL) || defined (NOGLE)
+        #ifdef SMSS
+            { "BlueCoin", createExtActor<BlueCoin> },
+        #endif
+
+        #ifdef NOGLE
             { "WarpArea", createExtActor<WarpArea> },
         #endif
 
-        #if defined (ALL) || defined (SMG63)
+        #ifdef SMG63
             { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
+            { "MarioDisappointmentArea", createExtActor<MarioDisappointmentArea> },
         #endif
 
-        #if defined (ALL) || defined (CA)
+        #ifdef CA
             { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<8> },
             { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
         #endif
