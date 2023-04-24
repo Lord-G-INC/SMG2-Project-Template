@@ -37,10 +37,10 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
-    if (mUseConnection)
-        MR::invalidateClipping(this);
-    else
-        MR::setClippingFarMax(this);
+    //if (mUseConnection)
+    //    MR::invalidateClipping(this);
+    //else
+    //    MR::setClippingFarMax(this);
 
     makeActorAppeared();
 

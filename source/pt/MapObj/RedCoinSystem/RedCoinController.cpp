@@ -41,10 +41,9 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::connectToSceneMapObjMovement(this);
     MR::invalidateClipping(this);
     MR::registerDemoSimpleCastAll(this);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
     MR::useStageSwitchWriteA(this, rIter);
     MR::useStageSwitchReadB(this, rIter);
-
+    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
 
     // Get Obj_args
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?

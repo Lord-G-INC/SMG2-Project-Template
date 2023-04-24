@@ -315,7 +315,7 @@ namespace pt {
 	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr, LayoutActor* pLayout) {
 		MR::processInitFunction(pActor, rIter, pStr, false);
 
-		pLayout = MR::createSimpleLayout("testaraetegasgb", "WarpAreaErrorLayout", 0);
+		pLayout = MR::createSimpleLayout("testaraetegasgb", "TextLayout", 0);
 		pLayout->initWithoutIter();
 		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"this message is a test");
 

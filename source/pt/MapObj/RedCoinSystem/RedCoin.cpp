@@ -163,16 +163,6 @@ void RedCoin::appearAndMove() {
 void RedCoin::collect() {
     mIsCollected = true;
 
-    //RedCoinController* pController;
-    //LiveActorGroup* group = MR::getGroupFromArray(this);
-//
-    //for (s32 i = 0; i < group->mNumObjs; i++) {
-    //    if (MR::isEqualString(group->getActor(i)->mName, "RedCoinController")) {
-    //        pController = (RedCoinController*)group->getActor(i);
-    //        break;
-    //    }
-    //}
-
     LiveActorGroup* group = MR::getGroupFromArray(this);
     RedCoinController* pController = ((RedCoinController*)group->getActor(group->mNumObjs - 1));
 
@@ -183,7 +173,7 @@ void RedCoin::collect() {
         MR::emitEffect(mAirBubble, "RecoveryBubbleBreak");
         mAirBubble->kill();
     }
-  
+    
     // Only ever increment coins once.
     if (!mHasRewardedCoins && !MR::isGalaxyDarkCometAppearInCurrentStage()) {
         MR::incPlayerLife(1);

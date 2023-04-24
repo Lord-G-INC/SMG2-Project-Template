@@ -155,11 +155,11 @@ namespace WarpAreaStageTable {
 	// Error Layout Code
 }
 
-	ErrorLayout::ErrorLayout() : LayoutActor("WarpAreaErrorLayout", 0) {}
+	ErrorLayout::ErrorLayout() : LayoutActor("TextLayout", 0) {}
 
 	void ErrorLayout::init(const JMapInfoIter& rIter) {
 		MR::connectToSceneLayout(this);
-		initLayoutManager("WarpAreaErrorLayout", 0);
+		initLayoutManager("TextLayout", 0);
 		MR::setTextBoxFormatRecursive(this, "Text00", L"");
 		appear();
 	}
