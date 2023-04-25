@@ -6,18 +6,19 @@ This fork of Project Template has compiler flags. You can add `--gle` to the bui
 
 Build flag `--all` builds absolutely everything in the workspace, regardless of GLE compatibility.
 
-Example
+Example:
 `py build.py USA --gle`
 
 Compiled builds are supplied but use of them is not recommended. The custom assets required for some patches are no longer maintaned on the repository.
 
 There are other build flags, but they are reserved for the projects of others.
 
--ALL (Builds everything- this is extremely unstable!)
--GLE
--NOGLE
--SMSS (SPG64's project "Super Mario Starshine")
--CA (Mariokirby1703's project "SMG2 Collector's Anxiety")
--SMG63 (Alex SMG's project "Super Mario Galaxy 63")
+-ALL (Builds everything- this is extremely unstable!)<br/>
+-GLE<br/>
+-NOGLE<br/>
+-SMSS (SPG64's project "Super Mario Starshine")<br/>
+-CA (Mariokirby1703's project "SMG2 Collector's Anxiety")<br/>
+-SMG63 (Alex SMG's project "Super Mario Galaxy 63")<br/>
 
-More flags can be added, however this project is already hard enough to maintain. It's worth it though!
+More flags can be added, however this project is already hard enough to maintain.<br/>
+It's worth it though!
