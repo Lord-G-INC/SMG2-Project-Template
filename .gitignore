@@ -10,3 +10,5 @@ CustomCode*.bin
 BuildPT.bat
 .vscode
 /deps/Syati
+BuildSMSS.bat
+deps/Kamek.7z
