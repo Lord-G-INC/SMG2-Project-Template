@@ -143,6 +143,7 @@ kmCall(0x80486D60, initBlueCoinCounters);
 
 void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     MR::setTextBoxArgNumberRecursive(actor, pStr, l, 0);
+    
     s32 rangeCollected = BlueCoinUtil::getBlueCoinRangeData(0, true);
     s32 rangeTotal = BlueCoinUtil::getBlueCoinRangeData(0, false);
 

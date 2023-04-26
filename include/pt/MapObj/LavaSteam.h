@@ -1,4 +1,4 @@
-#ifdef ALL
+#ifdef WIP
 #pragma once
 #include "syati.h"
 

@@ -254,8 +254,6 @@ namespace pt {
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
 
-
-	#if defined (ALL) || defined (SMG63)
 	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::needStageSwitchWriteA(actor, iter);
 
@@ -265,7 +263,6 @@ namespace pt {
 	}
 	
 	kmCall(0x802AF524, customHipDropSwitchColors);
-	#endif
 	
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
@@ -296,33 +293,35 @@ namespace pt {
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
 
-	//void pattanInit(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
-	//	MR::processInitFunction(pActor, rIter, pStr, false);
-//
-	//	MR::initDefaultPos(pActor, rIter);
-	//	MR::connectToSceneEnemy(pActor);
-	//}
-//
-	//kmCall(0x801E6DB8, pattanInit);
-//
-	//void pattanShow(LiveActor* pActor) {
-	//	MR::invalidateClipping(pActor);
-	//	pActor->makeActorAppeared();
-	//}
-//
-	//kmCall(0x801E6E68, pattanShow);
+	#ifdef WIP
+	void pattanInit(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
+		MR::processInitFunction(pActor, rIter, pStr, false);
+
+		MR::initDefaultPos(pActor, rIter);
+		MR::connectToSceneEnemy(pActor);
+	}
+
+	kmCall(0x801E6DB8, pattanInit);
+
+	void pattanShow(LiveActor* pActor) {
+		MR::invalidateClipping(pActor);
+		pActor->makeActorAppeared();
+	}
+	#endif
+
+	kmCall(0x801E6E68, pattanShow);
 
 	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr, LayoutActor* pLayout) {
 		MR::processInitFunction(pActor, rIter, pStr, false);
 
-		pLayout = MR::createSimpleLayout("testaraetegasgb", "TextLayout", 0);
+		pLayout = MR::createSimpleLayout("textlyt", "TextLayout", 0);
 		pLayout->initWithoutIter();
 		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"this message is a test");
 
-		asm("stw %0, 0x9C(%1)" : "=r" (pLayout) : "=r" (pActor)); // YEah
+		asm("stw %0, 0x9C(%1)" : "=r" (pLayout) : "=r" (pActor));
 	}
 
-	kmWrite32(0x8033FC44, 0x386000A0);
+	kmWrite32(0x8033FC44, 0x386000A0); // +4 to r3 for nw call
 
 	kmWrite32(0x802F175C, 0x80DF009C);
 	kmCall(0x802F1778, restartObjInitMessage);
@@ -337,19 +336,19 @@ namespace pt {
 
 
 	#ifdef CA
-	// No HipDropSwitch timer ticking
-	kmWrite32(0x802B0468, 0x60000000);
+		// No HipDropSwitch timer ticking
+		kmWrite32(0x802B0468, 0x60000000);
 
-	// Increase maximum coin count
-	kmWrite32(0x804DE0C8, 0x38A07FFF);
-	kmWrite32(0x804DE0EC, 0x38A07FFF);
-	kmWrite32(0x804D87B0, 0x23637FFF);
-	
-	// Increase maximum star bit count
-	kmWrite32(0x803162A8,0x2C037FFF);
-	kmWrite32(0x804D3BB8,0x2C037FFF);
-	kmWrite32(0x804DE078,0x38A07FFF);
-	kmWrite32(0x805DE088,0x38A07FFF);
+		// Increase maximum coin count
+		kmWrite32(0x804DE0C8, 0x38A07FFF);
+		kmWrite32(0x804DE0EC, 0x38A07FFF);
+		kmWrite32(0x804D87B0, 0x23637FFF);
+
+		// Increase maximum star bit count
+		kmWrite32(0x803162A8,0x2C037FFF);
+		kmWrite32(0x804D3BB8,0x2C037FFF);
+		kmWrite32(0x804DE078,0x38A07FFF);
+		kmWrite32(0x805DE088,0x38A07FFF);
 	#endif
 
 	kmWrite32(0x8029783C, 0x60000000);

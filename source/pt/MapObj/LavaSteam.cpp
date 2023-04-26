@@ -1,4 +1,4 @@
-#ifdef ALL
+#ifdef WIP
 #include "pt/MapObj/LavaSteam.h"
 
 LavaSteam::LavaSteam(const char* pName) : LiveActor(pName) {
