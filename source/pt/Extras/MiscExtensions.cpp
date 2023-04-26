@@ -307,10 +307,10 @@ namespace pt {
 		MR::invalidateClipping(pActor);
 		pActor->makeActorAppeared();
 	}
-	#endif
 
 	kmCall(0x801E6E68, pattanShow);
-
+	#endif
+	
 	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr, LayoutActor* pLayout) {
 		MR::processInitFunction(pActor, rIter, pStr, false);
 
