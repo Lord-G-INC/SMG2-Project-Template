@@ -74,7 +74,7 @@ void PowerStarSpawner::spawnStar() {
 	mElapsed++;
 
 	if (mElapsed == 0 && mUseSE)
-		MR::startLevelSound(this, "OjPowerStarSpawnerSpawn", -1, -1, -1);
+		MR::startActionSound(this, "OjPowerStarSpawnerSpawn", -1, -1, -1);
 
 	if (spawnCondition() && mElapsed >= mDelay) {
 		switch (mSpawnMode) { // I do not know how to improve this section.

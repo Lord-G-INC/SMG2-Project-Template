@@ -76,7 +76,7 @@ void LavaSteam::exeSteam() {
         MR::validateHitSensors(this);
     }
     
-    MR::startLevelSound(this, "SE_OJ_LV_LAVA_STEAM_OUT", -1, -1, -1);
+    MR::startActionSound(this, "SE_OJ_LV_LAVA_STEAM_OUT", -1, -1, -1);
 
     if (MR::isStep(this, 90)) {
         MR::deleteEffect(this, "Steam");

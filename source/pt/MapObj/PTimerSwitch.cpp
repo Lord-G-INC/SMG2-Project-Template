@@ -24,7 +24,7 @@ void PTimerSwitch::init(const JMapInfoIter& rIter) {
     MR::addHitSensorMapObj(this, "body", 0x10, 0.0f, TVec3f(0.0f, 0.0f, 0.0f));
     MR::addHitSensor(this, "hit", 0x49, 0x10, 120.0f, TVec3f(0.0f, 0.0f, 50.0f));
     MR::initCollisionParts(this, "PTimerSwitch", getSensor("body"), 0);
-    mParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), MR::CollisionScaleType_2);
+    mParts = MR::createCollisionPartsFromLiveActor(this, "Move", getSensor("hit"), MR::CollisionScaleType_Default);
     initSound(4, "PTimerSwitch", &mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
     MR::needStageSwitchWriteA(this, rIter);
     initNerve(&NrvPTimerSwitch::PTimerSwitchNrvOff::sInstance, 0);

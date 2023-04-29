@@ -192,7 +192,7 @@ namespace pt {
         { "BallOpener", NameObjFactory::createNameObj<BallOpener> },
         { "BeeJumpBall", NameObjFactory::createNameObj<BeeJumpBall> },
         { "ChooChooTrain", createExtActor<ChooChooTrain> },
-        { "CollapseRailMoveObj", NameObjFactory::createNameObj<CollapseRailMoveObj> },
+        //{ "CollapseRailMoveObj", NameObjFactory::createNameObj<CollapseRailMoveObj> },
         { "GoroRockLaneParts", NameObjFactory::createNameObj<GoroRockLaneParts> },
         { "GravityFallBlock", NameObjFactory::createNameObj<GravityFallBlock> },
         { "InvisiblePolygonObj", NameObjFactory::createNameObj<InvisiblePolygonObj> },
@@ -201,7 +201,7 @@ namespace pt {
         { "ScaleMapObj", createExtActor<LavaBallRisingPlanetLava>},
         { "SimpleEnvironmentObj", NameObjFactory::createNameObj<SimpleEnvironmentObj> },
         { "SimpleTextureSwitchChangeObj", NameObjFactory::createNameObj<SimpleTextureSwitchChangeObj> },
-        { "RepeatTimerSwitchingBlock", NameObjFactory::createNameObj<RepeatTimerBlock> },
+        //{ "RepeatTimerSwitchingBlock", NameObjFactory::createNameObj<RepeatTimerBlock> },
         { "WoodBox", NameObjFactory::createNameObj<WoodBox> }
     };
 

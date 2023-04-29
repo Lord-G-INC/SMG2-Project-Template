@@ -29,7 +29,7 @@ namespace pt {
         // Initialize collision
         HitSensor *senBody = getSensor("Body");
         MR::initCollisionPartsAutoEqualScaleOne(this, "Jiraira", senBody, MR::getJointMtx(this, "Jiraira"));
-        mButtonCollision = MR::createCollisionPartsFromLiveActor(this, "Button", senBody, MR::getJointMtx(this, "Button"), MR::CollisionScaleType_1);
+        mButtonCollision = MR::createCollisionPartsFromLiveActor(this, "Button", senBody, MR::getJointMtx(this, "Button"), MR::CollisionScaleType_NotUsingScale);
         MR::validateCollisionParts(mButtonCollision);
 
         // Initialize miscellaneous attributes
@@ -110,10 +110,10 @@ namespace pt {
         if (MR::isFirstStep(this)) {
             MR::startAction(this, "Stepped");
             MR::tryRumblePadMiddle(this, NULL);
-            MR::startLevelSound(this, "OjJirairaStepped", -1, -1, -1);
+            MR::startActionSound(this, "OjJirairaStepped", -1, -1, -1);
         }
 
-        MR::startLevelSound(this, "OjLvJirairaCharge", -1, -1, -1);
+        MR::startActionSound(this, "OjLvJirairaCharge", -1, -1, -1);
 
         if (MR::isGreaterStep(this, 30)) {
             setNerve(&NrvJiraira::NrvSteppedExplode::sInstance);
@@ -123,7 +123,7 @@ namespace pt {
     void Jiraira::exeExplode() {
         if (MR::isFirstStep(this)) {
             MR::emitEffect(this, "Explosion");
-            MR::startLevelSound(this, "OjJirairaExplode", -1, -1, -1);
+            MR::startActionSound(this, "OjJirairaExplode", -1, -1, -1);
             MR::startAction(this, "Down");
             MR::validateHitSensor(this, "Explode");
             MR::tryRumblePadAndCameraDistanceStrong(this, 800.0f, 1200.0f, 2000.0f);
@@ -147,7 +147,7 @@ namespace pt {
             MR::startBrk(this, "RecoveryLoop");
         }
 
-        MR::startLevelSound(this, "OjLvJirairaRecovering", -1, -1, -1);
+        MR::startActionSound(this, "OjLvJirairaRecovering", -1, -1, -1);
 
         if (MR::isGreaterStep(this, 120)) {
             setNerve(&NrvJiraira::NrvRecover::sInstance);
@@ -157,7 +157,7 @@ namespace pt {
     void Jiraira::exeRecover() {
         if (MR::isFirstStep(this)) {
             MR::startAction(this, "Recovery");
-            MR::startLevelSound(this, "OjJirairaRecover", -1, -1, -1);
+            MR::startActionSound(this, "OjJirairaRecover", -1, -1, -1);
         }
 
         if (MR::isActionEnd(this)) {

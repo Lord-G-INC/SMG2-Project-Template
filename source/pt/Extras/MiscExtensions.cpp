@@ -1,7 +1,7 @@
 #include "syati.h"
 #include "Game/Util.h"
 #include "Game/Screen/LayoutActor.h"
-#include "Game/System/Misc/TalkMessageCtrl.h"
+//#include "Game/System/Misc/TalkMessageCtrl.h"
 #include "pt/Util/ActorUtil.h"
 #include "JSystem/JUtility/JUTTexture.h"
 #include "Game/MapObj/SpinDriverPathDrawer.h"
@@ -275,16 +275,16 @@ namespace pt {
 	* Knowledge of MSBF is required for this to be of any use in game.
 	*/
 
-	const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
-		s16 selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
+	//const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
+		//s16 selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
 
-		char* str = new char[5];
-		sprintf(str, "New%d", selectTxt - 18);
+		//char* str = new char[5];
+		//sprintf(str, "New%d", selectTxt - 18);
 
-		return selectTxt < 18 ? msg->getBranchID() : str;
-	}
+		//return selectTxt < 18 ? msg->getBranchID() : str;
+	//}
 
-	kmCall(0x80379A84, YesNoDialogueExtensions);
+	//kmCall(0x80379A84, YesNoDialogueExtensions);
 
 	void smssKillSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
@@ -327,7 +327,7 @@ namespace pt {
 	kmCall(0x802F1778, restartObjInitMessage);
 
 	void restartObjActivateMessage(LiveActor* pActor, LayoutActor* pLayout) {
-		MR::startLevelSound(pActor, "Get", -1, -1, -1);
+		MR::startActionSound(pActor, "Get", -1, -1, -1);
 		pLayout->appear();
 	}
 

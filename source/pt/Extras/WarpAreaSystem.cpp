@@ -74,8 +74,8 @@ namespace WarpAreaStageTable {
 
 		if (canWarp) {
 			gLastTableIndex = targetLine;
-			GameSequenceFunction::changeToScenarioSelect(stageName);
-			GameSequenceFunction::changeSceneStage(stageName, scenarioNo, greenStarNo, 0);
+			GameSequenceFunction::requestChangeScenarioSelect(stageName);
+			GameSequenceFunction::requestChangeStage(stageName, scenarioNo, greenStarNo, JMapIdInfo());
 		}
 		else {
 			MR::openSystemWipeCircle(45);
