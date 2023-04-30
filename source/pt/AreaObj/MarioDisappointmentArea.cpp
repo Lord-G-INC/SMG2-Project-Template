@@ -1,6 +1,4 @@
 #ifdef SMG63
-#pragma once
-
 #include "pt/AreaObj/MarioDisappointmentArea.h"
 #include "syati.h"
 

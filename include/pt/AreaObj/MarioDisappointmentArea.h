@@ -1,6 +1,5 @@
 #ifdef SMG63
     #pragma once
-
     #include "syati.h"
 
     class MarioDisappointmentArea : public AreaObj {

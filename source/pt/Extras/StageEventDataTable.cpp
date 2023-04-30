@@ -1,13 +1,9 @@
+#ifdef NOGLE
 #include "pt/Extras/StageEventDataTable.h"
 #include "pt/Extras/WarpAreaSystem.h"
 #include "Game/Util.h"
 #include "pt/Util/ActorUtil.h"
-#include "Game/Screen/LayoutActor.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
-#include "Game/System.h"
-#include "Game/LiveActor.h"
-
-#ifdef NOGLE
 
 namespace pt {
 

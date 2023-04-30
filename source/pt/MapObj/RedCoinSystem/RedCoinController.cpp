@@ -73,11 +73,6 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 
     if (mIsTimerMode)
         MR::showPaneRecursive(mRedCoinCounter, "ShaTime");
-
-    LiveActorGroup* group = MR::getGroupFromArray(this);
-    for (s32 i = 0; i < group->mNumObjs; i++) {
-        OSReport("Coin group: %s, Entry %d/%d\n", group->getActor(i)->mName, i + 1, group->mNumObjs);
-    }
 }
 
 void RedCoinController::movement() {

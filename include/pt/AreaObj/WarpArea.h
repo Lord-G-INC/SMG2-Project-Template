@@ -1,9 +1,9 @@
+#ifdef NOGLE
 #pragma once
 
 #include "Game/AreaObj.h"
 #include "pt/Extras/WarpAreaSystem.h"
 
-#ifdef NOGLE
 namespace pt {
 	class WarpArea : public AreaObj {
 	public:

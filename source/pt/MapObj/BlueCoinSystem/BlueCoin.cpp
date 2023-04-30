@@ -1,7 +1,4 @@
 #ifdef SMSS
-
-/*
-*/
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/MapObj/CoinHolder.h"
@@ -10,6 +7,11 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mID = 0;
     mLaunchVelocity = 250.0f;
     mUseConnection = false;
+
+    mIsPurple = false;
+    mShadowCalcOn = true;
+    mIgnoreGravity = false;
+    mCalcShadowPrivateGravity = false;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -26,21 +28,16 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::calcGravity(this);
 
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
-
     initHitSensor(1);
     MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
-    setShadowAndPoseModeFromJMapIter(rIter);
-    initShadow(rIter);
+    MR::initShadowVolumeSphere(this, 50.0f);
+    MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
+    MR::setShadowDropLength(this, 0, 1000.0f);
 
     mConnector = new MapObjConnector(this);
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
-
-    //if (mUseConnection)
-    //    MR::invalidateClipping(this);
-    //else
-    //    MR::setClippingFarMax(this);
 
     makeActorAppeared();
 

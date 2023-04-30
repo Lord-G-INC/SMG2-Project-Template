@@ -1,6 +1,6 @@
+#ifdef NOGLE
 #pragma once
 
-#ifdef NOGLE
 #include "syati.h"
 
 namespace pt {

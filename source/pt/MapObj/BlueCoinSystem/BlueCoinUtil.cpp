@@ -49,7 +49,7 @@ namespace BlueCoinUtil {
                 code = NANDWrite(&info, buffer, 765);
 
                 if (code != 0 && code != 765)
-                    OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin write failed! NANDWrite code: %d\n\n", code);
+                    OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin write failed! NANDWrite code: %d\n", code);
 
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
@@ -65,7 +65,7 @@ namespace BlueCoinUtil {
             gBlueCoinData[i] = new bool[255];
             memset(gBlueCoinData[i], 0, 255);
         }
-        OSReport("(BlueCoinUtil) Blue Coin array initalization success.\n");
+        OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
     
     s32 getCurrentFileNum() { // Thank you AwesomeTMC
@@ -152,16 +152,12 @@ namespace BlueCoinUtil {
 
             OSReport("(BlueCoinIDRangeTable) Stage name: \"%s\", Range: %d through %d, Line: %d, Collected Coins Only: %d, Total: %d\n", pStageName, rangeMin, rangeMax, targetLine, collectedCoinsOnly, count);
             return count;
-
-
         }
         
         OSReport("(BlueCoinIDRangeTable) Stage name \"%s\" not found in table. -1 returned!\n", pStageName);
         return -1;
     }
 }
-
-// rework above function and add getTexID function
 
 // Blue coin binary management
 

@@ -1,8 +1,6 @@
-#include "pt/AreaObj/WarpArea.h"
-#include "pt/Extras/WarpAreaSystem.h"
-#include "Game/Util.h"
-
 #ifdef NOGLE
+#include "pt/AreaObj/WarpArea.h"
+
 namespace pt {
 
 /*

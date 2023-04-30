@@ -1,8 +1,8 @@
+#ifdef NOGLE
 #pragma once
 
 #include "syati.h"
 
-#ifdef NOGLE
 	class ErrorLayout : public LayoutActor {
 	public:
 		ErrorLayout();

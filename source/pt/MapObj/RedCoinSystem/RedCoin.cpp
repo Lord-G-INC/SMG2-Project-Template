@@ -30,6 +30,11 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mAppearDelay = 0;
     mElapsed = 0;
 
+    mIsPurple = false;
+    mShadowCalcOn = true;
+    mIgnoreGravity = false;
+    mCalcShadowPrivateGravity = false;
+
     // Setup Coin
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -53,8 +58,10 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     initHitSensor(1);
     MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
-    MR::invalidateClipping(this);
-    
+    MR::initShadowVolumeSphere(this, 50.0f);
+    MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
+    MR::setShadowDropLength(this, 0, 1000.0f);
+
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
     mConnector = new MapObjConnector(this);
@@ -112,7 +119,7 @@ void RedCoin::calcCounterPlayerPos() {
     if (mCounterPlayerPos) {
         pos = *MarioAccess::getPlayerActor()->getGravityVec();
         pos2 = *MR::getPlayerPos();
-        heightAdd = 250.0f;
+        heightAdd = 200.0f;
     }
 
     TVec2f screenPos;

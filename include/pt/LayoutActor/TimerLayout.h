@@ -1,10 +1,10 @@
+#ifdef ALL
 #pragma once
 
 #include "Game/Screen/LayoutActor.h"
 #include "syati.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-#ifdef ALL
 namespace pt {
     class TimerLayout : public LayoutActor {
     public:

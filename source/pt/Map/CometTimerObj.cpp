@@ -41,9 +41,14 @@ void CometTimerObj::movement() {
         }
     
     if (mLayout->isReadyToTimeUp() && mIsAppeared) {
+
+        mKillPlayer ? MR::forceKillPlayerByGroundRace() : hideLayoutAndSwitchOn();
+    }
+
+    if (MR::isOnSwitchB(this)) {
         mIsAppeared = false;
         MR::hideLayout(mLayout);
-        mKillPlayer ? MR::forceKillPlayerByGroundRace() : hideLayoutAndSwitchOn();
+        makeActorDead();
     }
 }
 

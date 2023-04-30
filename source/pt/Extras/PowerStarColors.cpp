@@ -1,7 +1,7 @@
+#ifdef NOGLE
 #include "pt/Extras/PowerStarColors.h"
 #include "pt/Util/ActorUtil.h"
 
-#ifdef NOGLE
 /*
 * Authors: Aurum
 * 
@@ -57,7 +57,6 @@ namespace pt {
 		return getPowerStarColor(MR::getCurrentStageName(), scenarioId);
 	}
 
-	#ifdef NOGLE // GLE has its own Star Color system, so we can disable ours.
 	/*
 	* At the given address in PowerStar::initMapToolInfo, there is a check which always results true, allowing us to
 	* rewrite these instructions. Here, we load the color ID based on the PowerStarType setting in ScenarioData.bcsv.
@@ -101,7 +100,6 @@ namespace pt {
 	kmWrite32(0x802DF030, 0x4800000C); // skip unnecessary instructions
 
 	kmWrite32(0x804CB8BC, 0x48169D65); // This uses strstr instead of MR::isEqualString in the isPowerStarTypeHidden__12ScenarioDataCFl function. Allows types like BlueHidden to work.
-	#endif
 	/*
 	* Power Star Font Icons
 	*
@@ -119,9 +117,7 @@ namespace pt {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
 
-	#ifdef NOGLE
 		kmCall(0x804B8048, loadPTPictureFont);
-	#endif
 
 	s32 normalStarIcons[] = {0x37, 0x72, 0x7E, 0x7F, 0x52, 0x80, 0x4A};
 	s32 cometStarIcons[] = {0x65, 0x7D, 0x4F, 0x7F, 0x52, 0x82, 0x83};
@@ -141,12 +137,10 @@ namespace pt {
 	}
 
 
-	#ifdef NOGLE
 		kmCall(0x80041E30, getStarIcon); // Normal Star icons
 		kmCall(0x80041F0C, getStarIcon); // Comet Star icons
 		kmCall(0x80041F94, getStarIcon); // Hidden Star icons
 		kmCall(0x80041F48, getStarIcon); // Collected Hidden Star icons
-	#endif
 	
 	/*
 	*	Star Ball: Custom Ball and Star Colors
@@ -174,7 +168,7 @@ namespace pt {
 		
 		// BTP and BRK animations are started and set using colorFrame.
 		MR::startBtpAndSetFrameAndStop(actor, "BallStarColor", colorFrame);
-		MR::startBrkAndSetFrameAndStop(actor, "Normal", colorFrame);
+		MR::startBrkAndSetFrameAndStop(actor, "Normal", MR::hasPowerStarInCurrentStage(argScenario) ? 4 : colorFrame);
 	}
 	
 	kmWrite32(0x8044461C, 0x7F84E378); // mr r4, r28
@@ -196,20 +190,16 @@ namespace pt {
 		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
 	}
 
-	#ifdef NOGLE
 		kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 		kmCall(0x802E0870, greenStarAppearParticleFix);
-	#endif;
 
 	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
 	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
 		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
 	}
 
-	#ifdef NOGLE
 		kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
 		kmCall(0x802DFE04, customPowerStarLightColors);
-	#endif
 
 	/*
 	*	Silver Star Colors
@@ -218,15 +208,15 @@ namespace pt {
 	*	This will be removed if people do not use it, since it's pointless.
 	*/
 	
-	#ifdef ALL
+	/*
 	void SilverStarColors(LiveActor* actor, const JMapInfoIter& iter) {
 		MR::initUseStageSwitchWriteA(actor, iter);
-		s32 frame = 6;
+		f32 frame = 6;
 		MR::getJMapInfoArg0NoInit(iter, &frame);
 		MR::startBtpAndSetFrameAndStop(actor, "Color", frame);
 	}
 
 	kmCall(0x8035F830, SilverStarColors);
-	#endif
+	*/
 	}
-#endif
+	#endif
