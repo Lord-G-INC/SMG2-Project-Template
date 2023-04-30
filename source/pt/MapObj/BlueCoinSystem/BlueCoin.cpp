@@ -11,7 +11,7 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
     mIsPurple = false;
     mShadowCalcOn = true;
     mIgnoreGravity = false;
-    mCalcShadowPrivateGravity = false;
+    mCalcShadowPrivateGravity = true;
 
     MR::createCoinRotater();
     MR::createCoinHolder();

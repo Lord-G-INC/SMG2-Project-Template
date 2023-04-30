@@ -33,7 +33,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mIsPurple = false;
     mShadowCalcOn = true;
     mIgnoreGravity = false;
-    mCalcShadowPrivateGravity = false;
+    mCalcShadowPrivateGravity = true;
 
     // Setup Coin
     MR::createCoinRotater();
