@@ -697,7 +697,7 @@ namespace pt {
 		// Calculate front vector
 		TVec3f gravity;
 		if (MR::isBindedGround(this)) {
-			//gravity.set(-*MR::getGroundNormal(this));
+			gravity.set(-MR::getGroundNormal(this));
 		}
 		else {
 			gravity.set(mGravity);
