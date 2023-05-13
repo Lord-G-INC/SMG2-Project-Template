@@ -170,9 +170,16 @@ void RedCoin::appearAndMove() {
 void RedCoin::collect() {
     mIsCollected = true;
 
+    RedCoinController* pController;
     LiveActorGroup* group = MR::getGroupFromArray(this);
-    RedCoinController* pController = ((RedCoinController*)group->getActor(group->mNumObjs - 1));
-
+    
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (MR::isEqualString(group->getActor(i)->mName, "RedCoinController")) {
+            pController = (RedCoinController*)group->getActor(i);
+            break;
+        }
+    }
+    
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
     
