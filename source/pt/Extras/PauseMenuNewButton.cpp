@@ -1,4 +1,4 @@
-#ifdef WIP
+#if defined (ALL) || defined (SMSS)
 #pragma once
 
 #include "syati.h"
@@ -21,7 +21,7 @@ void InitNewButton(PauseMenu* pPauseMenu, const char* pStr) {
     MR::setFollowTypeReplace(pPauseMenu, "NewButton");
 }
 
-kmCall(0x80486D58, InitNewButton);
+kmCall(0x80486D58, InitNewButton); // Call
 
 void ButtonControl(TVec2f* pPos, PauseMenu* pPauseMenu, const char* pStr) {
     MR::copyPaneTrans(&pPauseMenu->mButtonTopFollowPos, pPauseMenu, pStr);
@@ -30,7 +30,7 @@ void ButtonControl(TVec2f* pPos, PauseMenu* pPauseMenu, const char* pStr) {
     pPauseMenu->mButtonNew->update();
 }
 
-kmCall(0x8048727C, ButtonControl);
+kmCall(0x8048727C, ButtonControl); // Call
 
 void ForceToWaitNewButton(PauseMenu* pPauseMenu) {
     pPauseMenu->mButtonTop->forceToWait();
@@ -38,7 +38,7 @@ void ForceToWaitNewButton(PauseMenu* pPauseMenu) {
 }
 
 kmWrite32(0x80487504, 0x60000000); // nop
-kmCall(0x80487508, ForceToWaitNewButton);
+kmCall(0x80487508, ForceToWaitNewButton); // Call
 
 void AppearNewButton(PauseMenu* pPauseMenu) {
     pPauseMenu->mButtonTop->appear();
@@ -46,7 +46,7 @@ void AppearNewButton(PauseMenu* pPauseMenu) {
 }
 
 kmWrite32(0x80487560, 0x7FE3FB78); // mr r3, r31
-kmCall(0x80487564, AppearNewButton);
+kmCall(0x80487564, AppearNewButton); // Call
 
 bool IsNewButtonPointingTrigger(PauseMenu* pPauseMenu) {
     return pPauseMenu->mButtonTop->isPointingTrigger() || pPauseMenu->mButtonNew->isPointingTrigger();
@@ -72,7 +72,7 @@ bool IsNewButtonPressed(PauseMenu* pPauseMenu) {
 }
 
 kmWrite32(0x804877B4, 0x7F63DB78); // mr r3, r27
-kmCall(0x804877C0, IsNewButtonPressed);
+kmCall(0x804877C0, IsNewButtonPressed); // Call
 
 const char* SysInfoWindowStr(bool isValid, PauseMenu* pPauseMenu) {
     return pPauseMenu->mIsUsedNewButton ? "PauseMenu_ConfirmRestartStage" : isValid ? "PauseMenu_ConfirmEndGame" : "PauseMenu_ConfirmBackWorldMap";
@@ -89,7 +89,7 @@ void DisappearNewButton(PauseMenu* pPauseMenu) {
 }
 
 kmWrite32(0x80487B10, 0x7FC3F378); // mr r3, r30
-kmCall(0x80487B14, DisappearNewButton);
+kmCall(0x80487B14, DisappearNewButton); // Call
 
 bool IsNewButtonTimingForSelectedSE(PauseMenu* pPauseMenu) {
     if (pPauseMenu->mButtonBottom->isTimingForSelectedSe() || pPauseMenu->mButtonNew->isTimingForSelectedSe())
@@ -104,7 +104,7 @@ kmWrite32(0x804879B4, 0x2C040001); // cmpwi r4, 0x1
 kmWrite32(0x804879C0, 0x2C000001); // cmpwi r0, 0x1
 
 kmWrite32(0x804879C8, 0x7FC3F378); // mr r3, r30
-kmCall(0x804879CC, IsNewButtonTimingForSelectedSE);
+kmCall(0x804879CC, IsNewButtonTimingForSelectedSE); // Call
 
 
 bool IsNewButtonDecidedWait(PauseMenu* pPauseMenu) {
@@ -112,12 +112,12 @@ bool IsNewButtonDecidedWait(PauseMenu* pPauseMenu) {
 }
 
 kmWrite32(0x80487A00, 0x7FC3F378); // mr r3, r30
-kmCall(0x80487A04, IsNewButtonDecidedWait);
+kmCall(0x80487A04, IsNewButtonDecidedWait); // Call
 
-void DoNewButtonAction(PauseMenu* pPauseMenu, bool isValid) {
+void DoNewButtonAction(bool isUsedNewButton, bool isValid) {
     MR::startSystemWipeCircleWithCaptureScreen(0x5A);
 
-    if (pPauseMenu->mIsUsedNewButton) {
+    if (isUsedNewButton) {
 		GameSequenceFunction::requestChangeScenarioSelect(MR::getCurrentStageName());
 		GameSequenceFunction::requestChangeStage(MR::getCurrentStageName(), MR::getCurrentScenarioNo(), MR::getCurrentSelectedScenarioNo(), *(JMapIdInfo*)0);
     }
@@ -130,7 +130,7 @@ void DoNewButtonAction(PauseMenu* pPauseMenu, bool isValid) {
 }
 
 kmWrite32(0x80487CA4, 0x7C641B78); // mr r4, r3
-kmWrite32(0x80487CA8, 0x7FE3FB78); // mr r3, r31
-kmCall(0x80487CAC, DoNewButtonAction); // call to func
-kmWrite32(0x80487CB0, 0x48000008); // b 0x8
+kmWrite32(0x80487CA8, 0x889F005A); // lbz r4, 0x5A(r31)
+kmCall(0x80487CAC, DoNewButtonAction); // Call
+kmWrite32(0x80487CB0, 0x48000008); // b 0xC
 #endif
