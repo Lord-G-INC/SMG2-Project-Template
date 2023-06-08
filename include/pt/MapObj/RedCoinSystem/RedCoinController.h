@@ -10,30 +10,26 @@
     
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
-        void incCountAndUpdateLayouts();
+        void startCountUp(LiveActor* pRedCoin);
         void resetAllRedCoins();
         void appearCounterIfHidden();
         void updateCounter();
         void calcCounterVisibility();
         void calcCounterTimer();
+        void appearRedCoinCounterPlayer();
+        void calcRedCoinCounterPlayerPos();
     
         LayoutActor* mRedCoinCounter;
+        LayoutActor* mRedCoinCounterPlayer;
+        LiveActor* mLastRedCoin;
         CountUpPaneRumbler* mRumbler;
         s32 mNumCoins;
         s32 mElapsed;
         s32 mPowerStarCheck; // Obj_arg1
-        s32 mIconID; // Obj_arg
-
-        s32 mTimerModeMinutes; // Obj_arg4
-        s32 mTimerModeSeconds; // Obj_arg5
-
-        s32 mTimerMinutes;
-        s32 mTimerSeconds;
-        s32 mTimerMilliseconds;
+        s32 mIconID; // Obj_arg2
 
         bool mShouldNotRewardCoins; // Obj_arg0
         bool mHasAllRedCoins;
         bool mIsValidCounterAppear;
-        bool mIsTimerMode; // Obj_arg3
-        bool mIsUp;
+        bool mRedCoinCounterPlayerPos; // Obj_arg3
     };

@@ -19,20 +19,17 @@
         virtual void calcAndSetBaseMtx();
         virtual bool receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver);
 
-        void calcCounterPlayerPos();
         void collect();
         void appearAndMove();
         void initAirBubble();
     
-        LayoutActor* mCoinCounterPlayer;
         LiveActorGroup* mGroup;
         f32 mLaunchVelocity; // Obj_arg0
-        s32 mAppearDelay; // Obj_arg3
+        s32 mAppearDelay; // Obj_arg4
         s32 mElapsed;
         bool mUseConnection; // Obj_arg1
         bool mIsInAirBubble; // Obj_arg2
-        bool mInvalidateShadows; // Obj_arg4
-        bool mCounterPlayerPos; // Obj_arg5
+        bool mInvalidateShadows; // Obj_arg3
         bool mIsCollected;
         bool mHasRewardedCoins;
     };

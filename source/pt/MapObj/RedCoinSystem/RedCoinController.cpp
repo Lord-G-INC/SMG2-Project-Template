@@ -20,20 +20,13 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mElapsed = 0;
     mHasAllRedCoins = false;
 
+    mLastRedCoin = this;
+
     mShouldNotRewardCoins = false;
     mPowerStarCheck = 0;
     mIconID = 0x37;
     mIsValidCounterAppear = false;
-    mIsTimerMode = false;
-
-    mTimerModeMinutes = 0;
-    mTimerModeSeconds = 30;
-
-    mTimerMinutes = 0;
-    mTimerSeconds = 0;
-    mTimerMilliseconds = 0;
-
-    mIsUp = false;
+    mRedCoinCounterPlayerPos = false;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -43,18 +36,13 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::registerDemoSimpleCastAll(this);
     MR::useStageSwitchWriteA(this, rIter);
     MR::useStageSwitchReadB(this, rIter);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 64);
+    MR::joinToGroupArray(this, rIter, "RedCoin", 24);
 
     // Get Obj_args
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
-    MR::getJMapInfoArg3NoInit(rIter, &mIsTimerMode);
-    MR::getJMapInfoArg4NoInit(rIter, &mTimerModeMinutes);
-    MR::getJMapInfoArg5NoInit(rIter, &mTimerModeSeconds);
-
-    mTimerMinutes = mTimerModeMinutes;
-    mTimerSeconds = mTimerModeSeconds;
+    MR::getJMapInfoArg3NoInit(rIter, &mRedCoinCounterPlayerPos);
 
     // Initialize the RedCoinCounter
     mRedCoinCounter = MR::createSimpleLayout("counter", "RedCoinCounter", 2);
@@ -63,6 +51,11 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
     MR::hideLayout(mRedCoinCounter);
 
+    // Initialize RedCoinCounterPlayer
+    mRedCoinCounterPlayer = MR::createSimpleLayout("counternumber", "RedCoinCounterPlayer", 1);
+    MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", 0);
+    MR::registerDemoSimpleCastAll(mRedCoinCounterPlayer);
+
     wchar_t str;
     MR::addPictureFontCode(&str, MR::hasPowerStarInCurrentStage(mPowerStarCheck) ? mIconID : 0x52);
     MR::setTextBoxFormatRecursive(mRedCoinCounter, "TxtStar", &str);
@@ -70,20 +63,14 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     mRumbler = new CountUpPaneRumbler(mRedCoinCounter, "Counter");
     mRumbler->mRumbleCalculator->mRumbleStrength = 8.0f;
     mRumbler->reset();
-
-    if (mIsTimerMode)
-        MR::showPaneRecursive(mRedCoinCounter, "ShaTime");
 }
 
 void RedCoinController::movement() {
+    calcRedCoinCounterPlayerPos();
+
     mRumbler->update();
 
     calcCounterVisibility();
-
-    if (mIsTimerMode && MR::isOnSwitchB(this) && !mHasAllRedCoins) {
-        appearCounterIfHidden();
-        calcCounterTimer();
-    }
 
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
@@ -98,42 +85,10 @@ void RedCoinController::movement() {
     }
 }
 
-void RedCoinController::calcCounterTimer() {
-    if (!mIsUp) {
-        if (mTimerMilliseconds < 60)
-            mTimerMilliseconds--;
-
-        if (mTimerMilliseconds < 0) {
-            mTimerMilliseconds = 59;
-    
-            if (mTimerSeconds >= 0)
-                mTimerSeconds--;
-        }
-    
-        if (mTimerSeconds < 0) {
-            mTimerSeconds = 59;
-    
-            if (mTimerMinutes > 0)
-                mTimerMinutes--;
-        }
-    }
-    else {
-        resetAllRedCoins();
-        mTimerMilliseconds = -1;
-    }
-
-
-    if (mTimerMinutes == 0 && mTimerSeconds == 0 && mTimerMilliseconds == 0)
-        mIsUp = true;
-
-    MR::setTextBoxFormatRecursive(mRedCoinCounter, "ShaTime", L"%02d:%02d", mTimerMinutes, mTimerSeconds);
-}
-
 // This function is unused, but there are plans for
 // this function to be included if it can be figured out.
 
 void RedCoinController::resetAllRedCoins() {
-    MR::offSwitchB(this);
     LiveActorGroup* group = MR::getGroupFromArray(this);
 
     for (s32 i = 0; i < group->mNumObjs; i++) {
@@ -142,7 +97,7 @@ void RedCoinController::resetAllRedCoins() {
             MR::hideModel(coin);
             MR::invalidateShadowAll(coin);
             MR::invalidateHitSensors(coin);
-            MR::stopAnim(coin->mCoinCounterPlayer, 0);
+
             coin->mIsCollected = false;
 
             if (coin->mIsInAirBubble)
@@ -150,29 +105,56 @@ void RedCoinController::resetAllRedCoins() {
         }
     }
 
-
-    mTimerMinutes = mTimerModeMinutes;
-    mTimerSeconds = mTimerModeSeconds;
-    mTimerMilliseconds = 0;
     mNumCoins = 0;
-    mIsUp = false;
     mIsValidCounterAppear = false;
+    MR::offSwitchB(this);
+    MR::stopAnim(mRedCoinCounterPlayer, 0);
     MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
     MR::hideLayout(mRedCoinCounter);
     MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
 }
 
 // Increases both layouts by 1
-void RedCoinController::incCountAndUpdateLayouts() {
+void RedCoinController::startCountUp(LiveActor* pRedCoin) {
     mNumCoins++;
+    
+    mLastRedCoin = pRedCoin;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     updateCounter();
 }
 
+void RedCoinController::appearRedCoinCounterPlayer() {
+    calcRedCoinCounterPlayerPos();
+    MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", mNumCoins);
+    MR::startAnim(mRedCoinCounterPlayer, "Appear", 0);
+    MR::showLayout(mRedCoinCounterPlayer);
+    mRedCoinCounterPlayer->appear();
+}
+
+void RedCoinController::calcRedCoinCounterPlayerPos() {
+    TVec3f pos = mLastRedCoin->mGravity;
+    TVec3f pos2 = mLastRedCoin->mTranslation;
+    f32 heightAdd = 150.0f;
+
+    if (mRedCoinCounterPlayerPos) {
+        pos = *MarioAccess::getPlayerActor()->getGravityVec();
+        pos2 = *MR::getPlayerPos();
+        heightAdd = 200.0f;
+    }
+
+    TVec2f screenPos;
+    TVec3f newPos;
+
+    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pos2, (Vec*)&newPos, -heightAdd);
+    
+    MR::calcScreenPosition(&screenPos, newPos);
+    mRedCoinCounterPlayer->setTrans(screenPos);
+}
+
 void RedCoinController::updateCounter() {
-    if (mNumCoins == 1 && !mIsTimerMode) {
+    if (mNumCoins == 1) {
         mIsValidCounterAppear = true;
         appearCounterIfHidden();
     }

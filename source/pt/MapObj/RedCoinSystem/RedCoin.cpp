@@ -25,7 +25,6 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
-    mCounterPlayerPos = false;
     mHasRewardedCoins = false;
     mAppearDelay = 0;
     mElapsed = 0;
@@ -50,8 +49,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mUseConnection); // Use MapObjConnection?
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble); // Use AirBubble?
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows); // Hide Shadows?
-    MR::getJMapInfoArg4NoInit(rIter, &mCounterPlayerPos); // RedCoinCounterPlayer layout position
-    MR::getJMapInfoArg5NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay
+    MR::getJMapInfoArg4NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay
     
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -66,10 +64,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     mConnector = new MapObjConnector(this);
     mConnector->attach(mTranslation);
-
-    mCoinCounterPlayer = MR::createSimpleLayout("RedCoinCounterPlayer", "RedCoinCounterPlayer", 1);
-    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", 0);
-    MR::registerDemoSimpleCastAll(mCoinCounterPlayer);
 
     makeActorAppeared();
 
@@ -94,9 +88,6 @@ void RedCoin::initAfterPlacement() {
 
 
 void RedCoin::control() {
-    if (mIsCollected)
-        calcCounterPlayerPos();
-
     if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
         mElapsed++;
         
@@ -109,26 +100,6 @@ void RedCoin::control() {
 
     if (mIsCollected)
         MR::zeroVelocity(this);
-}
-
-void RedCoin::calcCounterPlayerPos() {
-    TVec3f pos = mGravity;
-    TVec3f pos2 = mTranslation;
-    f32 heightAdd = 150.0f;
-
-    if (mCounterPlayerPos) {
-        pos = *MarioAccess::getPlayerActor()->getGravityVec();
-        pos2 = *MR::getPlayerPos();
-        heightAdd = 200.0f;
-    }
-
-    TVec2f screenPos;
-    TVec3f newPos;
-
-    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pos2, (Vec*)&newPos, -heightAdd);
-    
-    MR::calcScreenPosition(&screenPos, newPos);
-    mCoinCounterPlayer->setTrans(screenPos);
 }
 
 void RedCoin::calcAndSetBaseMtx() {
@@ -195,13 +166,10 @@ void RedCoin::collect() {
         mHasRewardedCoins = true;
     }
 
-    pController->incCountAndUpdateLayouts();
-    MR::startSystemSE(pController->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
+    pController->startCountUp(this);
+    pController->appearRedCoinCounterPlayer();
 
-    MR::setTextBoxNumberRecursive(mCoinCounterPlayer, "TxtText", pController->mNumCoins);
-    MR::startAnim(mCoinCounterPlayer, "Appear", 0);
-    MR::showLayout(mCoinCounterPlayer);
-    mCoinCounterPlayer->appear();
+    MR::startSystemSE(pController->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 
     MR::incPlayerOxygen(mIsInAirBubble ? 2 : 1);
     MR::invalidateHitSensors(this);
