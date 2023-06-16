@@ -49,7 +49,7 @@ kmCall(0x8024F3C0, loadFileDataTable);
 const wchar_t *getFileIconMessage(int iconID)
 {
   char iconMsg[120];
-  snprintf(iconMsg, 120, "System_FileSelect_Icon00%d", iconID);
+  snprintf(iconMsg, 120, "System_FileSelect_Icon%03d", iconID);
   const wchar_t *newIconMsg = MR::getGameMessageDirect(iconMsg);
   if (newIconMsg == 0)
     return L"InvalidName";
