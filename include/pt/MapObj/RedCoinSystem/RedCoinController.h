@@ -10,13 +10,12 @@
     
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
-        void startCountUp(LiveActor* pRedCoin);
+        void startCountUp(LiveActor* pRedCoin, bool pos);
         void resetAllRedCoins();
         void appearCounterIfHidden();
         void updateCounter();
         void calcCounterVisibility();
         void calcCounterTimer();
-        void appearRedCoinCounterPlayer();
         void calcRedCoinCounterPlayerPos();
     
         LayoutActor* mRedCoinCounter;
@@ -31,5 +30,5 @@
         bool mShouldNotRewardCoins; // Obj_arg0
         bool mHasAllRedCoins;
         bool mIsValidCounterAppear;
-        bool mRedCoinCounterPlayerPos; // Obj_arg3
+        bool mLayoutPos;
     };

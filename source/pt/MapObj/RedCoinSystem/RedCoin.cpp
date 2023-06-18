@@ -28,6 +28,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
     mHasRewardedCoins = false;
     mAppearDelay = 0;
     mElapsed = 0;
+    mRedCoinCounterPlayerPos = false;
 
     mIsPurple = false;
     mShadowCalcOn = true;
@@ -50,6 +51,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble); // Use AirBubble?
     MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows); // Hide Shadows?
     MR::getJMapInfoArg4NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay
+    MR::getJMapInfoArg5NoInit(rIter, &mRedCoinCounterPlayerPos);
     
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
@@ -166,8 +168,7 @@ void RedCoin::collect() {
         mHasRewardedCoins = true;
     }
 
-    pController->startCountUp(this);
-    pController->appearRedCoinCounterPlayer();
+    pController->startCountUp(this, mRedCoinCounterPlayerPos);
 
     MR::startSystemSE(pController->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 

@@ -26,7 +26,7 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mPowerStarCheck = 0;
     mIconID = 0x37;
     mIsValidCounterAppear = false;
-    mRedCoinCounterPlayerPos = false;
+    mLayoutPos = 0;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -42,7 +42,6 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
-    MR::getJMapInfoArg3NoInit(rIter, &mRedCoinCounterPlayerPos);
 
     // Initialize the RedCoinCounter
     mRedCoinCounter = MR::createSimpleLayout("counter", "RedCoinCounter", 2);
@@ -115,17 +114,16 @@ void RedCoinController::resetAllRedCoins() {
 }
 
 // Increases both layouts by 1
-void RedCoinController::startCountUp(LiveActor* pRedCoin) {
+void RedCoinController::startCountUp(LiveActor* pRedCoin, bool pos) {
     mNumCoins++;
     
     mLastRedCoin = pRedCoin;
+    mLayoutPos = pos;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
     updateCounter();
-}
 
-void RedCoinController::appearRedCoinCounterPlayer() {
     calcRedCoinCounterPlayerPos();
     MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", mNumCoins);
     MR::startAnim(mRedCoinCounterPlayer, "Appear", 0);
@@ -134,14 +132,19 @@ void RedCoinController::appearRedCoinCounterPlayer() {
 }
 
 void RedCoinController::calcRedCoinCounterPlayerPos() {
-    TVec3f pos = mLastRedCoin->mGravity;
-    TVec3f pos2 = mLastRedCoin->mTranslation;
-    f32 heightAdd = 150.0f;
+    TVec3f pos;
+    TVec3f pos2;
+    f32 heightAdd;
 
-    if (mRedCoinCounterPlayerPos) {
+    if (mLayoutPos) {
         pos = *MarioAccess::getPlayerActor()->getGravityVec();
         pos2 = *MR::getPlayerPos();
         heightAdd = 200.0f;
+    }
+    else {
+        pos = mLastRedCoin->mGravity;
+        pos2 = mLastRedCoin->mTranslation;
+        heightAdd = 150.0f;
     }
 
     TVec2f screenPos;

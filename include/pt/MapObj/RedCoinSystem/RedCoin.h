@@ -32,4 +32,5 @@
         bool mInvalidateShadows; // Obj_arg3
         bool mIsCollected;
         bool mHasRewardedCoins;
+        bool mRedCoinCounterPlayerPos;
     };
