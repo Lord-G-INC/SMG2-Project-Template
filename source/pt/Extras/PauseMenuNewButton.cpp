@@ -1,4 +1,5 @@
-#if defined (ALL) || defined (SMSS)
+//#if defined (ALL) || defined (SMSS)
+#ifdef WIP
 #pragma once
 
 #include "syati.h"
@@ -103,10 +104,6 @@ bool IsNewButtonTimingForSelectedSE(PauseMenu* pPauseMenu) {
     return false;
 }
 
-kmWrite32(0x804879B0, 0x809E0034); // lwz r4, 0x34(r30)
-kmWrite32(0x804879B4, 0x2C040001); // cmpwi r4, 1
-
-kmWrite32(0x804879C0, 0x2C000001); // cmpwi r0, 1
 
 kmWrite32(0x804879C8, 0x7FC3F378); // mr r3, r30
 kmCall(0x804879CC, IsNewButtonTimingForSelectedSE); // Call
@@ -138,4 +135,45 @@ kmWrite32(0x80487CA4, 0x7C641B78); // mr r4, r3 (isValid into r4)
 kmWrite32(0x80487CA8, 0x7FE3FB78); // mr r3, r31 (PauseMenu* into r3)
 kmCall(0x80487CAC, DoNewButtonAction); // Call
 kmWrite32(0x80487CB0, 0x48000008); // b 0x8 (Skip useless instructions)
+
+bool ButtonBottomCrashFix(PauseMenu* pPauseMenu) {
+    if (pPauseMenu->mButtonNew) {
+        if (pPauseMenu->mButtonNew->_24) {
+            return true;
+        }
+    }
+
+    if (!pPauseMenu->mButtonBottom)
+        return false;
+    
+    if (!pPauseMenu->mButtonBottom->_24)
+        return false;
+
+    OSReport("Button Bottom True\n");
+    return true;
+}
+
+kmWrite32(0x804879B0, 0x7FC3F378);
+kmCall(0x804879B4, ButtonBottomCrashFix);
+kmWrite32(0x804879B8, 0x2C030000);
+kmWrite32(0x804879BC, 0x41820080);
+kmWrite32(0x804879C0, 0x48000008);
+
+
+bool ButtonStarListCrashFix(ButtonPaneController* pButtonStarList) {
+    if (!pButtonStarList)
+        return false;
+    
+    if (!pButtonStarList->_24)
+        return false;
+
+    return true;
+}
+
+kmWrite32(0x80487A3C, 0x807E0034);
+kmCall(0x80487A40, ButtonStarListCrashFix);
+kmWrite32(0x80487A44, 0x2C030000);
+kmWrite32(0x80487A48, 0x41820064);
+kmWrite32(0x80487A4C, 0x60000000);
+kmWrite32(0x80487A50, 0x807E0034);
 #endif
