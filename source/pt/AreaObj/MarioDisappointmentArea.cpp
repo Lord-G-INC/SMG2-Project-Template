@@ -11,8 +11,13 @@ void MarioDisappointmentArea::init(const JMapInfoIter& rIter) {
 
 void MarioDisappointmentArea::movement() {
     if (isInVolume(*MR::getPlayerPos())) {
-        MarioAccess::getPlayerActor()->_F9C = false;
-        MarioAccess::getPlayerActor()->_F9A = 1;
+        if (mObjArg0 > -1) {
+            MR::disableStarPointerShootStarPiece();
+        }
+        else {
+            MarioAccess::getPlayerActor()->_F9C = false;
+            MarioAccess::getPlayerActor()->_F9A = 1;
+        }
     }
 }
 

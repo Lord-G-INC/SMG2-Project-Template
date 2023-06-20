@@ -1,6 +1,6 @@
+#ifdef ALL
 #include "pt/LayoutActor/TimerLayout.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
-#include "Game/Screen/GameSceneLayoutHolder.h"
 
 /*
 * Clear Time In Stage Layout
@@ -10,7 +10,7 @@
 * Only available on the "ALL" configuration.
 */
 
-#ifdef ALL
+//#ifdef ALL
 namespace pt {
 
 s32 numScenario = 1; // Checked scenario is 1 by default.

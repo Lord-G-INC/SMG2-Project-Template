@@ -6,7 +6,7 @@
 // HUD
 
 BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {
-    mWaitTime = 120;
+    mWaitTime = -1;
 }
 
 void BlueCoinCounter::init(const JMapInfoIter& rIter) {
@@ -29,6 +29,12 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
 }
 
 void BlueCoinCounter::control() {
+    if (mWaitTime > 0)
+        mWaitTime--;
+
+    if (mWaitTime == 0)
+        setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+
     mAppearer->updateNerve();
     mPaneRumbler->update();
 }
@@ -42,31 +48,31 @@ void BlueCoinCounter::exeAppear() {
 }
   
 void BlueCoinCounter::exeDisappear() {
-    if (MR::isFirstStep(this))
+    if (MR::isFirstStep(this)) {
         mAppearer->disappear();
+        mWaitTime = -1;
+    }
 
-    if (MR::isStep(this, 10)) {
+    if (MR::isStep(this, 10))
         MR::hideLayout(this);
+}
+
+void BlueCoinCounter::startCountUp() {  
+    if (mAppearer->isAppeared()) {
+        updateCounter();
+        mWaitTime + 60;
+    }
+    else {
+        setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
         mWaitTime = 120;
     }
 }
 
-void BlueCoinCounter::startCountUp() {
-    mWaitTime + 30;
-
-    if (mAppearer->isAppeared())
-        updateCounter();
-    else
-        setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
-}
-
 void BlueCoinCounter::exeAppearAndUpdate() {
-    exeAppear();
-
     if (MR::isStep(this, 15))
         updateCounter();
 
-    MR::setNerveAtStep(this, &NrvBlueCoinCounter::NrvDisappear::sInstance, mWaitTime);
+    exeAppear();
 }
 
 void BlueCoinCounter::updateCounter() {
@@ -74,9 +80,6 @@ void BlueCoinCounter::updateCounter() {
     MR::startPaneAnim(this, "Counter", "Flash", 0);
     mPaneRumbler->start();
 }
-
-// Add 0x4 to CounterLayoutController for BlueCoinCounter ptr
-kmWrite32(0x80471780, 0x38600050);
 
 namespace NrvBlueCoinCounter {
 	void NrvAppear::execute(Spine* pSpine) const {
@@ -96,35 +99,46 @@ namespace NrvBlueCoinCounter {
     NrvAppearAndUpdate(NrvAppearAndUpdate::sInstance);
 }
 
+// Add 0x4 to CounterLayoutController for BlueCoinCounter ptr
+kmWrite32(0x80471780, 0x38600050);
+
 void initBlueCoinLayout(CounterLayoutController* pController) {
     MR::connectToSceneLayout(pController);
 
     pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
-    pController->mPTDBlueCoinCounter->initWithoutIter();
-    MR::hideLayout(pController->mPTDBlueCoinCounter);
+
+    if (!MR::isStageFileSelect()) {
+        pController->mPTDBlueCoinCounter->initWithoutIter();
+        MR::hideLayout(pController->mPTDBlueCoinCounter);
+    }
 }
 
 kmCall(0x804657A0, initBlueCoinLayout);
 
 void appearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
-    pController->showAllLayout();
+    if (!MR::isStageFileSelect()) {
+        ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->mWaitTime = -1;
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
+    }
+        pController->showAllLayout();
 }
 
-kmCall(0x880466128, appearBlueCoinLayout);
+kmCall(0x80466128, appearBlueCoinLayout);
 
 void disappearBlueCoinLayout(CounterLayoutController* pController) {
-    pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+    if (!MR::isStageFileSelect())
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+        
     pController->hideAllLayout();
 }
 
 kmCall(0x80466198, disappearBlueCoinLayout);
 
 void killBlueCoinCounter(CounterLayoutController* pController) {
-    LayoutActor* pLayout = pController->mPTDBlueCoinCounter;
-
-    MR::hideLayout(pLayout);
-    pLayout->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+    if (!MR::isStageFileSelect()) {
+        MR::hideLayout(pController->mPTDBlueCoinCounter);
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
+    }
     pController->killAllCoounter();
 }
 

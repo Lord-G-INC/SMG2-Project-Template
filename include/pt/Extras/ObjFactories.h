@@ -133,6 +133,7 @@ namespace pt {
         { "MultipleChoiceDice", createExtActor<MultipleChoiceDice> },
         { "Pompon2Plant", createExtActor<PomponPlant> },
         { "PowerStarSpawner", createExtActor<PowerStarSpawner> },
+        { "PTimerSwitch", createExtActor<PTimerSwitch> },
         { "ScrewSwitch", createExtActor<ScrewSwitch> },
         { "ScrewSwitchReverse", createExtActor<ScrewSwitchReverse> },
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
@@ -153,8 +154,9 @@ namespace pt {
         { "SuperSpinDriverBlue", createSuperSpinDriverCustomColor<4> },
         { "SuperSpinDriverRainbow", createSuperSpinDriverCustomColor<5> },
         { "SuperSpinDriverPurple", createSuperSpinDriverCustomColor<6> },
-        { "PTimerSwitch", createExtActor<PTimerSwitch> },
-        { "Pattan", createExtActor<Pattan> },
+        { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<7> },
+        { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
+        { "SuperSpinDriverYellow", createSuperSpinDriverCustomColor<9> },
 
         #ifdef ALL
             { "LavaSteam", createExtActor<LavaSteam> },
@@ -171,11 +173,6 @@ namespace pt {
         #ifdef SMG63
             { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
             { "MarioDisappointmentArea", createExtActor<MarioDisappointmentArea> },
-        #endif
-
-        #ifdef CA
-            { "SuperSpinDriverBlack", createSuperSpinDriverCustomColor<8> },
-            { "SuperSpinDriverWhite", createSuperSpinDriverCustomColor<8> },
         #endif
     };
 

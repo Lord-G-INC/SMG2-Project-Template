@@ -1,5 +1,6 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "Game/Util.h"
 
 //bool** gBlueCoinData;
 
@@ -37,6 +38,8 @@ void init() {
     for (Func* f = &__ctor_loc; f < &__ctor_end; f++) {
         (*f)();
     }
+
+
 }
 
 #if defined(TWN) || defined(KOR)

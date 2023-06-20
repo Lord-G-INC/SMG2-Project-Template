@@ -1,3 +1,4 @@
+#ifdef SMSS
 #include "syati.h"
 #include "pt/LayoutActor/FileSelectData.h"
 #include "pt/Util/ActorUtil.h"
@@ -15,7 +16,7 @@
    File Select Table loading and unloading
 */
 
-void *FileSelectDataTable;
+void *FileSelectDataTable = pt::loadArcAndFile("/ObjectData/FileSelectData.arc", "/FileSelectData.bcsv");
 s32 tableNum;
 
 void loadFileDataTable(LiveActor *pActor)
@@ -26,7 +27,6 @@ void loadFileDataTable(LiveActor *pActor)
   // Load arc and set variables.
   if (MR::isFileExist("/ObjectData/FileSelectData.arc", false))
   {
-    FileSelectDataTable = pt::loadArcAndFile("/ObjectData/FileSelectData.arc", "/FileSelectData.bcsv");
     JMapInfo JMapTable = JMapInfo();
     JMapTable.attach(FileSelectDataTable);
     tableNum = MR::getCsvDataElementNum(&JMapTable);
@@ -200,3 +200,4 @@ kmWrite32(0x80484A94, 0x60000000);
 kmWrite32(0x80484A98, 0xD0210008);
 kmWrite32(0x80484AA0, 0x60000000);
 kmWrite32(0x80484ad0, 0xc0210008);
+#endif

@@ -10,6 +10,7 @@
 /*
 * Authors: Aurum
 */
+
 namespace pt {
 	/*
 	* Error Message Fallback
@@ -46,11 +47,7 @@ namespace pt {
 	* Support for new BRK frames may be added in the future.
 	*/
 
-	#ifdef CA
-		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti"};
-	#else
-		const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti"};
-	#endif
+	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "White.bti", "White.bti", "Yellow.bti"};
 
 	JUTTextureHolder Colors = arrsize(ColorsStr);
 
@@ -292,64 +289,89 @@ namespace pt {
     }
 
     kmCall(0x801F8290, smssKillSamboHeadIfInWater);
-
-	#ifdef WIP
-	void pattanInit(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
-		MR::processInitFunction(pActor, rIter, pStr, false);
-
-		MR::initDefaultPos(pActor, rIter);
-		MR::connectToSceneEnemy(pActor);
-	}
-
-	kmCall(0x801E6DB8, pattanInit);
-
-	void pattanShow(LiveActor* pActor) {
-		MR::invalidateClipping(pActor);
-		pActor->makeActorAppeared();
-	}
-
-	kmCall(0x801E6E68, pattanShow);
-	#endif
 	
-	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr, LayoutActor* pLayout) {
+	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
 		MR::processInitFunction(pActor, rIter, pStr, false);
 
-		pLayout = MR::createSimpleLayout("textlyt", "TextLayout", 0);
-		pLayout->initWithoutIter();
-		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"this message is a test");
+		s32 msgID = -1;
+		MR::getJMapInfoMessageID(rIter, &msgID);
 
+		LayoutActor* pLayout = MR::createSimpleLayout("textlyt", "TextLayout", 0);
+		pLayout->initWithoutIter();
+
+		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"");
+		if (msgID > -1) {
+		char* text = new char[0xE];
+		snprintf(text, 0xE, "RestartObj%03d", msgID);
+		MR::setTextBoxGameMessageRecursive(pLayout, "Text00", text);
+		}
+	
 		asm("stw %0, 0x9C(%1)" : "=r" (pLayout) : "=r" (pActor));
 	}
 
-	kmWrite32(0x8033FC44, 0x386000A0); // +4 to r3 for nw call
+	#ifdef WIP
+	kmWrite32(0x8033FC44, 0x386000A0); // li r3 0xA4
 
-	kmWrite32(0x802F175C, 0x80DF009C);
+	//kmWrite32(0x802F175C, 0x80DF009C); // lwz r6, 0x9C(r31)
 	kmCall(0x802F1778, restartObjInitMessage);
+	#endif
 
 	void restartObjActivateMessage(LiveActor* pActor, LayoutActor* pLayout) {
 		MR::startActionSound(pActor, "Get", -1, -1, -1);
+
 		pLayout->appear();
+		//MR::startAnim(pLayout, "Show", 0);
 	}
 
+	#ifdef WIP
 	kmWrite32(0x802F1968, 0x809F009C);
 	kmCall(0x802F1978, restartObjActivateMessage);
-
-
-	#ifdef CA
-		// No HipDropSwitch timer ticking
-		kmWrite32(0x802B0468, 0x60000000);
-
-		// Increase maximum coin count
-		kmWrite32(0x804DE0C8, 0x38A07FFF);
-		kmWrite32(0x804DE0EC, 0x38A07FFF);
-		kmWrite32(0x804D87B0, 0x23637FFF);
-
-		// Increase maximum star bit count
-		kmWrite32(0x803162A8,0x2C037FFF);
-		kmWrite32(0x804D3BB8,0x2C037FFF);
-		kmWrite32(0x804DE078,0x38A07FFF);
-		kmWrite32(0x805DE088,0x38A07FFF);
 	#endif
 
+	#ifdef CA
+	// No HipDropSwitch timer ticking
+	kmWrite32(0x802B0468, 0x60000000);
+
+	// Increase maximum coin count
+	kmWrite32(0x804DE0C8, 0x38A07FFF);
+	kmWrite32(0x804DE0EC, 0x38A07FFF);
+	kmWrite32(0x804D87B0, 0x23637FFF);
+
+	// Increase maximum star bit count
+	kmWrite32(0x803162A8, 0x2C037FFF);
+	kmWrite32(0x804D3BB8, 0x2C037FFE);
+	kmWrite32(0x804DE078, 0x38A07FFE);
+	kmWrite32(0x805DE088, 0x38A07FFE);
+
 	kmWrite32(0x8029783C, 0x60000000);
+	#endif
+	
+
+	#ifdef SMSS
+	extern "C" {
+		void onSwitchB__2MRFP9LiveActor();
+		void stopStageBGM__2MRFUl();
+	}
+
+	asm void megahammerActivateSwitch() {
+		stwu r1, 0x10(r1)
+		mflr r0
+		stw r0, 0x24(r1)
+		stw r30, 0x1C(r1)
+		mr r30, r3
+		bl onSwitchB__2MRFP9LiveActor
+		li r3, 0
+		bl stopStageBGM__2MRFUl
+		lwz r0, 0x24(r1)
+		lwz r30, 0x1C(r1)
+		mtlr r0
+		addi r1, r1, 0x10
+		blr
+	}
+
+	kmWrite32(0x800DAABC, 0x60000000);
+	kmCall(0x800DFCB0, megahammerActivateSwitch);
+	kmWrite32(0x800DFCE8, 0x38600001);
+
+	#endif
 } 
