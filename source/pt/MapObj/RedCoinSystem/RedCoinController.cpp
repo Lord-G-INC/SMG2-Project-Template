@@ -22,11 +22,10 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
 
     mLastRedCoin = this;
 
-    mShouldNotRewardCoins = false;
+    mRewardCoins = false;
     mPowerStarCheck = 0;
     mIconID = 0x37;
     mIsValidCounterAppear = false;
-    mLayoutPos = 0;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -39,7 +38,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::joinToGroupArray(this, rIter, "RedCoin", 24);
 
     // Get Obj_args
-    MR::getJMapInfoArg0NoInit(rIter, &mShouldNotRewardCoins); // Should the Red Coin increment the coin counter by 2?
+    MR::getJMapInfoArg0NoInit(rIter, &mRewardCoins); // Should the Red Coin increment the coin counter by 2?
     MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
     MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
 
@@ -114,11 +113,10 @@ void RedCoinController::resetAllRedCoins() {
 }
 
 // Increases both layouts by 1
-void RedCoinController::startCountUp(LiveActor* pRedCoin, bool pos) {
+void RedCoinController::startCountUp(LiveActor* pRedCoin) {
     mNumCoins++;
     
     mLastRedCoin = pRedCoin;
-    mLayoutPos = pos;
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
@@ -136,7 +134,7 @@ void RedCoinController::calcRedCoinCounterPlayerPos() {
     TVec3f pos2;
     f32 heightAdd;
 
-    if (mLayoutPos) {
+    if (((RedCoin*)mLastRedCoin)->mRedCoinCounterPlayerPos) {
         pos = *MarioAccess::getPlayerActor()->getGravityVec();
         pos2 = *MR::getPlayerPos();
         heightAdd = 200.0f;

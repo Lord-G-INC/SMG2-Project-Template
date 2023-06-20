@@ -164,11 +164,11 @@ void RedCoin::collect() {
     // Only ever increment coins once.
     if (!mHasRewardedCoins && !MR::isGalaxyDarkCometAppearInCurrentStage()) {
         MR::incPlayerLife(1);
-        GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(pController->mShouldNotRewardCoins ? 0 : 2);
+        GameSequenceFunction::getPlayResultInStageHolder()->addCoinNum(!pController->mRewardCoins ? 2 : 0);
         mHasRewardedCoins = true;
     }
 
-    pController->startCountUp(this, mRedCoinCounterPlayerPos);
+    pController->startCountUp(this);
 
     MR::startSystemSE(pController->mHasAllRedCoins ? "SE_SY_RED_COIN_COMPLETE" : "SE_SY_RED_COIN", -1, -1);
 

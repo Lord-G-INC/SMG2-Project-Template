@@ -10,7 +10,7 @@
     
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
-        void startCountUp(LiveActor* pRedCoin, bool pos);
+        void startCountUp(LiveActor* pRedCoin);
         void resetAllRedCoins();
         void appearCounterIfHidden();
         void updateCounter();
@@ -27,8 +27,7 @@
         s32 mPowerStarCheck; // Obj_arg1
         s32 mIconID; // Obj_arg2
 
-        bool mShouldNotRewardCoins; // Obj_arg0
+        bool mRewardCoins; // Obj_arg0
         bool mHasAllRedCoins;
         bool mIsValidCounterAppear;
-        bool mLayoutPos;
     };
