@@ -58,9 +58,11 @@ kmCall(0x80487720, IsNewButtonPointingTrigger);
 bool IsNewButtonPressed(PauseMenu* pPauseMenu) {
     bool isPressed = false;
 
-    if (pPauseMenu->mButtonBottom->trySelect()) {
-        pPauseMenu->mIsUsedNewButton = false;
-        isPressed = true;
+    if (!MR::isStageNoPauseMenuStars()) {
+        if (pPauseMenu->mButtonBottom->trySelect()) {
+            pPauseMenu->mIsUsedNewButton = false;
+            isPressed = true;
+        }
     }
 
     if (pPauseMenu->mButtonNew->trySelect()) {
@@ -92,6 +94,9 @@ kmWrite32(0x80487B10, 0x7FC3F378); // mr r3, r30 (PauseMenu* into r3)
 kmCall(0x80487B14, DisappearNewButton); // Call
 
 bool IsNewButtonTimingForSelectedSE(PauseMenu* pPauseMenu) {
+    if (!pPauseMenu->mButtonBottom)
+        return false;
+
     if (pPauseMenu->mButtonBottom->isTimingForSelectedSe() || pPauseMenu->mButtonNew->isTimingForSelectedSe())
         return true;
 
@@ -106,7 +111,6 @@ kmWrite32(0x804879C0, 0x2C000001); // cmpwi r0, 1
 kmWrite32(0x804879C8, 0x7FC3F378); // mr r3, r30
 kmCall(0x804879CC, IsNewButtonTimingForSelectedSE); // Call
 
-
 bool IsNewButtonDecidedWait(PauseMenu* pPauseMenu) {
     return pPauseMenu->mButtonBottom->isDecidedWait() || pPauseMenu->mButtonNew->isDecidedWait();
 }
@@ -119,9 +123,8 @@ void DoNewButtonAction(PauseMenu* pPauseMenu, bool isValid) {
     
     if (pPauseMenu->mIsUsedNewButton) {
         const char* currStage = MR::getCurrentStageName();
-        s32 currScenario = MR::getCurrentScenarioNo();
         GameSequenceFunction::requestChangeScenarioSelect(currStage);
-		GameSequenceFunction::requestChangeStage(currStage, currScenario, MR::getCurrentSelectedScenarioNo(), *(JMapIdInfo*)0);
+		GameSequenceFunction::requestChangeStage(currStage, MR::getCurrentScenarioNo(), MR::getCurrentSelectedScenarioNo(), *(JMapIdInfo*)0);
     }
     else {
         if (isValid)
