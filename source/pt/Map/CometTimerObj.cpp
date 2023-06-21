@@ -21,8 +21,9 @@ void CometTimerObj::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mKillPlayer);
 
     MR::useStageSwitchReadA(this, rIter);
-    MR::useStageSwitchWriteB(this, rIter);
-    
+    MR::useStageSwitchReadB(this, rIter);
+    MR::useStageSwitchWriteDead(this, rIter);
+
     mLayout = new TimeLimitLayout(1);
     mLayout->setDisplayModeOnNormal(true);
     MR::connectToSceneLayout(mLayout);
@@ -41,7 +42,6 @@ void CometTimerObj::movement() {
         }
     
     if (mLayout->isReadyToTimeUp() && mIsAppeared) {
-
         mKillPlayer ? MR::forceKillPlayerByGroundRace() : hideLayoutAndSwitchOn();
     }
 
@@ -53,10 +53,11 @@ void CometTimerObj::movement() {
 }
 
 void CometTimerObj::hideLayoutAndSwitchOn() {
-    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
-    if (MR::isValidSwitchB(this))
-        MR::onSwitchB(this);
+    if (MR::isValidSwitchDead(this))
+        MR::onSwitchDead(this);
 
-    if (MR::isValidSwitchA(this))
-        MR::offSwitchA(this);
+    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
+    mIsAppeared = false;
+    MR::hideLayout(mLayout);
+    makeActorDead();
 }

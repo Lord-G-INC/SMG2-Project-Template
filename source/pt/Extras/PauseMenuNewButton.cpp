@@ -59,7 +59,7 @@ kmCall(0x80487720, IsNewButtonPointingTrigger);
 bool IsNewButtonPressed(PauseMenu* pPauseMenu) {
     bool isPressed = false;
 
-    if (!MR::isStageNoPauseMenuStars()) {
+    if (pPauseMenu->mButtonBottom) {
         if (pPauseMenu->mButtonBottom->trySelect()) {
             pPauseMenu->mIsUsedNewButton = false;
             isPressed = true;
@@ -95,11 +95,15 @@ kmWrite32(0x80487B10, 0x7FC3F378); // mr r3, r30 (PauseMenu* into r3)
 kmCall(0x80487B14, DisappearNewButton); // Call
 
 bool IsNewButtonTimingForSelectedSE(PauseMenu* pPauseMenu) {
-    if (!pPauseMenu->mButtonBottom)
-        return false;
+    if (pPauseMenu->mButtonBottom) {
+        if (pPauseMenu->mButtonBottom->isTimingForSelectedSe())
+            return true;
+    }
 
-    if (pPauseMenu->mButtonBottom->isTimingForSelectedSe() || pPauseMenu->mButtonNew->isTimingForSelectedSe())
-        return true;
+    if (pPauseMenu->mButtonNew) {
+        if (pPauseMenu->mButtonNew->isTimingForSelectedSe())
+            return true;
+    }
 
     return false;
 }
@@ -109,7 +113,17 @@ kmWrite32(0x804879C8, 0x7FC3F378); // mr r3, r30
 kmCall(0x804879CC, IsNewButtonTimingForSelectedSE); // Call
 
 bool IsNewButtonDecidedWait(PauseMenu* pPauseMenu) {
-    return pPauseMenu->mButtonBottom->isDecidedWait() || pPauseMenu->mButtonNew->isDecidedWait();
+    if (pPauseMenu->mButtonBottom) {
+        if (pPauseMenu->mButtonBottom->isDecidedWait())
+            return true;
+    }
+
+    if (pPauseMenu->mButtonNew) {
+        if (pPauseMenu->mButtonNew->isDecidedWait())
+            return true;
+    }
+
+    return false;
 }
 
 kmWrite32(0x80487A00, 0x7FC3F378); // mr r3, r30 (PauseMenu* into r3)
@@ -149,7 +163,6 @@ bool ButtonBottomCrashFix(PauseMenu* pPauseMenu) {
     if (!pPauseMenu->mButtonBottom->_24)
         return false;
 
-    OSReport("Button Bottom True\n");
     return true;
 }
 
@@ -160,17 +173,17 @@ kmWrite32(0x804879BC, 0x41820080);
 kmWrite32(0x804879C0, 0x48000008);
 
 
-bool ButtonStarListCrashFix(ButtonPaneController* pButtonStarList) {
-    if (!pButtonStarList)
+bool ButtonStarListCrashFix(PauseMenu*pPauseMenu) {
+    if (!pPauseMenu->mButtonStarList)
         return false;
     
-    if (!pButtonStarList->_24)
+    if (!pPauseMenu->mButtonStarList->_24)
         return false;
 
     return true;
 }
 
-kmWrite32(0x80487A3C, 0x807E0034);
+kmWrite32(0x80487A3C, 0x7FC3F378);
 kmCall(0x80487A40, ButtonStarListCrashFix);
 kmWrite32(0x80487A44, 0x2C030000);
 kmWrite32(0x80487A48, 0x41820064);

@@ -283,13 +283,14 @@ namespace pt {
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
-	void smssKillSamboHeadIfInWater(LiveActor* pActor) {
+	void killSamboHeadIfInWater(LiveActor* pActor) {
      if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
         pActor->kill();
     }
 
-    kmCall(0x801F8290, smssKillSamboHeadIfInWater);
+    kmCall(0x801F8290, killSamboHeadIfInWater);
 	
+	#ifdef WIP
 	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
 		MR::processInitFunction(pActor, rIter, pStr, false);
 
@@ -309,12 +310,11 @@ namespace pt {
 		asm("stw %0, 0x9C(%1)" : "=r" (pLayout) : "=r" (pActor));
 	}
 
-	#ifdef WIP
+
 	kmWrite32(0x8033FC44, 0x386000A0); // li r3 0xA4
 
 	//kmWrite32(0x802F175C, 0x80DF009C); // lwz r6, 0x9C(r31)
 	kmCall(0x802F1778, restartObjInitMessage);
-	#endif
 
 	void restartObjActivateMessage(LiveActor* pActor, LayoutActor* pLayout) {
 		MR::startActionSound(pActor, "Get", -1, -1, -1);
@@ -323,7 +323,6 @@ namespace pt {
 		//MR::startAnim(pLayout, "Show", 0);
 	}
 
-	#ifdef WIP
 	kmWrite32(0x802F1968, 0x809F009C);
 	kmCall(0x802F1978, restartObjActivateMessage);
 	#endif
