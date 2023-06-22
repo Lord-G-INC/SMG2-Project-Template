@@ -31,7 +31,7 @@
 #include "pt/MapObj/SwitchBox.h"
 #include "pt/MapObj/RedCoinSystem/RedCoin.h"
 #include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
-#include "pt/AreaObj/RestrictGameLayoutArea.h"
+#include "pt/AreaObj/RestrictArea.h"
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Map/CometTimerObj.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
@@ -171,7 +171,7 @@ namespace pt {
         #endif
 
         #ifdef SMG63
-            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
+            { "RestrictArea", createExtActor<RestrictArea> },
             { "MarioDisappointmentArea", createExtActor<MarioDisappointmentArea> },
         #endif
     };

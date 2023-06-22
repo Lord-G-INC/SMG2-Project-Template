@@ -4,11 +4,13 @@
 #include "syati.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-class RestrictGameLayoutArea : public AreaObj {
+class RestrictArea : public AreaObj {
 public:
-    RestrictGameLayoutArea(const char* pName);
+    RestrictArea(const char* pName);
     virtual void init(const JMapInfoIter& rIter);
     virtual void movement();
     virtual const char* getManagerName() const;
+
+    bool mIsLeftArea;
 };
 #endif
