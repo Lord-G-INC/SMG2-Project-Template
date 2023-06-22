@@ -1,26 +1,31 @@
 #ifdef SMG63
-#include "pt/AreaObj/RestrictArea.h"
+#include "pt/AreaObj/SMG63Area.h"
 
-RestrictArea::RestrictArea(const char* pName) : AreaObj(pName) {
+SMG63Area::SMG63Area(const char* pName) : AreaObj(pName) {
     mIsLeftArea = false;
 }
 
-void RestrictArea::init(const JMapInfoIter& rIter) {
+void SMG63Area::init(const JMapInfoIter& rIter) {
     AreaObj::init(rIter);
 	MR::connectToSceneAreaObj(this);
 }
 
-void RestrictArea::movement() {
-    if (!mIsLeftArea) {
+void SMG63Area::movement() {
+    if (!mIsLeftArea || mObjArg0 == 2) {
         if (isInVolume(*MR::getPlayerPos())) {
-            if (mObjArg0 != 1) {
+            if (mObjArg0 < 1) {
                 MR::deactivateDefaultGameLayout();
 
                 if (mObjArg0 == 0)
                 MR::tryScreenToFrameCinemaFrame();
             }
-            else
+            else if (mObjArg0 == 1) {
                 MR::disableStarPointerShootStarPiece();
+            }
+            else if (mObjArg0 == 2) {
+                MarioAccess::getPlayerActor()->_F9C = false;
+                MarioAccess::getPlayerActor()->_F9A = 1;
+            }
 
             mIsLeftArea = true;
         }
@@ -42,7 +47,7 @@ void RestrictArea::movement() {
     }
 }
 
-const char* RestrictArea::getManagerName() const {
+const char* SMG63Area::getManagerName() const {
     return "ForbidWaterSearch";
 }
 #endif

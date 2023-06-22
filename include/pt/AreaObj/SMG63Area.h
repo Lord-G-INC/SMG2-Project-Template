@@ -4,9 +4,9 @@
 #include "syati.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-class RestrictArea : public AreaObj {
+class SMG63Area : public AreaObj {
 public:
-    RestrictArea(const char* pName);
+    SMG63Area(const char* pName);
     virtual void init(const JMapInfoIter& rIter);
     virtual void movement();
     virtual const char* getManagerName() const;
