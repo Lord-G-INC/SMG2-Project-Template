@@ -37,6 +37,8 @@ void BlueCoinCounter::control() {
 
     mAppearer->updateNerve();
     mPaneRumbler->update();
+
+    OSReport("mWaitTime: %d\n", mWaitTime);
 }
 
 void BlueCoinCounter::exeAppear() {
@@ -44,6 +46,9 @@ void BlueCoinCounter::exeAppear() {
         MR::showLayout(this);
         mAppearer->appear(TVec2f(0.0f, 0.0f));
         MR::startAnim(this, "Wait", 1);
+        
+        if (mWaitTime == 0)
+            mWaitTime = -1;
     }
 }
   
@@ -60,7 +65,9 @@ void BlueCoinCounter::exeDisappear() {
 void BlueCoinCounter::startCountUp() {  
     if (mAppearer->isAppeared()) {
         updateCounter();
-        mWaitTime + 60;
+
+        if (mWaitTime > 0)
+            mWaitTime = 120;
     }
     else {
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
@@ -69,10 +76,11 @@ void BlueCoinCounter::startCountUp() {
 }
 
 void BlueCoinCounter::exeAppearAndUpdate() {
+    if (MR::isFirstStep(this))
+        exeAppear();
+
     if (MR::isStep(this, 15))
         updateCounter();
-
-    exeAppear();
 }
 
 void BlueCoinCounter::updateCounter() {
@@ -104,10 +112,9 @@ kmWrite32(0x80471780, 0x38600050);
 
 void initBlueCoinLayout(CounterLayoutController* pController) {
     MR::connectToSceneLayout(pController);
-
-    pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
-
+    
     if (!MR::isStageFileSelect()) {
+        pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
         pController->mPTDBlueCoinCounter->initWithoutIter();
         MR::hideLayout(pController->mPTDBlueCoinCounter);
     }
