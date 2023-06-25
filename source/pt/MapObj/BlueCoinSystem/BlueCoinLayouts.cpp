@@ -42,7 +42,7 @@ void BlueCoinCounter::control() {
 }
 
 void BlueCoinCounter::exeAppear() {
-    if (MR::isFirstStep(this) && MR::isHiddenLayout(this)) {
+    if (MR::isFirstStep(this) || MR::isStep(this, 2) && mAppearer->isDisappeared()) {
         MR::showLayout(this);
         mAppearer->appear(TVec2f(0.0f, 0.0f));
         MR::startAnim(this, "Wait", 1);
