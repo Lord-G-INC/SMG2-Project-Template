@@ -1,4 +1,4 @@
-#ifdef SMG63
+#if defined(SMG63) || defined (SMSS)
 #pragma once
 
 #include "syati.h"

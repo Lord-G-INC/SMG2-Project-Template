@@ -1,4 +1,4 @@
-#ifdef SMG63
+#if defined(SMG63) || defined (SMSS)
 #include "pt/AreaObj/SMG63Area.h"
 
 SMG63Area::SMG63Area(const char* pName) : AreaObj(pName) {
@@ -11,13 +11,13 @@ void SMG63Area::init(const JMapInfoIter& rIter) {
 }
 
 void SMG63Area::movement() {
-    if (!mIsLeftArea || mObjArg0 == 2) {
+    if (!mIsLeftArea || mObjArg0 > 0) {
         if (isInVolume(*MR::getPlayerPos())) {
             if (mObjArg0 < 1) {
                 MR::deactivateDefaultGameLayout();
 
                 if (mObjArg0 == 0)
-                MR::tryScreenToFrameCinemaFrame();
+                    MR::tryScreenToFrameCinemaFrame();
             }
             else if (mObjArg0 == 1) {
                 MR::disableStarPointerShootStarPiece();

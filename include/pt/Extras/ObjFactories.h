@@ -164,7 +164,7 @@ namespace pt {
             { "WarpArea", createExtActor<WarpArea> },
         #endif
 
-        #ifdef SMG63
+        #if defined(SMG63) || defined (SMSS)
             { "SMG63Area", createExtActor<SMG63Area> },
         #endif
     };

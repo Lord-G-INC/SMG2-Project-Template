@@ -371,6 +371,22 @@ namespace pt {
 	kmWrite32(0x800DAABC, 0x60000000);
 	kmCall(0x800DFCB0, megahammerActivateSwitch);
 	kmWrite32(0x800DFCE8, 0x38600001);
+	#endif
 
+	#if defined (SMG63) || defined (ALL)
+	void SnowBallDieInWater(LiveActor* pActor, const TVec3f& rPos1, const TVec3f& rPos2) {
+		MR::makeMtxUpNoSupportPos(&((TMtx34f*)pActor)[0x3], rPos1, rPos2);
+
+		if (MR::isInWater(pActor->mTranslation)) {
+			AreaObj* pArea = MR::getAreaObj("WaterArea", pActor->mTranslation);
+
+			if (pArea)
+				if (pArea->mObjArg2 >= 0)
+					pActor->kill();
+		}
+	}
+
+	kmWrite32(0x80301C64, 0x7FA3EB78);
+	kmCall(0x80301C6C, SnowBallDieInWater);
 	#endif
 } 
