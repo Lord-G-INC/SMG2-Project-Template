@@ -59,7 +59,7 @@ namespace BlueCoinUtil {
     }
 
     void initBlueCoinArray() {
-        OSReport("(BlueCoinUtil) Initalizing Blue Coin array.\n");
+        OSReport("(BlueCoinUtil) Initializing Blue Coin array.\n");
         gBlueCoinData = new bool*[3];
         for (int i = 0; i < 3; i++) {
             gBlueCoinData[i] = new bool[255];
@@ -67,26 +67,28 @@ namespace BlueCoinUtil {
         }
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
-    
+
     s32 getCurrentFileNum() { // Thank you AwesomeTMC
         SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
-        s32* valuePtr = (s32 *)((char *) (saveDataHandleSequence) + 0x10);
-        return *valuePtr - 1;
+        return *(s32 *)((char *) (saveDataHandleSequence) + 0x10) - 1;
     }
 
     void setBlueCoinGotCurrentFile(u8 id) {
         gBlueCoinData[getCurrentFileNum()][id] = true;
+        OSReport("Blue Coin ID #%d collected on file %d\n", id, getCurrentFileNum());
     }
 
     void resetAllBlueCoin(u8 file) {
         memset(gBlueCoinData[file - 1], 0, 255);
         saveBlueCoinData();
+        OSReport("(BlueCoinUtil) Blue Coin data for file %d reset.\n", file);
     }
 
     void resetAllBlueCoinAllFileNoSave() {
         for (int i = 0; i < 3; i++) {
             memset(gBlueCoinData[i], 0, 255);
         }
+        OSReport("(BlueCoinUtil) Blue Coin array cleared.\n");
     }
 
     bool isBlueCoinGot(u8 file, u8 id) {
@@ -107,7 +109,7 @@ namespace BlueCoinUtil {
     }
 
     bool isBlueCoinGot240(u8 fileID) {
-        return getTotalBlueCoinNum(fileID) == 240 ? true : false;
+        return getTotalBlueCoinNum(fileID) == 240;
     }
 
     s32 getTotalBlueCoinNumCurrentFile() {
@@ -174,8 +176,8 @@ kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
 void saveBlueCoinDataOnGameSave(const char* pName) {
     MR::startSystemSE(pName, -1, -1);
     BlueCoinUtil::saveBlueCoinData();
-    
-}
+    }
+
 kmCall(0x804DAFD0, saveBlueCoinDataOnGameSave);
 
 // Read blue coin binary on title screen load.
