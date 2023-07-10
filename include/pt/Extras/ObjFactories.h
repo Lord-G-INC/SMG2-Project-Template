@@ -31,14 +31,12 @@
 #include "pt/MapObj/SwitchBox.h"
 #include "pt/MapObj/RedCoinSystem/RedCoin.h"
 #include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
-#include "pt/AreaObj/RestrictGameLayoutArea.h"
+#include "pt/AreaObj/SMG63Area.h"
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Map/CometTimerObj.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/PTimerSwitch.h"
 #include "pt/MapObj/LavaSteam.h"
-
-#include "pt/AreaObj/MarioDisappointmentArea.h"
 
 /*
 * SMG2 actor class definitions for use with "NameObjFactory::createNameObj". We only need these declarations. The actual
@@ -58,7 +56,7 @@ class Shellfish;
 class SimpleEnvironmentObj;
 class SimpleTextureSwitchChangeObj;
 class WoodBox;
-#include "Game/MapObj/Pattan.h"
+
 
 namespace pt {
     template<typename T>
@@ -69,10 +67,6 @@ namespace pt {
     template<s32 COLOR>
     NameObj* createSuperSpinDriverCustomColor(const char *pName) {
         return new SuperSpinDriver(pName, COLOR);
-    }
-
-    NameObj* createPattan(const char *pName) {
-        return new Pattan(pName);
     }
 
     struct CreateSceneObjEntry {
@@ -170,9 +164,8 @@ namespace pt {
             { "WarpArea", createExtActor<WarpArea> },
         #endif
 
-        #ifdef SMG63
-            { "RestrictGameLayoutArea", createExtActor<RestrictGameLayoutArea> },
-            { "MarioDisappointmentArea", createExtActor<MarioDisappointmentArea> },
+        #if defined(SMG63) || defined (SMSS)
+            { "SMG63Area", createExtActor<SMG63Area> },
         #endif
     };
 

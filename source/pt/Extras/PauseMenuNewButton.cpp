@@ -1,5 +1,4 @@
-//#if defined (ALL) || defined (SMSS)
-#ifdef WIP
+#if defined (ALL) || defined (SMSS)
 #pragma once
 
 #include "syati.h"

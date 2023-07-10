@@ -1,14 +1,16 @@
-#ifdef SMG63
+#if defined(SMG63) || defined (SMSS)
 #pragma once
 
 #include "syati.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
 
-class RestrictGameLayoutArea : public AreaObj {
+class SMG63Area : public AreaObj {
 public:
-    RestrictGameLayoutArea(const char* pName);
+    SMG63Area(const char* pName);
     virtual void init(const JMapInfoIter& rIter);
     virtual void movement();
     virtual const char* getManagerName() const;
+
+    bool mIsLeftArea;
 };
 #endif

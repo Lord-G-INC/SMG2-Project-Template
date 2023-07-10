@@ -40,10 +40,15 @@ void BlueCoinCounter::control() {
 }
 
 void BlueCoinCounter::exeAppear() {
-    if (MR::isFirstStep(this) && MR::isHiddenLayout(this)) {
-        MR::showLayout(this);
-        mAppearer->appear(TVec2f(0.0f, 0.0f));
-        MR::startAnim(this, "Wait", 1);
+    if (MR::isFirstStep(this) || MR::isStep(this, 1) && mAppearer->isDisappeared()) {
+        if (!mAppearer->isAppeared()) {
+            MR::showLayout(this);
+            mAppearer->appear(TVec2f(0.0f, 0.0f));
+            MR::startAnim(this, "Wait", 1);
+        }
+
+        if (mWaitTime == 0)
+            mWaitTime = -1;
     }
 }
   
@@ -58,21 +63,24 @@ void BlueCoinCounter::exeDisappear() {
 }
 
 void BlueCoinCounter::startCountUp() {  
-    if (mAppearer->isAppeared()) {
-        updateCounter();
-        mWaitTime + 60;
-    }
-    else {
+    if (mAppearer->isDisappeared()) {
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
         mWaitTime = 120;
+    }
+    else {
+        updateCounter();
+
+        if (mWaitTime > 0)
+            mWaitTime = 120;
     }
 }
 
 void BlueCoinCounter::exeAppearAndUpdate() {
+    if (MR::isFirstStep(this))
+        exeAppear();
+
     if (MR::isStep(this, 15))
         updateCounter();
-
-    exeAppear();
 }
 
 void BlueCoinCounter::updateCounter() {
@@ -104,12 +112,10 @@ kmWrite32(0x80471780, 0x38600050);
 
 void initBlueCoinLayout(CounterLayoutController* pController) {
     MR::connectToSceneLayout(pController);
-
-    pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
-
+    
     if (!MR::isStageFileSelect()) {
+        pController->mPTDBlueCoinCounter = new BlueCoinCounter("BlueCoinCounter");
         pController->mPTDBlueCoinCounter->initWithoutIter();
-        MR::hideLayout(pController->mPTDBlueCoinCounter);
     }
 }
 
@@ -119,7 +125,8 @@ void appearBlueCoinLayout(CounterLayoutController* pController) {
     if (!MR::isStageFileSelect()) {
         ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->mWaitTime = -1;
         pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
-    }
+    } 
+
         pController->showAllLayout();
 }
 
@@ -139,6 +146,7 @@ void killBlueCoinCounter(CounterLayoutController* pController) {
         MR::hideLayout(pController->mPTDBlueCoinCounter);
         pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     }
+
     pController->killAllCoounter();
 }
 

@@ -29,10 +29,9 @@ PowerStarSpawner::PowerStarSpawner(const char* pName) : LiveActor(pName) {
 	mScenario = 1;
 	mSpawnMode = -1;
 	mDelay = 0;
-	mUseSE = 0;
-	mFromMario = 0;
+	mUseSE = false;
+	mFromMario = false;
 	mElapsed = -1;
-	mCamInfo = 0;
 	mSpawnCondition = -1;
 }
 
