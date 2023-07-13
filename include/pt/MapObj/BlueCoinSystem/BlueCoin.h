@@ -1,4 +1,4 @@
-#ifdef SMSS
+#ifdef USEBLUECOIN
 #pragma once
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"

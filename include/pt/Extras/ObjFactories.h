@@ -156,7 +156,7 @@ namespace pt {
             { "LavaSteam", createExtActor<LavaSteam> },
         #endif
 
-        #ifdef SMSS
+        #ifdef USEBLUECOIN
             { "BlueCoin", createExtActor<BlueCoin> },
         #endif
 

@@ -1,4 +1,4 @@
-#ifdef SMSS
+#if defined USEBLUECOIN && !defined SM64BLUECOIN
 #pragma once
 #include "syati.h"
 

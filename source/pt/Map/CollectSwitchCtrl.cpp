@@ -75,7 +75,7 @@ namespace pt {
 			count = MR::getPowerStarNum();
 		}
 		
-		#ifdef SMSS
+		#if defined USEBLUECOIN && !defined SM64BLUECOIN
 		else if (mItem == 4) {
 			count = BlueCoinUtil::getTotalBlueCoinNumCurrentFile();
 		}

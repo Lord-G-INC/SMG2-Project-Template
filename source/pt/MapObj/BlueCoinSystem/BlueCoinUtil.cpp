@@ -1,4 +1,4 @@
-#ifdef SMSS
+#if defined USEBLUECOIN && !defined SM64BLUECOIN
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/Util/ActorUtil.h"
 

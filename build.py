@@ -88,7 +88,7 @@ if "--gle" in sys.argv:
 # Compiler flag for the Starshine Team's project "Super Mario Starshine"
 if "--smss" in sys.argv:
     print("Building with flags SMSS and GLE true")
-    compiler_flags.append("-DSMSS -DGLE")
+    compiler_flags.append("-DSMSS -DGLE -DUSEBLUECOIN")
 
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
 if "--ca" in sys.argv:
@@ -99,6 +99,16 @@ if "--ca" in sys.argv:
 if "--smg63" in sys.argv:
     print("Building with flags SMG63 and GLE true")
     compiler_flags.append("-DSMG63 -DGLE")
+
+# Compiler flag for alternating the behavior of the Blue Coin object
+if "--usebluecoin" in sys.argv:
+    print("Building with the Blue Coin System enabled")
+    compiler_flags.append("-DUSEBLUECOIN")
+
+# Compiler flag for enabling and alternating the behavior of the Blue Coin object
+if "--sm64bluecoin" in sys.argv:
+    print("Building with SM64 Blue Coin behavior")
+    compiler_flags.append("-DUSEBLUECOIN -DSM64BLUECOIN")
 
 assembler_flags = [
     "-c",
