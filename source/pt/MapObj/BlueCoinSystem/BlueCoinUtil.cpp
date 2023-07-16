@@ -4,7 +4,10 @@
 #include "pt/Util/ActorUtil.h"
 
 bool** gBlueCoinData;
+bool* gBlueCoinFlag;
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
+
+#define BINSIZE 766
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -13,19 +16,22 @@ namespace BlueCoinUtil {
         s32 code = NANDOpen("BlueCoinData.bin", &info, 3);
         
         if (code == -12)
-            OSReport("(BlueCoinUtil) BlueCoinData.bin not found. A new one will be created at save time.\n");
+            OSReport("(BlueCoinUtil) BlueCoinData.bin not found. A new one will be created on game save.\n");
 
         if (code == 0) {
-            bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[765];
-            code = NANDRead(&info, buffer, 765);
-            if (code != 0 && code != 765) {
-                OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin read failed! NANDRead code: %d\n", code);
+            bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[BINSIZE];
+            code = NANDRead(&info, buffer, BINSIZE);
+            if (code != 0 && code != BINSIZE) {
+                OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin read failed. NANDRead code: %d\n", code);
             }
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
                     gBlueCoinData[i][j] = *buffer++;
                 }
             }
+
+            gBlueCoinFlag = (bool*)buffer[0]; // Odd, but works since the bool we want is the very last one in the array.
+            
             delete [] buffer;
             OSReport("(BlueCoinUtil) BlueCoinData.bin successfully read.\n");
         }
@@ -39,7 +45,7 @@ namespace BlueCoinUtil {
             code = NANDOpen("BlueCoinData.bin", &info, 3);
             if (code == 0) {
                 NANDSeek(&info, 0, 0);
-                bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[765];
+                bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[BINSIZE];
                 s32 idx = 0;
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 255; j++) {
@@ -47,10 +53,13 @@ namespace BlueCoinUtil {
                     }
                 }
 
-                code = NANDWrite(&info, buffer, 765);
+            buffer[765] = gBlueCoinFlag;
+            OSReport("%d, %d\n", buffer[765], gBlueCoinFlag);
 
-                if (code != 0 && code != 765)
-                    OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin write failed! NANDWrite code: %d\n", code);
+                code = NANDWrite(&info, buffer, BINSIZE);
+
+                if (code != 0 && code != BINSIZE)
+                    OSPanic("BlueCoinUtil.cpp", __LINE__, "BlueCoinData.bin write failed. NANDWrite code: %d\n", code);
 
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
@@ -66,6 +75,7 @@ namespace BlueCoinUtil {
             gBlueCoinData[i] = new bool[255];
             memset(gBlueCoinData[i], 0, 255);
         }
+        gBlueCoinFlag = false;
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
 
@@ -76,7 +86,12 @@ namespace BlueCoinUtil {
 
     void setBlueCoinGotCurrentFile(u8 id) {
         gBlueCoinData[getCurrentFileNum()][id] = true;
-        OSReport("Blue Coin ID #%d collected on file %d\n", id, getCurrentFileNum());
+
+        if (!gBlueCoinFlag) {
+            gBlueCoinFlag = (bool*)true;
+            OSReport("First Blue Coin flag set to true.\n");
+        }
+        OSReport("Blue Coin ID #%d collected on file %d.\n", id, getCurrentFileNum());
     }
 
     void resetAllBlueCoin(u8 file) {

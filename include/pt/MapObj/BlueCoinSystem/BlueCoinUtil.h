@@ -9,7 +9,7 @@ namespace BlueCoinUtil {
     void loadBlueCoinData();
     // Saves gBlueCoinData bool array into BlueCoinData.bin.
     void saveBlueCoinData();
-    // Initalizes gBlueCoinData bool array.
+    // Initializes gBlueCoinData bool array.
     void initBlueCoinArray();
     // Gets the current save file number being played.
     s32 getCurrentFileNum();
