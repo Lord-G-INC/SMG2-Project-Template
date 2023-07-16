@@ -25,6 +25,8 @@ namespace BlueCoinUtil {
     void resetAllBlueCoin(u8 file);
     // Sets all blue coins on all files to false.
     void resetAllBlueCoinAllFileNoSave();
+    // Updates the Blue Coin counter
+    void startCounterCountUp();
     // Gets the collected number of collected blue coins.
     s32 getTotalBlueCoinNum(u8 file);
     // Gets the collected number of collected blue coins on the current file.
