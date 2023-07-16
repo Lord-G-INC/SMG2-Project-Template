@@ -1,5 +1,6 @@
 #if defined USEBLUECOIN && !defined SM64BLUECOIN
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "pt/Util/ActorUtil.h"
 
 bool** gBlueCoinData;
@@ -110,6 +111,10 @@ namespace BlueCoinUtil {
 
     bool isBlueCoinGot240(u8 fileID) {
         return getTotalBlueCoinNum(fileID) == 240;
+    }
+
+    void startCounterCountUp() {
+        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
     }
 
     s32 getTotalBlueCoinNumCurrentFile() {

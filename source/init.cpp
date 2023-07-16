@@ -31,7 +31,7 @@ void init() {
 
     OSReport("SMG2PTD INIT: Created by Evanbowl and the Lord-G Inc Team\nBuilt: %s, %s\nTarget: %s\n", __DATE__, __TIME__, name);
 
-    #if defined USEBLUECOINS && !defined SM64BLUECOIN
+    #if defined USEBLUECOIN && !defined SM64BLUECOIN
         BlueCoinUtil::initBlueCoinArray();
     #endif
 

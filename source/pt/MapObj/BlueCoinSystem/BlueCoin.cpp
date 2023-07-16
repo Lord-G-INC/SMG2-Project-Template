@@ -1,6 +1,5 @@
 #ifdef USEBLUECOIN
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
-#include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/MapObj/CoinHolder.h"
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
@@ -20,8 +19,8 @@ BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
 
 void BlueCoin::init(const JMapInfoIter& rIter) {
     #ifdef SM64BLUECOIN
-    MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
-    MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
+    MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity);
+    MR::getJMapInfoArg1NoInit(rIter, &mUseConnection);
     MR::processInitFunction(this, rIter, "BlueCoin", false);
     #else
     MR::getJMapInfoArg0NoInit(rIter, &mID);
@@ -29,8 +28,6 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
     MR::processInitFunction(this, rIter, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
     #endif
-
-    OSReport("Init\n");
 
     initEffectKeeper(2, "Coin", 0);
     MR::calcGravity(this);
@@ -94,21 +91,19 @@ void BlueCoin::appearAndMove() {
 }
 
 void BlueCoin::collect() {
-    MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
-    
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);
 
     #ifdef SM64BLUECOIN
     MR::emitEffect(this, "BlueCoinGet"); 
     #else
+    MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet");  
+
     if (!BlueCoinUtil::isBlueCoinGotCurrentFile(mID)) {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
-        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
+        BlueCoinUtil::startCounterCountUp();
     }
-
-    MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet");  
-    
+    MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
     #endif
 
     if (!MR::isGalaxyDarkCometAppearInCurrentStage()) {
