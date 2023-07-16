@@ -3,6 +3,7 @@
 
 #include "syati.h"
 #include "Game/Screen/CountUpPaneRumbler.h"
+#include "Game/Screen/SysInfoWindow.h"
 
 const wchar_t counterPictureFonts[] = {
 0x000E, 0x0003, 0x0055, 0x0002, 0x005A, // Blue Coin Icon
@@ -24,15 +25,19 @@ public:
         void startCountUp();
         void updateCounter();
         void exeAppearAndUpdate();
+        void exeShowTextBox();
 
         CounterLayoutAppearer* mAppearer;
         CountUpPaneRumbler* mPaneRumbler;
+        SysInfoWindow* mSysInfoWindow;
         s32 mWaitTime;
+        bool mIsTextBoxShowing;
 };
 
 namespace NrvBlueCoinCounter {
 	NERVE(NrvAppear);
         NERVE(NrvDisappear);
         NERVE(NrvAppearAndUpdate);
+        NERVE(NrvShowTextBox);
 };
 #endif

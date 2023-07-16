@@ -4,7 +4,7 @@
 #include "pt/Util/ActorUtil.h"
 
 bool** gBlueCoinData;
-bool* gBlueCoinFlag;
+bool gBlueCoinFlag;
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
 #define BINSIZE 766
@@ -30,8 +30,8 @@ namespace BlueCoinUtil {
                 }
             }
 
-            gBlueCoinFlag = (bool*)buffer[0]; // Odd, but works since the bool we want is the very last one in the array.
-            
+            gBlueCoinFlag = *buffer;
+
             delete [] buffer;
             OSReport("(BlueCoinUtil) BlueCoinData.bin successfully read.\n");
         }
@@ -54,7 +54,6 @@ namespace BlueCoinUtil {
                 }
 
             buffer[765] = gBlueCoinFlag;
-            OSReport("%d, %d\n", buffer[765], gBlueCoinFlag);
 
                 code = NANDWrite(&info, buffer, BINSIZE);
 
@@ -86,11 +85,6 @@ namespace BlueCoinUtil {
 
     void setBlueCoinGotCurrentFile(u8 id) {
         gBlueCoinData[getCurrentFileNum()][id] = true;
-
-        if (!gBlueCoinFlag) {
-            gBlueCoinFlag = (bool*)true;
-            OSReport("First Blue Coin flag set to true.\n");
-        }
         OSReport("Blue Coin ID #%d collected on file %d.\n", id, getCurrentFileNum());
     }
 
@@ -113,6 +107,20 @@ namespace BlueCoinUtil {
 
     bool isBlueCoinGotCurrentFile(u8 id) {
         return gBlueCoinData[getCurrentFileNum()][id];
+    }
+
+    void setOnBlueCoinFlag() {
+        gBlueCoinFlag = true;
+        OSReport("First Blue Coin flag set to true.\n");
+    }
+
+    bool isOnBlueCoinFlag() {
+        OSReport("gBlueCoinFlag: %d\n", gBlueCoinFlag);
+        return gBlueCoinFlag;
+    }
+
+    bool isBlueCoinTextBoxAppeared() {
+        return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
     }
 
     s32 getTotalBlueCoinNum(u8 file) {

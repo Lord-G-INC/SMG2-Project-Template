@@ -19,6 +19,12 @@ namespace BlueCoinUtil {
     bool isBlueCoinGot(u8 file, u8 id);
     // Checks if a specific blue coin is true on the current save file.
     bool isBlueCoinGotCurrentFile(u8 id);
+    //
+    bool isOnBlueCoinFlag();
+    //
+    void setOnBlueCoinFlag();
+    //
+    bool isBlueCoinTextBoxAppeared();
     // Checks if 240 blue coins on a specified file are true.
     bool isBlueCoinGot240(u8 fileID);
     // Sets all blue coin slots to false and starts a save.

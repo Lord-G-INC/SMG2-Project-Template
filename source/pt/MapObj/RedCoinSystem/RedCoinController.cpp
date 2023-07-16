@@ -1,4 +1,5 @@
 #include "pt/MapObj/RedCoinSystem/RedCoinController.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/Util/ActorUtil.h"
 
 /* --- RED COIN CONTROLLER --- */
@@ -167,7 +168,13 @@ void RedCoinController::updateCounter() {
 }
 
 void RedCoinController::calcCounterVisibility() {
-    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking())
+    bool blueCoin = false;
+
+    #if defined USEBLUECOIN && !defined SM64BLUECOIN
+    blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
+    #endif
+
+    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || blueCoin)
         MR::hideLayout(mRedCoinCounter);
     else {
         if (mIsValidCounterAppear)
