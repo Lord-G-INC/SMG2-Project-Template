@@ -88,6 +88,7 @@ if "--gle" in sys.argv:
 # Compiler flag for the Starshine Team's project "Super Mario Starshine"
 if "--smss" in sys.argv:
     print("Building with flags SMSS and GLE true")
+    print("This target builds with the Blue Coin System")
     compiler_flags.append("-DSMSS -DGLE -DUSEBLUECOIN")
 
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"

@@ -106,7 +106,6 @@ void BlueCoinCounter::exeShowTextBox() {
         mWaitTime = -1;
         mSysInfoWindow->appear("BlueCoinCounter_OnFirstBlueCoin", SysInfoWindow::SysInfoType_0, SysInfoWindow::SysInfoTextPos_0, SysInfoWindow::SysInfoMessageType_1);
         MR::deactivateDefaultGameLayout();
-        BlueCoinUtil::setOnBlueCoinFlag();
         MR::hideLayout(this);
         MR::suspendAllSceneNameObj();
         mSysInfoWindow->requestResume();
@@ -118,9 +117,22 @@ void BlueCoinCounter::exeShowTextBox() {
         MR::resumeAllSceneNameObj();
         mWaitTime = 120;
         MR::activateDefaultGameLayout();
+        BlueCoinUtil::setOnBlueCoinFlag();
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
     }
 }
+
+bool fixBlueCoinWindowCrash() {
+    if (!MR::isStageFileSelect()) {
+        bool yes = MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
+        OSReport("%d\n", yes);
+        return yes;
+    }
+
+    return MR::isPlayerDead();
+}
+
+kmCall(0x80451C40, fixBlueCoinWindowCrash);
 
 namespace NrvBlueCoinCounter {
 	void NrvAppear::execute(Spine* pSpine) const {
