@@ -53,11 +53,11 @@ namespace pt {
 		void* file = arc->getResource(pFile);
 	
 		if (arc && file) {
-			OSReport("Archive %s and file %s both exist!\n", pArc, pFile);
+			OSReport("(PTD Archive Loader) Archive %s and file %s both exist!\n", pArc, pFile);
 			return file;
 		}
 		else
-			OSReport("%s %s isn't exist!\n", pArc, pFile);
+			OSReport("(PTD Archive Loader) %s %s isn't exist!\n", pArc, pFile);
 	
 		return 0;
 	}

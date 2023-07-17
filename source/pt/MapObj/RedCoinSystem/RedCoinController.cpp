@@ -172,6 +172,11 @@ void RedCoinController::calcCounterVisibility() {
 
     #if defined USEBLUECOIN && !defined SM64BLUECOIN
     blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
+
+    if (blueCoin) {
+        requestResume();
+        mRedCoinCounter->requestResume();
+    }
     #endif
 
     if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || blueCoin)

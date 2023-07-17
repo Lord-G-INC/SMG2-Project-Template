@@ -31,7 +31,6 @@ public:
         CountUpPaneRumbler* mPaneRumbler;
         SysInfoWindow* mSysInfoWindow;
         s32 mWaitTime;
-        bool mIsTextBoxShowing;
 };
 
 namespace NrvBlueCoinCounter {

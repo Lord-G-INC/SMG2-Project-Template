@@ -8,7 +8,6 @@
 BlueCoinCounter::BlueCoinCounter(const char* pName) : LayoutActor(pName, 0) {
     mWaitTime = -1;
     mSysInfoWindow = 0;
-    mIsTextBoxShowing = false;
 }
 
 void BlueCoinCounter::init(const JMapInfoIter& rIter) {
@@ -32,6 +31,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     if (!BlueCoinUtil::isOnBlueCoinFlag()) {
         mSysInfoWindow = MR::createSysInfoWindow();
         MR::connectToSceneLayout(mSysInfoWindow);
+        MR::registerDemoSimpleCastAll(mSysInfoWindow);
     }
 }
 
@@ -47,7 +47,6 @@ void BlueCoinCounter::control() {
 }
 
 void BlueCoinCounter::exeAppear() {
-    OSReport("Appear\n");
     if (MR::isFirstStep(this) || MR::isStep(this, 1) && mAppearer->isDisappeared()) {
         if (!mAppearer->isAppeared()) {
             MR::showLayout(this);
@@ -61,7 +60,6 @@ void BlueCoinCounter::exeAppear() {
 }
   
 void BlueCoinCounter::exeDisappear() {
-    OSReport("Disappear\n");
     if (MR::isFirstStep(this)) {
         mAppearer->disappear();
         mWaitTime = -1;
@@ -89,7 +87,6 @@ void BlueCoinCounter::startCountUp() {
 }   
 
 void BlueCoinCounter::exeAppearAndUpdate() {
-    OSReport("Appear + Update\n");
     if (MR::isFirstStep(this))
         exeAppear();
 
@@ -104,24 +101,25 @@ void BlueCoinCounter::updateCounter() {
 }
 
 void BlueCoinCounter::exeShowTextBox() {
-    OSReport("ShowTextBox\n");
-    if (MR::isFirstStep(this)) {
+    if (MR::isStep(this, 3)) {
+        mAppearer->disappear();
+        mWaitTime = -1;
         mSysInfoWindow->appear("BlueCoinCounter_OnFirstBlueCoin", SysInfoWindow::SysInfoType_0, SysInfoWindow::SysInfoTextPos_0, SysInfoWindow::SysInfoMessageType_1);
-        mIsTextBoxShowing = true;
         MR::deactivateDefaultGameLayout();
         BlueCoinUtil::setOnBlueCoinFlag();
         MR::hideLayout(this);
+        MR::suspendAllSceneNameObj();
+        mSysInfoWindow->requestResume();
+        mSysInfoWindow->mIconAButton->requestResume();
+        requestResume();
     }
 
     if (mSysInfoWindow->isDisappear()) {
-        setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
-        MR::showLayout(this);
+        MR::resumeAllSceneNameObj();
         mWaitTime = 120;
-        mIsTextBoxShowing = false;
         MR::activateDefaultGameLayout();
+        setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
     }
-
-    OSReport("%d\n", mSysInfoWindow->isDisappear());
 }
 
 namespace NrvBlueCoinCounter {

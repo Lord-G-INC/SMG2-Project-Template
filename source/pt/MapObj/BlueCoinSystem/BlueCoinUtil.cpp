@@ -115,12 +115,14 @@ namespace BlueCoinUtil {
     }
 
     bool isOnBlueCoinFlag() {
-        OSReport("gBlueCoinFlag: %d\n", gBlueCoinFlag);
         return gBlueCoinFlag;
     }
 
     bool isBlueCoinTextBoxAppeared() {
-        return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
+        if (isOnBlueCoinFlag())
+            return false;
+        else
+            return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
     }
 
     s32 getTotalBlueCoinNum(u8 file) {

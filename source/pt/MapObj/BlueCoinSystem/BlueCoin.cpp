@@ -85,7 +85,7 @@ void BlueCoin::appearAndMove() {
     TVec3f coinVelocity = TVec3f(0.0f, mLaunchVelocity / 10.0f, 0.0f);
     coinVelocity.scale(coinVelocity.y, -mGravity);
 
-    MR::startSystemSE("SE_SY_TIMECOIN_APPEAR", -1, -1);
+    MR::startSystemSE("SE_SY_PURPLE_COIN_APPEAR", -1, -1);
     
     appearMove(mTranslation, coinVelocity, 0x7FFFFFFF, 60);
 }
@@ -103,7 +103,7 @@ void BlueCoin::collect() {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
         BlueCoinUtil::startCounterCountUp();
     }
-    MR::startSystemSE("SE_SY_BLUE_COIN_GET", -1, -1); 
+    MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
     #endif
 
     if (!MR::isGalaxyDarkCometAppearInCurrentStage()) {
