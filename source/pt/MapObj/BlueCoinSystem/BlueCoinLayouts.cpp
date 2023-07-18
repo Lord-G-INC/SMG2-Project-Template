@@ -29,7 +29,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     MR::hideLayout(this);
 
     if (!BlueCoinUtil::isOnBlueCoinFlag()) {
-        mSysInfoWindow = MR::createSysInfoWindow();
+        mSysInfoWindow = MR::createSysInfoWindowMiniExecuteWithChildren();
         MR::connectToSceneLayout(mSysInfoWindow);
         MR::registerDemoSimpleCastAll(mSysInfoWindow);
     }
@@ -123,11 +123,9 @@ void BlueCoinCounter::exeShowTextBox() {
 }
 
 bool fixBlueCoinWindowCrash() {
-    if (!MR::isStageFileSelect()) {
-        bool yes = MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
-        OSReport("%d\n", yes);
-        return yes;
-    }
+    if (!MR::isStageFileSelect())
+        if (!BlueCoinUtil::isOnBlueCoinFlag())
+            return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
 
     return MR::isPlayerDead();
 }

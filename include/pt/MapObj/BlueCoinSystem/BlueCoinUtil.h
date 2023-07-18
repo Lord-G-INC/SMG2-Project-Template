@@ -9,6 +9,8 @@ namespace BlueCoinUtil {
     void loadBlueCoinData();
     // Saves gBlueCoinData bool array into BlueCoinData.bin.
     void saveBlueCoinData();
+    // Prints the Blue Coin counts of each save file and gBlueCoinFlag's value to the log.
+    void printBlueCoinSaveFileInfo();
     // Initializes gBlueCoinData bool array.
     void initBlueCoinArray();
     // Gets the current save file number being played.
@@ -19,18 +21,18 @@ namespace BlueCoinUtil {
     bool isBlueCoinGot(u8 file, u8 id);
     // Checks if a specific blue coin is true on the current save file.
     bool isBlueCoinGotCurrentFile(u8 id);
-    //
+    // Returns the value of the "seen" variable of BlueCoinCounter's SysInfoWindow.
     bool isOnBlueCoinFlag();
-    //
+    // Sets the "seen" variable of BlueCoinCounter's SysInfoWindow to true.
     void setOnBlueCoinFlag();
-    //
+    // Checks if the BlueCoinCounter's SysInfoWindow is appeared.
     bool isBlueCoinTextBoxAppeared();
     // Checks if 240 blue coins on a specified file are true.
-    bool isBlueCoinGot240(u8 fileID);
+    bool isBlueCoinGot240(u8 file);
     // Sets all blue coin slots to false and starts a save.
     void resetAllBlueCoin(u8 file);
     // Sets all blue coins on all files to false.
-    void resetAllBlueCoinAllFileNoSave();
+    void clearBlueCoinData();
     // Updates the Blue Coin counter
     void startCounterCountUp();
     // Gets the collected number of collected blue coins.
