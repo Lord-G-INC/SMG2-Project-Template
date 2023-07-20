@@ -2,9 +2,11 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "pt/Util/ActorUtil.h"
+#include "Game/NPC/TalkMessageCtrl.h"
 
 bool** gBlueCoinData;
 bool gBlueCoinFlag;
+
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
 #define BINSIZE 766
@@ -228,4 +230,22 @@ void onTitleScreenLoad(LiveActor* pActor) {
 
 kmCall(0x8024F358, onTitleScreenLoad);
 
+// Misc blue coin patches
+
+void customLMSBranchConditions(TalkNodeCtrl* pNode, bool cond) {
+    u16 condType = ((u16*)pNode->getCurrentNodeBranch())[3];
+    u16 condParam = ((u16*)pNode->getCurrentNodeBranch())[4];
+
+    if (condType == 17)
+        cond = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
+    if (condType == 18)
+        cond = BlueCoinUtil::getTotalBlueCoinNumCurrentFile() >= condParam;
+
+    pNode->forwardCurrentBranchNode(cond);
+}
+
+kmWrite32(0x8037B134, 0x7FC3F378); // mr r3, r30
+kmWrite32(0x8037B138, 0x7CC43378); // mr r4, r6
+kmCall(0x8037B13C, customLMSBranchConditions);
+kmWrite32(0x8037B140, 0x4BFFFE9C); // b -0x164
 #endif

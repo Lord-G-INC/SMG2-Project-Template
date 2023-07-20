@@ -273,7 +273,7 @@ namespace pt {
 	*/
 
 	const char* YesNoDialogueExtensions(const TalkMessageCtrl* msg) {
-		s16 selectTxt = ((s16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
+		u16 selectTxt = ((u16*)msg->mTalkNodeCtrl->getNextNodeBranch())[4];
 
 		char* str = new char[5];
 		sprintf(str, "New%d", selectTxt - 18);
@@ -389,4 +389,14 @@ namespace pt {
 	kmWrite32(0x80301C64, 0x7FA3EB78);
 	kmCall(0x80301C6C, SnowBallDieInWater);
 	#endif
+	
+	//void stinkyAudioLib(AudSoundNameConverter* pConverter, int* pInt, const char* pStr) {
+	//	pConverter->getSoundID(pInt, pStr);
+	//	OSReport("amogus: %p, %d, %s\n", pConverter, *pInt, pStr);
+	//}
+//
+	//kmCall(0x8005B3E8, stinkyAudioLib);
+	//kmCall(0x8005B424, stinkyAudioLib);
+	//kmCall(0x8005AE94, stinkyAudioLib);
+	
 } 
