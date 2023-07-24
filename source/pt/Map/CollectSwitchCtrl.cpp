@@ -77,7 +77,7 @@ namespace pt {
 		
 		#if defined USEBLUECOIN && !defined SM64BLUECOIN
 		else if (mItem == 4) {
-			count = BlueCoinUtil::getTotalBlueCoinNumCurrentFile();
+			count = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false);
 		}
 		#endif
 

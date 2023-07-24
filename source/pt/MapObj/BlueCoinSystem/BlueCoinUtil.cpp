@@ -4,12 +4,11 @@
 #include "pt/Util/ActorUtil.h"
 #include "Game/NPC/TalkMessageCtrl.h"
 
-bool** gBlueCoinData;
-bool gBlueCoinFlag;
+BlueCoinData* gBlueCoinData;
 
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
-#define BINSIZE 766
+#define BINSIZE 771
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -18,26 +17,28 @@ namespace BlueCoinUtil {
         s32 code = NANDOpen("BlueCoinData.bin", &info, 3);
         
         if (code == -12) {
-            gBlueCoinFlag = 0;
             OSReport("(BlueCoinUtil) BlueCoinData.bin not found. A new one will be created on game save.\n");
         }
 
         if (code == 0) {
-            bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[BINSIZE];
+            u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
             code = NANDRead(&info, buffer, BINSIZE);
             if (code != 0 && code != BINSIZE) {
                 OSPanic(__FILE__, __LINE__, "BlueCoinData.bin read failed. NANDRead code: %d\n", code);
             }
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
-                    gBlueCoinData[i][j] = *buffer++;
+                    gBlueCoinData->collectionData[i][j] = *buffer++;
                 }
             }
 
-            gBlueCoinFlag = *buffer;
+            for (s32 i = 0; i < 3; i++) {
+                gBlueCoinData->spentData[i] = buffer[i];
+                gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[3+i];
+            }
 
             delete [] buffer;
-            OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
+            OSReport("(BlueCoinUtil) BlueCoinData.bin successfully read.\n");
             printBlueCoinSaveFileInfo();
         }
         NANDClose(&info);
@@ -50,15 +51,16 @@ namespace BlueCoinUtil {
             code = NANDOpen("BlueCoinData.bin", &info, 3);
             if (code == 0) {
                 NANDSeek(&info, 0, 0);
-                bool* buffer = new (JKRHeap::sSystemHeap, 0x20) bool[BINSIZE];
+                u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
                 s32 idx = 0;
                 for (int i = 0; i < 3; i++) {
+                    buffer[765+i] = gBlueCoinData->spentData[i];
+                    buffer[768+i] = (bool)gBlueCoinData->hasSeenTextBox[i];
+
                     for (int j = 0; j < 255; j++) {
-                        buffer[idx++] = gBlueCoinData[i][j];
+                        buffer[idx++] = (bool)gBlueCoinData->collectionData[i][j];
                     }
                 }
-
-            buffer[765] = gBlueCoinFlag;
 
                 code = NANDWrite(&info, buffer, BINSIZE);
 
@@ -74,17 +76,35 @@ namespace BlueCoinUtil {
     }
 
     void printBlueCoinSaveFileInfo() {
-        OSReport("f0: %d, f1: %d, f2: %d\nSeen message? %s\n", getTotalBlueCoinNum(0), getTotalBlueCoinNum(1), getTotalBlueCoinNum(2), gBlueCoinFlag ? "Yes" : "No");
+        OSReport("c0: %d, c1: %d, c2: %d\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
+        getTotalBlueCoinNum(0, false), 
+        getTotalBlueCoinNum(1, false), 
+        getTotalBlueCoinNum(2, false),
+        getSpentBlueCoinNum(0),
+        getSpentBlueCoinNum(1),
+        getSpentBlueCoinNum(2),
+        gBlueCoinData->hasSeenTextBox[0] ? "Yes" : "No",
+        gBlueCoinData->hasSeenTextBox[1] ? "Yes" : "No",
+        gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No"
+        );
+    }
+
+    void clearBlueCoinData() {
+        for (int i = 0; i < 3; i++) {
+            memset(gBlueCoinData->collectionData[i], 0, 255);
+        }
+        OSReport("(BlueCoinUtil) Blue Coin array cleared.\n");
     }
 
     void initBlueCoinArray() {
         OSReport("(BlueCoinUtil) Initializing Blue Coin array.\n");
-        gBlueCoinData = new bool*[3];
+        gBlueCoinData = new BlueCoinData;
+        gBlueCoinData->collectionData = new bool*[3];
         for (int i = 0; i < 3; i++) {
-            gBlueCoinData[i] = new bool[255];
-            memset(gBlueCoinData[i], 0, 255);
+            gBlueCoinData->collectionData[i] = new bool[255];
+            memset(gBlueCoinData->collectionData[i], 0, 255);
+            gBlueCoinData->hasSeenTextBox[i] = 0;
         }
-        gBlueCoinFlag = 0;
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
 
@@ -94,66 +114,81 @@ namespace BlueCoinUtil {
     }
 
     void setBlueCoinGotCurrentFile(u8 id) {
-        gBlueCoinData[getCurrentFileNum()][id] = true;
+        gBlueCoinData->collectionData[getCurrentFileNum()][id] = true;
         OSReport("(BlueCoinUtil) Blue Coin ID #%d collected on file %d.\n", id, getCurrentFileNum());
     }
 
+    bool isBlueCoinGot(u8 file, u8 id) {
+        return gBlueCoinData->collectionData[file][id];
+    }
+    
+    bool isBlueCoinGotCurrentFile(u8 id) {
+        return gBlueCoinData->collectionData[getCurrentFileNum()][id];
+    }
+
+    bool isBlueCoinGot240(u8 file) {
+        return getTotalBlueCoinNum(file, false) == 240;
+    }
+
+    bool isOnBlueCoinFlagCurrentFile() {
+        return gBlueCoinData->hasSeenTextBox[getCurrentFileNum()];
+    }
+    
+    void setOnBlueCoinFlagCurrentFile() {
+        gBlueCoinData->hasSeenTextBox[getCurrentFileNum()] = true;
+        OSReport("(BlueCoinUtil) gBlueCoinData->hasSeenTextBox on the current file set to true.\n");
+    }
+
     void resetAllBlueCoin(u8 file) {
-        memset(gBlueCoinData[file - 1], 0, 255);
+        memset(gBlueCoinData->collectionData[file - 1], 0, 255);
+        gBlueCoinData->spentData[file - 1] = 0;
+        gBlueCoinData->hasSeenTextBox[file - 1] = 0;
         saveBlueCoinData();
         OSReport("(BlueCoinUtil) Blue Coin data for file %d reset.\n", file);
     }
 
-    void clearBlueCoinData() {
-        for (int i = 0; i < 3; i++) {
-            memset(gBlueCoinData[i], 0, 255);
-        }
-        OSReport("(BlueCoinUtil) Blue Coin array cleared.\n");
-    }
-
-    bool isBlueCoinGot(u8 file, u8 id) {
-        return gBlueCoinData[file][id];
-    }
-
-    bool isBlueCoinGotCurrentFile(u8 id) {
-        return gBlueCoinData[getCurrentFileNum()][id];
-    }
-
-    void setOnBlueCoinFlag() {
-        gBlueCoinFlag = true;
-        OSReport("(BlueCoinUtil) gBlueCoinFlag set to true.\n");
-    }
-
-    bool isOnBlueCoinFlag() {
-        return gBlueCoinFlag;
-    }
-
     bool isBlueCoinTextBoxAppeared() {
-        if (isOnBlueCoinFlag())
+        if (isOnBlueCoinFlagCurrentFile())
             return false;
         else
             return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
     }
 
-    s32 getTotalBlueCoinNum(u8 file) {
-        s32 total = 0;
-        for (s32 i = 0; i < 255; i++) {
-            if (gBlueCoinData[file][i])
-                total++;
+    void spendBlueCoinCurrentFile(u8 numcoin) {
+        numcoin == 0 ? 30 : numcoin;
+        if (getTotalBlueCoinNumCurrentFile(true) >= numcoin) {
+            gBlueCoinData->spentData[getCurrentFileNum()] += numcoin;
+            startCounterCountUp();
+            OSReport("(BlueCoinUtil) Transaction of %d Blue Coins accepted\n", numcoin);
         }
-        return total;
+        else
+            OSReport("(BlueCoinUtil) Transaction of %d Blue Coins not accepted. Too few coins.\n", numcoin);
     }
 
-    bool isBlueCoinGot240(u8 file) {
-        return getTotalBlueCoinNum(file) == 240;
+    s32 getSpentBlueCoinNum(u8 file) {
+        return gBlueCoinData->spentData[file];
+    }
+
+    s32 getSpentBlueCoinNumCurrentFile() {
+        return gBlueCoinData->spentData[getCurrentFileNum()];
+    }
+
+    s32 getTotalBlueCoinNum(u8 file, bool ignoreSpent) {
+        s32 total = 0;
+        for (s32 i = 0; i < 255; i++) {
+            if (gBlueCoinData->collectionData[file][i])
+                total++;
+        }
+
+        return ignoreSpent ? total -= getSpentBlueCoinNum(file) : total;
+    }
+
+    s32 getTotalBlueCoinNumCurrentFile(bool ignoreSpent) {
+        return getTotalBlueCoinNum(getCurrentFileNum(), ignoreSpent);
     }
 
     void startCounterCountUp() {
         ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
-    }
-
-    s32 getTotalBlueCoinNumCurrentFile() {
-        return getTotalBlueCoinNum(getCurrentFileNum());
     }
 
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly) {
@@ -211,7 +246,7 @@ void resetAllBlueCoinOnDeleteFile(SaveDataHandleSequence* pSeq, UserFile* pFile,
 
 kmCall(0x804D9BF8, resetAllBlueCoinOnDeleteFile);
 
-// Save gBlueCoinData to file.
+// Save gBlueCoinData->collectionData to file.
 
 void saveBlueCoinDataOnGameSave(const char* pName) {
     MR::startSystemSE(pName, -1, -1);
@@ -232,16 +267,16 @@ kmCall(0x8024F358, onTitleScreenLoad);
 
 // Misc blue coin patches
 
-void customLMSBranchConditions(TalkNodeCtrl* pCtrl, bool cond) {
+void customLMSBranchConditions(TalkNodeCtrl* pCtrl, bool result) {
     u16 condType = ((u16*)pCtrl->getCurrentNodeBranch())[3];
     u16 condParam = ((u16*)pCtrl->getCurrentNodeBranch())[4];
 
     if (condType == 17)
-        cond = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
+        result = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
     if (condType == 18)
-        cond = BlueCoinUtil::getTotalBlueCoinNumCurrentFile() >= condParam;
+        result = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false) >= condParam;
 
-    pCtrl->forwardCurrentBranchNode(cond);
+    pCtrl->forwardCurrentBranchNode(result);
 }
 
 kmWrite32(0x8037B134, 0x7FC3F378); // mr r3, r30
@@ -253,8 +288,10 @@ kmWrite32(0x8037B140, 0x4BFFFE9C); // b -0x164
 
 bool customLMSEventFunctions(TalkNodeCtrl* pNode) {
     u16 eventType = ((u16*)pNode->getCurrentNodeEvent())[2];
-    u16 eventParam = ((u16*)pNode->getCurrentNodeEvent())[3];
-    OSReport("Event: %d, %d\n", eventType, eventParam);
+    u16 eventParam = ((u16*)pNode->getCurrentNodeEvent())[5];
+
+    if (eventType == 12)
+        BlueCoinUtil::spendBlueCoinCurrentFile(eventParam);
 
     return pNode->isExistNextNode();
 }

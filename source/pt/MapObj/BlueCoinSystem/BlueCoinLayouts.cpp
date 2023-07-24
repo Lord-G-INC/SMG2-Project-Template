@@ -16,7 +16,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     MR::registerDemoSimpleCastAll(this);
     MR::connectToSceneLayout(this);
     MR::createAndAddPaneCtrl(this, "Counter", 1);
-    MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNumCurrentFile());
+    MR::setTextBoxNumberRecursive(this, "ShaNumber", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true));
 
     mAppearer = new CounterLayoutAppearer(this, TVec2f(-50.0f, 0.0f));
 
@@ -28,7 +28,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     initNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     MR::hideLayout(this);
 
-    if (!BlueCoinUtil::isOnBlueCoinFlag()) {
+    if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile()) {
         mSysInfoWindow = MR::createSysInfoWindowMiniExecuteWithChildren();
         MR::connectToSceneLayout(mSysInfoWindow);
         MR::registerDemoSimpleCastAll(mSysInfoWindow);
@@ -70,7 +70,7 @@ void BlueCoinCounter::exeDisappear() {
 }
 
 void BlueCoinCounter::startCountUp() { 
-    if (BlueCoinUtil::isOnBlueCoinFlag()) {
+    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile()) {
         if (mAppearer->isDisappeared()) {
             setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
             mWaitTime = 120;
@@ -95,7 +95,7 @@ void BlueCoinCounter::exeAppearAndUpdate() {
 }
 
 void BlueCoinCounter::updateCounter() {
-    MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNumCurrentFile());
+    MR::setTextBoxNumberRecursive(this, "Counter", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true));
     MR::startPaneAnim(this, "Counter", "Flash", 0);
     mPaneRumbler->start();
 }
@@ -117,14 +117,14 @@ void BlueCoinCounter::exeShowTextBox() {
         MR::resumeAllSceneNameObj();
         mWaitTime = 120;
         MR::activateDefaultGameLayout();
-        BlueCoinUtil::setOnBlueCoinFlag();
+        BlueCoinUtil::setOnBlueCoinFlagCurrentFile();
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
     }
 }
 
 bool fixBlueCoinWindowCrash() {
-    if (!MR::isStageFileSelect())
-        if (!BlueCoinUtil::isOnBlueCoinFlag())
+    if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy"))
+        if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile())
             return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
 
     return MR::isPlayerDead();
@@ -224,7 +224,7 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     s32 rangeCollected = BlueCoinUtil::getBlueCoinRangeData(0, true);
     s32 rangeTotal = BlueCoinUtil::getBlueCoinRangeData(0, false);
 
-    MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinTotal", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(), 0);
+    MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinTotal", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false), 0);
 
     if (rangeCollected > -1) {
         MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeCollected, 0);
@@ -257,7 +257,7 @@ void setBlueCoinCounterFileInfo(LayoutActor* pLayout, const Nerve* pNerve) {
     s32 fileID = 1;
     asm("lwz %0, 0x2C(r31)" : "=r" (fileID));
 
-    MR::setTextBoxArgNumberRecursive(pLayout, "ShaBlueCoinFileInfo", BlueCoinUtil::getTotalBlueCoinNum(fileID - 1), 0);
+    MR::setTextBoxArgNumberRecursive(pLayout, "ShaBlueCoinFileInfo", BlueCoinUtil::getTotalBlueCoinNum(fileID - 1, false), 0);
     pLayout->setNerve(pNerve);
 }
 

@@ -65,7 +65,8 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoinController::movement() {
-    calcRedCoinCounterPlayerPos();
+    if (!MR::isHiddenLayout(mRedCoinCounterPlayer))
+        calcRedCoinCounterPlayerPos();
 
     mRumbler->update();
 
