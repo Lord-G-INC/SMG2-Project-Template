@@ -32,11 +32,9 @@ void LavaSteam::init(const JMapInfoIter& rIter) {
 }
 
 void LavaSteam::initAfterPlacement() {
-
 }
 
 void LavaSteam::attackSensor(HitSensor* pSender, HitSensor* pReceiver) {
-
 }
 
 void LavaSteam::startClipped() {
