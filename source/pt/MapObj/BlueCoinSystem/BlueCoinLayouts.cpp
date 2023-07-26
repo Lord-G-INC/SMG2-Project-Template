@@ -28,7 +28,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     initNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     MR::hideLayout(this);
 
-    if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile()) {
+    if (!BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile()) {
         mSysInfoWindow = MR::createSysInfoWindowMiniExecuteWithChildren();
         MR::connectToSceneLayout(mSysInfoWindow);
         MR::registerDemoSimpleCastAll(mSysInfoWindow);
@@ -70,7 +70,7 @@ void BlueCoinCounter::exeDisappear() {
 }
 
 void BlueCoinCounter::startCountUp() { 
-    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile()) {
+    if (BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile()) {
         if (mAppearer->isDisappeared()) {
             setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
             mWaitTime = 120;
@@ -117,14 +117,14 @@ void BlueCoinCounter::exeShowTextBox() {
         MR::resumeAllSceneNameObj();
         mWaitTime = 120;
         MR::activateDefaultGameLayout();
-        BlueCoinUtil::setOnBlueCoinFlagCurrentFile();
+        BlueCoinUtil::setSeenBlueCoinTextBoxCurrentFile();
         setNerve(&NrvBlueCoinCounter::NrvAppearAndUpdate::sInstance);
     }
 }
 
 bool fixBlueCoinWindowCrash() {
     if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy"))
-        if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile())
+        if (!BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile())
             return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
 
     return MR::isPlayerDead();

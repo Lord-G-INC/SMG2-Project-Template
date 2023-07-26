@@ -4,6 +4,7 @@
 
 struct BlueCoinData {
     bool** collectionData;
+    bool flags[24];
     u8 spentData[3];
     bool hasSeenTextBox[3];
 };
@@ -29,14 +30,16 @@ namespace BlueCoinUtil {
     bool isBlueCoinGot(u8 file, u8 id);
     // Checks if a specific blue coin is true on the current save file.
     bool isBlueCoinGotCurrentFile(u8 id);
-    // Checks if 240 blue coins on a specified file are true.
-    bool isBlueCoinGot240(u8 file);
     // Returns the value of the "seen" variable of BlueCoinCounter's SysInfoWindow.
-    bool isOnBlueCoinFlagCurrentFile();
+    bool hasSeenBlueCoinTextBoxCurrentFile();
     // Sets the "seen" variable of BlueCoinCounter's SysInfoWindow to true.
-    void setOnBlueCoinFlagCurrentFile();
+    void setSeenBlueCoinTextBoxCurrentFile();
     // Checks if the BlueCoinCounter's SysInfoWindow is appeared.
     bool isBlueCoinTextBoxAppeared();
+    //
+    void setOnBlueCoinFlagCurrentFile(u8 flag);
+    //
+    bool isOnBlueCoinFlagCurrentFile(u8 flag);
     // Sets all blue coin slots to false and starts a save.
     void resetAllBlueCoin(u8 file);
     // Updates the Blue Coin counter

@@ -8,7 +8,13 @@ BlueCoinData* gBlueCoinData;
 
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
-#define BINSIZE 771
+#define BINSIZE 795
+
+#define FLAGS_LOCATION 765
+#define SPENT_LOCATION 789
+#define TEXTBOX_LOCATION 792
+
+#define NUM_FLAGS 24
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -24,7 +30,7 @@ namespace BlueCoinUtil {
             u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
             code = NANDRead(&info, buffer, BINSIZE);
             if (code != 0 && code != BINSIZE) {
-                OSPanic(__FILE__, __LINE__, "BlueCoinData.bin read failed. NANDRead code: %d\n", code);
+                OSPanic(__FILE__, __LINE__, "BlueCoinData.bin read failed. NANDRead code: %d", code);
             }
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
@@ -32,9 +38,16 @@ namespace BlueCoinUtil {
                 }
             }
 
+            for (s32 i = 0; i < NUM_FLAGS; i++) {
+                gBlueCoinData->flags[i] = (bool)buffer[i];
+            }
+
             for (s32 i = 0; i < 3; i++) {
-                gBlueCoinData->spentData[i] = buffer[i];
-                gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[3+i];
+                gBlueCoinData->spentData[i] = buffer[24+i];
+                gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[27+i];
+
+                if (gBlueCoinData->spentData[i] > getTotalBlueCoinNum(i, false))
+                    OSReport("(BlueCoinUtil) Discrepancy found on save file %d\n", i);
             }
 
             delete [] buffer;
@@ -54,18 +67,22 @@ namespace BlueCoinUtil {
                 u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
                 s32 idx = 0;
                 for (int i = 0; i < 3; i++) {
-                    buffer[765+i] = gBlueCoinData->spentData[i];
-                    buffer[768+i] = (bool)gBlueCoinData->hasSeenTextBox[i];
+                    buffer[SPENT_LOCATION+i] = gBlueCoinData->spentData[i];
+                    buffer[TEXTBOX_LOCATION+i] = (bool)gBlueCoinData->hasSeenTextBox[i];
 
                     for (int j = 0; j < 255; j++) {
                         buffer[idx++] = (bool)gBlueCoinData->collectionData[i][j];
                     }
                 }
 
+                for (int i = 0; i < NUM_FLAGS; i++) {
+                    buffer[FLAGS_LOCATION + i] = gBlueCoinData->flags[i];
+                }
+
                 code = NANDWrite(&info, buffer, BINSIZE);
 
                 if (code != 0 && code != BINSIZE)
-                    OSPanic(__FILE__, __LINE__, "BlueCoinData.bin write failed. NANDWrite code: %d\n", code);
+                    OSPanic(__FILE__, __LINE__, "BlueCoinData.bin write failed. NANDWrite code: %d", code);
 
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
@@ -76,7 +93,7 @@ namespace BlueCoinUtil {
     }
 
     void printBlueCoinSaveFileInfo() {
-        OSReport("c0: %d, c1: %d, c2: %d\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: f1: f2:\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
         getTotalBlueCoinNum(0, false), 
         getTotalBlueCoinNum(1, false), 
         getTotalBlueCoinNum(2, false),
@@ -126,29 +143,39 @@ namespace BlueCoinUtil {
         return gBlueCoinData->collectionData[getCurrentFileNum()][id];
     }
 
-    bool isBlueCoinGot240(u8 file) {
-        return getTotalBlueCoinNum(file, false) == 240;
-    }
-
-    bool isOnBlueCoinFlagCurrentFile() {
+    bool hasSeenBlueCoinTextBoxCurrentFile() {
         return gBlueCoinData->hasSeenTextBox[getCurrentFileNum()];
-    }
-    
-    void setOnBlueCoinFlagCurrentFile() {
+    }  
+
+    void setSeenBlueCoinTextBoxCurrentFile() {
         gBlueCoinData->hasSeenTextBox[getCurrentFileNum()] = true;
         OSReport("(BlueCoinUtil) gBlueCoinData->hasSeenTextBox on the current file set to true.\n");
+    }
+
+    void setOnBlueCoinFlagCurrentFile(u8 flag) {
+        gBlueCoinData->flags[flag+(8*getCurrentFileNum())] = true;
+        OSReport("(BlueCoinUtil) Flag %d set on file %d, Flag num: %d\n", flag, getCurrentFileNum(), flag+(8*getCurrentFileNum()));
+    }
+
+    bool isOnBlueCoinFlagCurrentFile(u8 flag) {
+        return gBlueCoinData->flags[flag+(8*getCurrentFileNum())];
     }
 
     void resetAllBlueCoin(u8 file) {
         memset(gBlueCoinData->collectionData[file - 1], 0, 255);
         gBlueCoinData->spentData[file - 1] = 0;
         gBlueCoinData->hasSeenTextBox[file - 1] = 0;
+
+        for (int i = 0; i < 8; i++) {
+            gBlueCoinData->flags[i+(8*(file-1))] = 0;
+        }
+
         saveBlueCoinData();
         OSReport("(BlueCoinUtil) Blue Coin data for file %d reset.\n", file);
     }
 
     bool isBlueCoinTextBoxAppeared() {
-        if (isOnBlueCoinFlagCurrentFile())
+        if (hasSeenBlueCoinTextBoxCurrentFile())
             return false;
         else
             return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
@@ -158,7 +185,6 @@ namespace BlueCoinUtil {
         numcoin == 0 ? 30 : numcoin;
         if (getTotalBlueCoinNumCurrentFile(true) >= numcoin) {
             gBlueCoinData->spentData[getCurrentFileNum()] += numcoin;
-            startCounterCountUp();
             OSReport("(BlueCoinUtil) Transaction of %d Blue Coins accepted\n", numcoin);
         }
         else
@@ -275,6 +301,9 @@ void customLMSBranchConditions(TalkNodeCtrl* pCtrl, bool result) {
         result = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
     if (condType == 18)
         result = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false) >= condParam;
+    if (condType == 19)
+        result = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= condParam;
+
 
     pCtrl->forwardCurrentBranchNode(result);
 }
@@ -292,6 +321,8 @@ bool customLMSEventFunctions(TalkNodeCtrl* pNode) {
 
     if (eventType == 12)
         BlueCoinUtil::spendBlueCoinCurrentFile(eventParam);
+    if (eventType == 13)
+        BlueCoinUtil::startCounterCountUp();
 
     return pNode->isExistNextNode();
 }

@@ -103,6 +103,7 @@ void BlueCoin::collect() {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
         BlueCoinUtil::startCounterCountUp();
     }
+
     MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
     #endif
 
