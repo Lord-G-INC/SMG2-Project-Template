@@ -42,6 +42,7 @@ void RedCoinSwitch::init(const JMapInfoIter& rIter) {
 void RedCoinSwitch::exeOn() {
     MR::startAction(this, "Press");
     MR::invalidateCollisionParts(this);
+    MR::invalidateClipping(this);
     isOn = true;
     
     mTimeLimitLayout->setTimeLimit(mTime * 60);
