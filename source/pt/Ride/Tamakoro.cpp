@@ -21,6 +21,7 @@ bool useStageSwitchWriteAAndGetArg3(Tamakoro *pStarBall, JMapInfoIter &rIter)
 	return MR::useStageSwitchWriteA(pStarBall, rIter);
 }
 kmCall(0x804444E0, useStageSwitchWriteAAndGetArg3);
+kmWrite32(0x8033C8C4, 0x3860015C); // change __nw alloc to allow for arg3
 
 
 // Manually overwrite the exeBindEnd code, can't change easily with asm unfortunately.
@@ -50,7 +51,7 @@ void exeBindEnd(Tamakoro *pStarBall)
 			pStarBall->mPurpleCoin->appearMove(pStarBall->mTranslation, pStarBall->mGravity * -30.0, -1, -1);
 		}
 	}
-	if (MR::isGreaterStep(pStarBall, 12) && MR::isOnGroundPlayer() || !MR::isGreaterStep(pStarBall, 90))
+	if (MR::isGreaterStep(pStarBall, 12) && MR::isOnGroundPlayer() || MR::isGreaterStep(pStarBall, 90))
 	{
 		if (pStarBall->mMusicNum != 1) // only start last stage music if there is star ball music playing
 			MR::startLastStageBGM();
