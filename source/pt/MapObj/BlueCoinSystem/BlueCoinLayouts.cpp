@@ -108,6 +108,7 @@ void BlueCoinCounter::exeShowTextBox() {
         MR::deactivateDefaultGameLayout();
         MR::hideLayout(this);
         MR::suspendAllSceneNameObj();
+        BlueCoinUtil::setOnBlueCoinFlagCurrentFile(5);
         mSysInfoWindow->requestResume();
         mSysInfoWindow->mIconAButton->requestResume();
         requestResume();

@@ -6,7 +6,7 @@
 class BlueCoin : public Coin {
     public:
     BlueCoin(const char*);
-    virtual void init(const JMapInfoIter&);
+    virtual void init(const JMapInfoIter& rIter);
     virtual void initAfterPlacement();
     virtual void control();
     virtual void calcAndSetBaseMtx();
