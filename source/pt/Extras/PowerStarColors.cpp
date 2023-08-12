@@ -1,6 +1,6 @@
-#ifdef NOGLE
 #include "pt/Extras/PowerStarColors.h"
 #include "pt/Util/ActorUtil.h"
+#ifdef NOGLE
 
 /*
 * Authors: Aurum
