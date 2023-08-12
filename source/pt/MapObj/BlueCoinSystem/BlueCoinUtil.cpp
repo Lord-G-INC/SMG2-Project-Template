@@ -81,7 +81,6 @@ namespace BlueCoinUtil {
 
                     for (int j = 0; j < 8; j++) {
                         buffer[FLAGS_LOCATION+flagidx] = gBlueCoinData->flags[i][j];
-                        OSReport("SAVE: %d, %d\n", flagidx, gBlueCoinData->flags[i][j]);
                         flagidx++;
                     }
                 }
@@ -100,10 +99,23 @@ namespace BlueCoinUtil {
     }
 
     void printBlueCoinSaveFileInfo() {
-        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: 00000000, f1: 00000000, f2: 00000000\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
+        char* file0 = new char[9];
+        char* file1 = new char[9];
+        char* file2 = new char[9];
+
+        for (s32 i = 0; i < 8; i++) {
+            file0[i] = gBlueCoinData->flags[0][i] ? 0x31 : 0x30;
+            file1[i] = gBlueCoinData->flags[1][i] ? 0x31 : 0x30;
+            file2[i] = gBlueCoinData->flags[2][i] ? 0x31 : 0x30;
+        }
+
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
         getTotalBlueCoinNum(0, false), 
         getTotalBlueCoinNum(1, false), 
         getTotalBlueCoinNum(2, false),
+        file0,
+        file1,
+        file2,
         getSpentBlueCoinNum(0),
         getSpentBlueCoinNum(1),
         getSpentBlueCoinNum(2),

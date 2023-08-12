@@ -194,17 +194,16 @@ namespace pt {
 		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
 	}
 
-		kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
-		kmCall(0x802E0870, greenStarAppearParticleFix);
+	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
+	kmCall(0x802E0870, greenStarAppearParticleFix);
 
 	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
 	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
 		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
 	}
 
-		kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
-		kmCall(0x802DFE04, customPowerStarLightColors);
-
+	kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
+	kmCall(0x802DFE04, customPowerStarLightColors);
 	/*
 	*	Silver Star Colors
 	*	A suggestion from Alex SMG and others that turned out to be really fun to make.
