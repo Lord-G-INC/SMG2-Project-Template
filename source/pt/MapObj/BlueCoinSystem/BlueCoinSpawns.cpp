@@ -1,3 +1,4 @@
+#if defined USEBLUECOIN && !defined SM64BLUECOIN
 #include "syati.h"
 #include "Game/Enemy/Kuribo.h"
 #include "Game/Enemy/SamboHead.h"
@@ -52,3 +53,5 @@ void SamboHeadAppearBlueCoin(SamboHead* pSamboHead, const char* pStr) {
 }
 
 kmCall(0x801F81D4, SamboHeadAppearBlueCoin);
+
+#endif
