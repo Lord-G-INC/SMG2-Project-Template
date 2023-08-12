@@ -152,6 +152,7 @@ namespace pt {
 	*	Not really useful, but is neat.
 	*/
 
+#endif
 	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
 		s32 colorFrame = -1;
@@ -160,8 +161,10 @@ namespace pt {
 		MR::getJMapInfoArg1NoInit(iter, &argScenario);	
 		MR::getJMapInfoArg2NoInit(iter, &colorFrame);
 
+		#ifdef NOGLE
 		if (colorFrame == -1)
 			colorFrame = pt::getPowerStarColorCurrentStage(argScenario);
+		#endif
 	
 		if (colorFrame == 1)
 			MR::startBtkAndSetFrameAndStop(actor, "BallStarColor", 1);
@@ -185,6 +188,7 @@ namespace pt {
 
 	kmCall(0x80446B4C, TamakoroCustomPowerStarColorsParticles);
 
+#ifdef NOGLE
 	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
 	void greenStarAppearParticleFix(LiveActor* pActor, s32 mColor) {
 		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
