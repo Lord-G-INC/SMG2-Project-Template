@@ -328,27 +328,26 @@ namespace pt {
 	#endif
 	
 	// Suggested by Xandog
-	const wchar_t* CustomGreenStarNames(GalaxyStatusAccessor accessor) {
-	    const char* pStageName;
-	    s32 starid;
-	    asm("mr %0, r30" : "=r" (pStageName));
-	    asm("mr %0, r31" : "=r" (starid));
+	const wchar_t* CustomGreenStarNames(GalaxyStatusAccessor accessor, const char* pStageName, s32 starid) {
+		char textName[256];
+	    snprintf(textName, 256, "ScenarioName_%s_GreenStar%d", pStageName, starid-accessor.getPowerStarNum()/2);
 	
-	    char* textName = new char[256];
-	    snprintf(textName, 256, "ScenarioName_%s_GreenStar%d", pStageName, starid - accessor.getGreenStarNum());
-	
-	    TalkMessageInfo info = TalkMessageInfo();
+	    TalkMessageInfo info;
 	    MessageSystem::getGameMessageDirect(&info, textName);
 	
 	    if (info.mMessage)
-	        return MR::getGameMessageDirect(textName);
+	        return info.mMessage;
 	
-	    snprintf(textName, 256, "ScenarioName_GreenStar%d", starid - accessor.getGreenStarNum());
+	    snprintf(textName, 256, "ScenarioName_GreenStar%d", starid-accessor.getPowerStarNum()/2);
 	    return MR::getGameMessageDirect(textName);
 	}
 	
-	kmCall(0x8004159C, CustomGreenStarNames);
-	kmWrite32(0x800415A0, 0x48000058); // b 0x58
+	kmWrite32(0x8004159C, 0x7FC4F378);
+	kmWrite32(0x800415A0, 0x7FE5FB78);
+	kmCall(0x800415A4, CustomGreenStarNames);
+	kmWrite32(0x800415A8, 0x48000050); // b 0x48
+
+	kmWrite32(0x8048ED84, 0x38600000);
 
 	#ifdef CA
 	// No HipDropSwitch timer ticking
