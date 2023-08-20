@@ -12,7 +12,10 @@ kmWrite32(0x8033D4C4, 0x386000D8); // li r3, 0xD8
 
 void KuriboSetUpBlueCoin(Kuribo* pKuribo, const JMapInfoIter& rIter, const char* pStr) {
     pKuribo->mBlueCoinArg = -1;
-    MR::getJMapInfoArg2NoInit(rIter, &pKuribo->mBlueCoinArg);
+    
+    if (MR::isValidInfo(rIter)) {
+        MR::getJMapInfoArg2NoInit(rIter, &pKuribo->mBlueCoinArg);
+    }
 
     MR::processInitFunction(pKuribo, rIter, pStr, 0);
 
@@ -36,7 +39,10 @@ kmWrite32(0x8033DC44, 0x386000C4); // li r3, 0xC4
 
 void SamboHeadSetUpBlueCoin(SamboHead* pSamboHead, const JMapInfoIter& rIter, const char* pStr) {
     pSamboHead->mBlueCoinArg = -1;
-    MR::getJMapInfoArg1NoInit(rIter, &pSamboHead->mBlueCoinArg);
+
+    if (MR::isValidInfo(rIter)) {
+        MR::getJMapInfoArg1NoInit(rIter, &pSamboHead->mBlueCoinArg);
+    }
 
     MR::processInitFunction(pSamboHead, rIter, pStr, 0);
     pSamboHead->mBlueCoin = (BlueCoin*)BlueCoinUtil::createBlueCoinForSpawning(pSamboHead, pSamboHead->mBlueCoinArg);
