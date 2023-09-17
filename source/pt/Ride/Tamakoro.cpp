@@ -44,7 +44,7 @@ void exeBindEnd(Tamakoro *pStarBall)
 		#endif
 
 		MR::startActionSound(pStarBall, "SmRideEnd", -1, -1, -1);
-		MR::startSoundPlayer("SE_PV_JUMP_S", -1);
+		MR::startSoundPlayer("SE_PV_JUMP_S", -1, -1);
 		if (pStarBall->mMusicNum != 1) // only stop music if there is star ball music playing
 			MR::stopStageBGM(10);
 		if (pStarBall->mPurpleCoin) {
