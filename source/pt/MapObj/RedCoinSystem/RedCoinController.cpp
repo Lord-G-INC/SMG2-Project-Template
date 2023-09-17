@@ -88,31 +88,31 @@ void RedCoinController::movement() {
 // This function is unused, but there are plans for
 // this function to be included if it can be figured out.
 
-void RedCoinController::resetAllRedCoins() {
-    LiveActorGroup* group = MR::getGroupFromArray(this);
-
-    for (s32 i = 0; i < group->mNumObjs; i++) {
-        if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
-            RedCoin* coin = ((RedCoin*)group->getActor(i));
-            MR::hideModel(coin);
-            MR::invalidateShadowAll(coin);
-            MR::invalidateHitSensors(coin);
-
-            coin->mIsCollected = false;
-
-            if (coin->mIsInAirBubble)
-                coin->mAirBubble->makeActorAppeared();
-        }
-    }
-
-    mNumCoins = 0;
-    mIsValidCounterAppear = false;
-    MR::offSwitchB(this);
-    MR::stopAnim(mRedCoinCounterPlayer, 0);
-    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
-    MR::hideLayout(mRedCoinCounter);
-    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
-}
+//void RedCoinController::resetAllRedCoins() {
+//    LiveActorGroup* group = MR::getGroupFromArray(this);
+//
+//    for (s32 i = 0; i < group->mNumObjs; i++) {
+//        if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
+//            RedCoin* coin = ((RedCoin*)group->getActor(i));
+//            MR::hideModel(coin);
+//            MR::invalidateShadowAll(coin);
+//            MR::invalidateHitSensors(coin);
+//
+//            coin->mIsCollected = false;
+//
+//            if (coin->mIsInAirBubble)
+//                coin->mAirBubble->makeActorAppeared();
+//        }
+//    }
+//
+//    mNumCoins = 0;
+//    mIsValidCounterAppear = false;
+//    MR::offSwitchB(this);
+//    MR::stopAnim(mRedCoinCounterPlayer, 0);
+//    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
+//    MR::hideLayout(mRedCoinCounter);
+//    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
+//}
 
 // Increases both layouts by 1
 void RedCoinController::startCountUp(LiveActor* pRedCoin) {

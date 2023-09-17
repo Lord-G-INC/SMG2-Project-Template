@@ -94,7 +94,7 @@ if "--smss" in sys.argv:
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
 if "--ca" in sys.argv:
     print("Building with flags CA and GLE true")
-    compiler_flags.append("-DCA -DGLE")
+    compiler_flags.append("-DCA -DGLE -DSM64BLUECOIN")
 
 # Compiler flag for the Alex SMG's project: "Super Mario Galaxy 63"
 if "--smg63" in sys.argv:

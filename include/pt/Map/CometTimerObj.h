@@ -8,7 +8,7 @@ public:
     CometTimerObj(const char* pName);
     virtual void init(const JMapInfoIter& rIter);
     virtual void movement();
-    void hideLayoutAndSwitchOn();
+    void onTimeUp();
 
     TimeLimitLayout* mLayout;
     s32 mTime;

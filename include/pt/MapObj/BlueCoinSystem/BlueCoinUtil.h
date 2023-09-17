@@ -12,10 +12,10 @@ struct BlueCoinData {
 extern BlueCoinData* gBlueCoinData;
 
 namespace BlueCoinUtil {
-    /// @brief Loads BlueCoinData.bin into gBlueCoinData bool array.
+    /// @brief Loads BlueCoinData.bin into gBlueCoinData bool array. Made with help from Lord-Giganticus.
     void loadBlueCoinData();
     
-    /// @brief Saves gBlueCoinData bool array into BlueCoinData.bin.
+    /// @brief Saves gBlueCoinData bool array into BlueCoinData.bin. Made with help from Lord-Giganticus.
     void saveBlueCoinData();
 
     /// @brief Prints the Blue Coin counts of each save file and gBlueCoinFlag's value to the log.
@@ -27,7 +27,7 @@ namespace BlueCoinUtil {
     /// @brief Initializes the BlueCoinData struct
     void initBlueCoinArray();
 
-    /// @brief Gets the current save file ID
+    /// @brief Gets the current save file ID, - 1. This function was created by AwesomeTMC.
     /// @return s32
     s32 getCurrentFileNum();
 
@@ -63,11 +63,11 @@ namespace BlueCoinUtil {
     void setOnBlueCoinFlagCurrentFile(u8 flag);
 
     /// @brief Checks the specified BlueCoinFlag on the current file.
-    /// @param flag File ID
+    /// @param flag Flag ID
     /// @return bool
     bool isOnBlueCoinFlagCurrentFile(u8 flag);
 
-    /// @brief Wipes Blue Coin data on the target file and starts a save.
+    /// @brief Wipes Blue Coin data on the target file and triggers a save.
     /// @param file File ID
     void resetAllBlueCoin(u8 file);
 
@@ -104,13 +104,13 @@ namespace BlueCoinUtil {
     /// @return s32
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly);
 
-    /// @brief Creates a Blue Coin that can be used for spawning.
-    /// @param pActor Source Actor.
-    /// @param id Blue Coin ID.
+    /// @brief Creates a Blue Coin that can be used for spawning. The Blue Coin will not be created if -1 is passed into id. In that case, 0 will be returned.
+    /// @param pSourceActor Source Actor
+    /// @param id Blue Coin ID
     /// @return LiveActor*
-    LiveActor* createBlueCoinForSpawning(LiveActor* pActor, s32 id);
+    LiveActor* createBlueCoinForSpawning(LiveActor* pSourceActor, s32 id);
 
-    /// @brief Appears a Blue Coin
+    /// @brief Appears a Blue Coin.
     /// @param pSourceActor Source Actor
     /// @param pBlueCoin Blue Coin to appear
     void appearBlueCoin(LiveActor* pSourceActor, LiveActor* pBlueCoin);

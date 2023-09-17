@@ -24,14 +24,13 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, "BlueCoin", false);
     #else
     if (MR::isValidInfo(rIter)) {
-    MR::getJMapInfoArg0NoInit(rIter, &mID);
-    MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
-    MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
-    MR::processInitFunction(this, rIter, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
+        MR::getJMapInfoArg0NoInit(rIter, &mID);
+        MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
+        MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
+        MR::processInitFunction(this, rIter, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
     }
-    else {
+    else
         MR::processInitFunction(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
-    }
     #endif
 
     initEffectKeeper(2, "Coin", 0);

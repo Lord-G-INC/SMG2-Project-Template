@@ -99,26 +99,26 @@ namespace BlueCoinUtil {
     }
 
     void printBlueCoinSaveFileInfo() {
-        char* file0 = new char[9];
-        char* file1 = new char[9];
-        char* file2 = new char[9];
+        char flagstr[3][9];
 
-        for (s32 i = 0; i < 8; i++) {
-            file0[i] = gBlueCoinData->flags[0][i] ? 0x31 : 0x30;
-            file1[i] = gBlueCoinData->flags[1][i] ? 0x31 : 0x30;
-            file2[i] = gBlueCoinData->flags[2][i] ? 0x31 : 0x30;
+        for (s32 i = 0; i < 3; i++) {
+            flagstr[i][8] = 0;
+
+            for (s32 j = 0; j < 8; j++) {
+            flagstr[i][j] = gBlueCoinData->flags[i][j] ? 0x31 : 0x30;
+            }
         }
 
-        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ns0: %d, s1: %d, s2: %d\nstb0: %s, stb1: %s, stb2: %s\n", 
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
         getTotalBlueCoinNum(0, false), 
         getTotalBlueCoinNum(1, false), 
         getTotalBlueCoinNum(2, false),
-        file0,
-        file1,
-        file2,
-        getSpentBlueCoinNum(0),
-        getSpentBlueCoinNum(1),
-        getSpentBlueCoinNum(2),
+        flagstr[0],
+        flagstr[1],
+        flagstr[2],
+        gBlueCoinData->spentData[0],
+        gBlueCoinData->spentData[1],
+        gBlueCoinData->spentData[2],
         gBlueCoinData->hasSeenTextBox[0] ? "Yes" : "No",
         gBlueCoinData->hasSeenTextBox[1] ? "Yes" : "No",
         gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No"
@@ -151,7 +151,7 @@ namespace BlueCoinUtil {
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
 
-    s32 getCurrentFileNum() { // Thank you AwesomeTMC
+    s32 getCurrentFileNum() {
         SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
         return *(s32 *)((char *) (saveDataHandleSequence) + 0x10) - 1;
     }
@@ -261,7 +261,7 @@ namespace BlueCoinUtil {
                 break;
             }
         }
-        
+
         if (targetLine > -1) {
             s32 rangeMin;
             s32 rangeMax;
@@ -287,16 +287,16 @@ namespace BlueCoinUtil {
         return -1;
     }
 
-    LiveActor* createBlueCoinForSpawning(LiveActor* pActor, s32 id) {
+    LiveActor* createBlueCoinForSpawning(LiveActor* pSourceActor, s32 id) {
         if (id > -1) {
         BlueCoin* coin = new BlueCoin("BlueCoinS");
         coin->mID = id;
-        MR::addToCoinHolder(pActor, coin);
+        MR::addToCoinHolder(pSourceActor, coin);
         coin->initWithoutIter();
         MR::hideModel(coin);
         MR::invalidateHitSensors(coin);
-        pActor->mActionKeeper->mItemGenerator = 0;
-        OSReport("(BlueCoinUtil) Created Blue Coin with ID %d for the actor \"%s\".\n", id, pActor->mName);
+        pSourceActor->mActionKeeper->mItemGenerator = 0;
+        OSReport("(BlueCoinUtil) Created Blue Coin with ID %d for the actor \"%s\".\n", id, pSourceActor->mName);
         return coin;
         }
 

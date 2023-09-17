@@ -203,17 +203,19 @@ namespace pt {
 	*/
 
 	void DeathAreaExtensions(DeathArea* area) {
-		MR::getGameSceneLayoutHolder()->mMarioSubMeter->mAirMeter->mLayoutActorFlag.mIsHidden = area->isInVolume(*MR::getPlayerPos());
+		if (area->mObjArg0 < 0) {
+			MR::getGameSceneLayoutHolder()->mMarioSubMeter->mAirMeter->mLayoutActorFlag.mIsHidden = area->isInVolume(*MR::getPlayerPos());
 
-		bool checkForSwimming;
+			bool checkForSwimming;
 
-		if (area->mObjArg1 == -1)
-			checkForSwimming = false;
-		else
-			checkForSwimming = true;
+			if (area->mObjArg1 == -1)
+				checkForSwimming = false;
+			else
+				checkForSwimming = true;
 
-		if (area->isInVolume(*MR::getPlayerPos()) && checkForSwimming ? MR::isPlayerSwimming() : true) 
-			MarioAccess::forceKill(checkForSwimming ? 3 : 0, 0);
+			if (area->isInVolume(*MR::getPlayerPos()) && checkForSwimming ? MR::isPlayerSwimming() : true) 
+				MarioAccess::forceKill(checkForSwimming ? 3 : 0, 0);
+		}
 	}
 
 	kmCall(0x8007401C, DeathAreaExtensions);
@@ -342,32 +344,13 @@ namespace pt {
 	    return MR::getGameMessageDirect(textName);
 	}
 	
-	kmWrite32(0x8004159C, 0x7FC4F378);
-	kmWrite32(0x800415A0, 0x7FE5FB78);
+	kmWrite32(0x8004159C, 0x7FC4F378); // mr r4, r30
+	kmWrite32(0x800415A0, 0x7FE5FB78); // mr r5, r31
 	kmCall(0x800415A4, CustomGreenStarNames);
 	kmWrite32(0x800415A8, 0x48000050); // b 0x48
 
-	kmWrite32(0x8048ED84, 0x38600000);
-
-	#ifdef CA
-	// No HipDropSwitch timer ticking
-	kmWrite32(0x802B0468, 0x60000000);
-
-	// Increase maximum coin count
-	kmWrite32(0x804DE0C8, 0x38A07FFF);
-	kmWrite32(0x804DE0EC, 0x38A07FFF);
-	kmWrite32(0x804D87B0, 0x23637FFF);
-
-	// Increase maximum star bit count
-	kmWrite32(0x803162A8, 0x2C037FFF);
-	kmWrite32(0x804D3BB8, 0x2C037FFE);
-	kmWrite32(0x804DE078, 0x38A07FFE);
-	kmWrite32(0x805DE088, 0x38A07FFE);
-
-	kmWrite32(0x8029783C, 0x60000000);
-	#endif
+	//kmWrite32(0x8048ED84, 0x38600000); // li r3, 0
 	
-
 	#ifdef SMSS
 	extern "C" {
 		void onSwitchB__2MRFP9LiveActor();
@@ -420,5 +403,4 @@ namespace pt {
 	//kmCall(0x8005B3E8, stinkyAudioLib);
 	//kmCall(0x8005B424, stinkyAudioLib);
 	//kmCall(0x8005AE94, stinkyAudioLib);
-	
 } 

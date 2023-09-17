@@ -35,6 +35,11 @@ void LavaSteam::initAfterPlacement() {
 }
 
 void LavaSteam::attackSensor(HitSensor* pSender, HitSensor* pReceiver) {
+    if (isNerve(&NrvLavaSteam::HostTypeWait::sInstance) && isNerve(&NrvLavaSteam::HostTypeWaitForSwitchOn::sInstance)) {
+        if (MR::isSensorPlayerOrRide(pReceiver)) {
+            
+        }
+    }
 }
 
 void LavaSteam::startClipped() {
