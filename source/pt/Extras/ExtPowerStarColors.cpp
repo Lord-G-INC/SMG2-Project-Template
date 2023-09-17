@@ -221,5 +221,5 @@ namespace pt {
 
 	kmCall(0x8035F830, SilverStarColors);
 	*/
-	}
 #endif
+	}
