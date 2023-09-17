@@ -1,5 +1,5 @@
 #include "pt/MapObj/DisplayStar.h"
-#include "pt/Extras/PowerStarColors.h"
+#include "pt/Extras/ExtPowerStarColors.h"
 
 /*
 * Display Power Star

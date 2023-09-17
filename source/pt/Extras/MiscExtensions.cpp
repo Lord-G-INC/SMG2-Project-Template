@@ -3,9 +3,6 @@
 #include "Game/Screen/LayoutActor.h"
 #include "Game/NPC/TalkMessageCtrl.h"
 #include "pt/Util/ActorUtil.h"
-#include "JSystem/JUtility/JUTTexture.h"
-#include "Game/MapObj/SpinDriverPathDrawer.h"
-#include "pt/Extras/JUTTextureHolder.h"
 
 /*
 * Authors: Aurum
@@ -35,47 +32,6 @@ namespace pt {
 	}
 
 	kmCall(0x800413F0, getErrorMessage); // MR::getGameMessageDirect will return the error message instead of NULL
-
-	/*
-	* Green + Custom Launch Stars
-	*
-	* Unsurprisingly, all the BTP and BRK frames for the green Launch Star is still found inside SuperSpinDriver.arc. Here,
-	* we hijack calls to initColor in order to check for the green color first. If the Launch Star's color is set to green,
-	* we apply its animation frames. Otherwise, we call initColor to set up the other colors.
-	*
-	* This code also allows new BTP frames and SpinDriverPath textures to be loaded and used.
-	* Support for new BRK frames may be added in the future.
-	*/
-
-	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "White.bti", "White.bti", "Yellow.bti"};
-
-	JUTTextureHolder Colors = arrsize(ColorsStr);
-
-	void initSuperSpinDriverCustomColor(SuperSpinDriver *pActor) {
-		s32 color = pActor->mColor;
-
-		if (color != 0 && color != 2) {
-			MR::startBtpAndSetFrameAndStop(pActor, "SuperSpinDriver", color);
-			MR::startBrk(pActor, color == 1 ? "Green" : "Red");
-
-			pActor->mSpinDriverPathDrawer->mColor = color == 1 ? 0 : color;
-		} else
-			pActor->initColor();
-			
-        if (color >= 3)
-            Colors.SetTexture(color - 3, new JUTTexture(MR::loadTexFromArc("SpinDriverPath.arc", ColorsStr[color - 3], 0), 0));
-	}
-
-	kmCall(0x8031E29C, initSuperSpinDriverCustomColor); // redirect initColor in init
-
-	void setSpinDriverPathCustomColor(SpinDriverPathDrawer* pDrawer) {
-		if (pDrawer->mColor >= 3)
-			Colors[pDrawer->mColor - 3]->load(GX_TEXMAP0);
-
-		pDrawer->calcDrawCode(); // Restore original call
-	}
-
-	kmCall(0x8030EF28, setSpinDriverPathCustomColor);
 
 
 	/*
@@ -144,38 +100,6 @@ namespace pt {
 	//
 	//kmCall(0x801A8CFC, initFixKameckTurtle); // redirect BRK assignment to initialization fix
 	//kmWrite32(0x801A8DD0, 0x818C0038);       // Call makeActorDead instead of makeActorAppeared
-
-
-	/*
-	* KeySwitch fix
-	*
-	* If a KeySwitch is constructed by Teresa or KuriboChief, it will crash the game due to an oversight by the developers.
-	* This feature works perfectly fine in SMG1., however, SMG2 introduced a new Obj_arg that does not check if the given
-	* JMapInfoIter is valid before attempting to read the Obj_arg value. This will cause the game to access invalid data
-	* and thus causing a crash.
-	*/
-	void initKeySwitchSafeGetShadowDropLength(const JMapInfoIter &rIter, f32 *pDest) {
-		if (MR::isValidInfo(rIter)) {
-			MR::getJMapInfoArg0NoInit(rIter, pDest);
-		}
-	}
-
-	kmCall(0x802BDE80, initKeySwitchSafeGetShadowDropLength); // overwrite call to getJMapInfoArg0NoInit
-
-
-	/*
-	* QuakeEffectGenerator fix
-	*
-	* QuakeEffectGenerator never plays the earthquake sound as its sound object is never initialized. This is likely an
-	* oversight from when the SMG2 developers upgraded SMG1's sound system since sounds are loaded slightly different in
-	* SMG1.
-	*/
-	void initQuakeEffectGeneratorSound(LiveActor *pActor) {
-		MR::invalidateClipping(pActor);
-		pActor->initSound(1, "QuakeEffectGenerator", &pActor->mTranslation, TVec3f(0.0f, 0.0f, 0.0f));
-	}
-
-	kmCall(0x8026360C, initQuakeEffectGeneratorSound); // redirection hook
 
 	/*
 	* Debugging feature: displaying the file name on the "File isn't exist" error.

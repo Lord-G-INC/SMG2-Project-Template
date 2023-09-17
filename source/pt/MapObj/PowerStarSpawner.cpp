@@ -1,5 +1,5 @@
 #include "pt/MapObj/PowerStarSpawner.h"
-#include "pt/Extras/PowerStarColors.h"
+#include "pt/Extras/ExtPowerStarColors.h"
 
 namespace pt {
 

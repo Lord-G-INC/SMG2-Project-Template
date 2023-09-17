@@ -2,7 +2,7 @@
 #include "pt/Util.h"
 
 /*
-* Authors: Aurum
+* Author: Aurum
 * Objects: BallBeamer
 * Parameters:
 *  - Obj_arg0, float, 12.0f: Ring speed
@@ -11,7 +11,7 @@
 *  - Obj_arg3, float, 0.0f: Color frame
 *  - Obj_arg4, float, 3000.0f: Activation range
 *  - Obj_arg5, long, 3: Max rings (capped between 3 and 11)
-* 
+*
 * The spherical Ring Beamer from Buoy Base Galaxy. The code for ring beams to follow spherical gravity is left unused in
 * SMG2, meaning that recreating this enemy wasn't very difficult at all. This comes with proper Support Play behavior as
 * well as SW_PARAM compatibility.
@@ -64,7 +64,7 @@ namespace pt {
 		mParamScale->init(rIter);
 
 		// Initialize rings
-		mBeams = new RingBeam*[mNumMaxBeams];
+		mBeams = new RingBeam * [mNumMaxBeams];
 		mAttackDuration = mNumMaxBeams * 120;
 
 		for (s32 i = 0; i < mNumMaxBeams; i++) {

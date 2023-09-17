@@ -2,7 +2,7 @@
 #include "pt/Util.h"
 
 /*
-* Authors: Aurum
+* Author: Aurum
 * Objects: JumpGuarder
 * Parameters:
 * - Obj_arg1, float, 16.0f: Launch velocity
@@ -74,7 +74,8 @@ namespace pt {
 		MR::attachSupportTicoToTarget(this);
 
 		TMtx34f mtxTRS;
-		MR::makeMtxTRS(mtxTRS, TVec3f(0.0f, 44.0f, 0.0f), mHead->mRotation, mHead->mScale);
+		MR::makeMtxTRS(mtxTRS, TVec3f(0.0f, 44.0f, 0.0f), mHead->mRotation, mScale);
+
 		PSMTXCopy(mJointMtx, mHeadMtx);
 		PSMTXConcat(mHeadMtx, mtxTRS, mHeadMtx);
 

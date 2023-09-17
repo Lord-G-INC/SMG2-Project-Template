@@ -1,9 +1,6 @@
 #pragma once
 
 #include "syati.h"
-#include "Game/MapObj/CoinHolder.h"
-
-class Coin;
 
 namespace pt {
 	void moveAndTurnToPlayer(LiveActor *pActor, const MR::ActorMoveParam &rParam);
@@ -17,7 +14,5 @@ namespace pt {
 	AnimScaleController* createSamboAnimScaleController(AnimScaleParam *pAnimScaleParam);
 
 	void* loadArcAndFile(const char *pArc, const char *pFile);
-	//void* loadFile(const char* pFile);
-
 	void initShadowVolumeBox(LiveActor* pActor, const TVec3f& rPos);
 };

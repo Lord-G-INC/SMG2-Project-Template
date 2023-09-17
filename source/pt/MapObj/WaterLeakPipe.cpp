@@ -1,7 +1,7 @@
 ﻿#include "pt/MapObj/WaterLeakPipe.h"
 
 /*
-* Authors: Aurum
+* Author: Aurum
 * Objects: WaterLeakPipe
 * Parameters:
 *  - Obj_arg0, float, 500.0f: Pipe height
@@ -16,7 +16,7 @@
 
 namespace pt {
 	IceStepNoSlip::IceStepNoSlip(MtxPtr pMtx)
-		: ModelObj("アイス床", "IceStepNoSlip", pMtx, CATEGORY_DRAW_BUFFER_INDIRECT_MAP_OBJ_STRONG_LIGHT, CATEGORY_AUTO, CATEGORY_AUTO, false)
+		: ModelObj("アイス床", "IceStepNoSlip", pMtx, MR::DrawBufferType_IndirectMapObjStrongLight, MR::CategoryList_Auto, MR::CategoryList_Auto, false)
 	{
 
 	}

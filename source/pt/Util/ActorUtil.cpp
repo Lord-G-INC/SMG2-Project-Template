@@ -46,8 +46,8 @@ namespace pt {
 
 		return new AnimScaleController(pAnimScaleParam);
 	}
-
-    //Loads an arc and a selected file into memory.
+	
+	//Loads an arc and a selected file into memory.
 	void* loadArcAndFile(const char *pArc, const char *pFile) {
 		JKRArchive* arc = MR::mountArchive(pArc, MR::getStationedHeapGDDR3(), false);
 		void* file = arc->getResource(pFile);

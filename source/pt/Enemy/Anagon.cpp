@@ -2,15 +2,15 @@
 #include "pt/Util.h"
 
 /*
-* Authors: Aurum
+* Author: Aurum
 * Objects: Anagon
 * Parameters:
 * - Obj_arg0, float, 20.0f: Speed
 * - SW_AWAKE
 * - SW_APPEAR, use
 * - SW_DEAD, use, write: Activated when killed
-* - Rail, need: For movement 
-* 
+* - Rail, need: For movement
+*
 * This is a simplified port of SkeletalFishBaby, the swimming Gringill enemy from Drip Drop Galaxy and Deep Dark Galaxy.
 * As SMG1's actor has a lot of complicated code related to the Kingfin boss fight, I attempted to rewrite it entirely.
 * The name is different because Anagon is the proper Japanese name for Gringills. Interestingly, sound data for this

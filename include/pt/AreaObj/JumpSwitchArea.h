@@ -1,6 +1,7 @@
 #pragma once
 
 #include "syati.h"
+#include "Game/AreaObj/AreaObj.h"
 
 namespace pt {
     class JumpSwitchArea : public AreaObj {

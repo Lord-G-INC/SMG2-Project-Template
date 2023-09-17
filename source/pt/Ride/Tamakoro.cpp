@@ -2,7 +2,7 @@
 #include "pt/Ride/Tamakoro.h"
 #include "Game/Util.h"
 #include "Game/LiveActor/LiveActor.h"
-#include "pt/Extras/PowerStarColors.h"
+#include "pt/Extras/ExtPowerStarColors.h"
 
 /*
 Author: AwesomeTMC

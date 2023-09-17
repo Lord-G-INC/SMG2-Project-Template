@@ -1,6 +1,5 @@
-#include "pt/Extras/PowerStarColors.h"
+#include "pt/Extras/ExtPowerStarColors.h"
 #include "pt/Util/ActorUtil.h"
-#ifdef NOGLE
 
 /*
 * Authors: Aurum
@@ -11,6 +10,7 @@
 * to ignore these conditions effectively.
 */
 namespace pt {
+	#ifdef NOGLE
 	/*
 	* This is the function to retrieve the color ID based on the specified scenario's PowerStarType value. This function
 	* creates a GalaxyStatusAccessor for the specified stage in order to obtain the value to be found. Following this are
@@ -151,8 +151,8 @@ namespace pt {
 	*
 	*	Not really useful, but is neat.
 	*/
-
 #endif
+
 	void TamakoroCustomPowerStarColors(LiveActor* actor, const JMapInfoIter& iter) {		
 		s32 argScenario = 0;
 		s32 colorFrame = -1;
