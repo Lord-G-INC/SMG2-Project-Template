@@ -238,15 +238,13 @@ def make_map(region: str, object_paths: list[str]):
 # ----------------------------------------------------------------------------------------------------------------------
 # Entry point
 # ----------------------------------------------------------------------------------------------------------------------
-if len(sys.argv) < 2:
+if not any([True for x in REGIONS if x in sys.argv]):
     print("Did not specify a target region, building all targets!")
 
     for region in REGIONS:
         build(region)
 else:
-    region = sys.argv[1]
-
-    if region not in REGIONS:
-        err(f"Invalid build target found: {region}")
-
-    build(region)
+    regions = [x for x in REGIONS if x in sys.argv]
+    
+    for region in regions:
+        build(region)
