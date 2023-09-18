@@ -18,6 +18,7 @@ jobs:
       working-directory: deps
       run: Invoke-WebRequest -Uri https://github.com/Lord-Giganticus/SyatiSetup/releases/download/Auto/syatisetup.exe -OutFile syatisetup.exe
     - uses: actions/setup-python@v4
+    - run: python -m pip install pyelftools
     - run: python ci.py
     - uses: "marvinpinto/action-automatic-releases@latest"
       if: ${{ github.event_name == 'push' }}
