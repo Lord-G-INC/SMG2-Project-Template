@@ -23,31 +23,36 @@ namespace pt {
 
         #ifdef USEBLUECOIN
         /* 25 */ { "BlueCoin",          "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 26 */ { "BlueCoinClear",          "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
+        /* 26 */ { "BlueCoinClear",     "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
         #endif
 
-        /* 25/27 */ { "PurpleCoin",        NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
+        /* 25/27 */ { "PurpleCoin",     NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
     };
 
     DummyDisplayModel* tryCreateNewDummyModel(LiveActor *pHost, const JMapInfoIter &rIter, s32 defaultId, int v4) {
         s32 modelId = MR::getDummyDisplayModelId(rIter, defaultId);
 
-        if (modelId < 0 || modelId > 14 + sizeof(cNewDummyDisplayModels) / sizeof(cNewDummyDisplayModels[0]))
+        if (modelId < 0 || modelId > 14 + sizeof(cNewDummyDisplayModels) / sizeof(cNewDummyDisplayModels[0])) {
             return NULL;
+        }
 
-        if (modelId <= 14)
+        if (modelId <= 14) {
             return MR::tryCreateDummyModel(pHost, rIter, modelId, v4);
+        }
 
         s32 colorId = 0;
 
-        if (MR::isValidInfo(rIter))
+        if (MR::isValidInfo(rIter)) {
             MR::getJMapInfoArg6NoInit(rIter, &colorId);
+        }
         
+        #if defined USEBLUECOIN && !defined SM64BLUECOIN
         if (modelId == 25) {
             if (BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
                 modelId = 26;
         }
-
+        #endif
+        
         DummyDisplayModelInfo *pInfo = &cNewDummyDisplayModels[modelId - 15];
         DummyDisplayModel *pModel = new DummyDisplayModel(pHost, pInfo, v4, modelId, colorId);
         pModel->initWithoutIter();
