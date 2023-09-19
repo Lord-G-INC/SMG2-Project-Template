@@ -287,30 +287,57 @@ namespace BlueCoinUtil {
         return -1;
     }
 
+    void getBlueCoinPaneNameFromTable(LayoutActor* pLayout, const char* pStageName) {
+        JMapInfo table = JMapInfo();
+        table.attach(gBlueCoinBcsvTable);
+
+        const char* tableStageName;
+        s32 targetLine = -1;
+
+        if (!pStageName)
+            pStageName = MR::getCurrentStageName();
+
+        for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
+            MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
+
+            if (MR::isEqualString(pStageName, tableStageName)) {
+                targetLine = i;
+                break;
+            }
+        }
+
+        s32 texID = 0;  
+        MR::getCsvDataS32(&texID, &table, "TexID", targetLine);
+        char paneName[10];
+        snprintf(paneName, 10, "ShaCoin%02d", texID);
+        OSReport("(BlueCoinIDRangeTable) Pane \"ShaCoin%02d\" selected.\n", texID);
+        MR::showPaneRecursive(pLayout, (const char*)paneName);
+    }
+
     LiveActor* createBlueCoinForSpawning(LiveActor* pSourceActor, s32 id) {
         if (id > -1) {
-        BlueCoin* coin = new BlueCoin("BlueCoinS");
-        coin->mID = id;
-        MR::addToCoinHolder(pSourceActor, coin);
-        coin->initWithoutIter();
-        MR::hideModel(coin);
-        MR::invalidateHitSensors(coin);
-        pSourceActor->mActionKeeper->mItemGenerator = 0;
-        OSReport("(BlueCoinUtil) Created Blue Coin with ID %d for the actor \"%s\".\n", id, pSourceActor->mName);
-        return coin;
+            BlueCoin* coin = new BlueCoin("BlueCoinS");
+            coin->mID = id;
+            MR::addToCoinHolder(pSourceActor, coin);
+            coin->initWithoutIter();
+            MR::hideModel(coin);
+            MR::invalidateHitSensors(coin);
+            pSourceActor->mActionKeeper->mItemGenerator = 0;
+            OSReport("(BlueCoinUtil) Created Blue Coin with ID %d for the actor \"%s\".\n", id, pSourceActor->mName);
+            return coin;
         }
 
         return 0;
     }
 
     void appearBlueCoin(LiveActor* pSourceActor, LiveActor* pBlueCoin) {
-    if (pBlueCoin) {
-        TVec3f coinVelocity = TVec3f(0.0f, 25.0f, 0.0f);
-        coinVelocity.scale(coinVelocity.y, -pSourceActor->mGravity);
+        if (pBlueCoin) {
+            TVec3f coinVelocity = TVec3f(0.0f, 25.0f, 0.0f);
+            coinVelocity.scale(coinVelocity.y, -pSourceActor->mGravity);
 
-        MR::startSystemSE("SE_SY_PURPLE_COIN_APPEAR", -1, -1);
+            MR::startSystemSE("SE_SY_PURPLE_COIN_APPEAR", -1, -1);
 
-        ((BlueCoin*)pBlueCoin)->appearMove(pSourceActor->mTranslation, coinVelocity, 0x7FFFFFFF, 60);
+            ((BlueCoin*)pBlueCoin)->appearMove(pSourceActor->mTranslation, coinVelocity, 0x7FFFFFFF, 60);
         }
     }
 }

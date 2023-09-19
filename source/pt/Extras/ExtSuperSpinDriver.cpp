@@ -21,7 +21,7 @@ namespace pt {
 	* Support for new BRK frames may be added in the future.
 	*/
 
-	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "White.bti", "White.bti", "Yellow.bti"};
+	const char* ColorsStr[] = {"Red.bti", "Blue.bti", "Rainbow.bti", "Purple.bti", "Black.bti", "White.bti", "Yellow.bti"};
 
 	JUTTextureHolder Colors = arrsize(ColorsStr);
 

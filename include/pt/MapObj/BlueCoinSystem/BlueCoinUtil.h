@@ -104,6 +104,8 @@ namespace BlueCoinUtil {
     /// @return s32
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly);
 
+    void getBlueCoinPaneNameFromTable(LayoutActor* pLayout, const char* pStageName);
+
     /// @brief Creates a Blue Coin that can be used for spawning. The Blue Coin will not be created if -1 is passed into id. In that case, 0 will be returned.
     /// @param pSourceActor Source Actor
     /// @param id Blue Coin ID

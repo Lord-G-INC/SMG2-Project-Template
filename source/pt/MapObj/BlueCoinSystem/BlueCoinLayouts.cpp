@@ -108,7 +108,6 @@ void BlueCoinCounter::exeShowTextBox() {
         MR::deactivateDefaultGameLayout();
         MR::hideLayout(this);
         MR::suspendAllSceneNameObj();
-        BlueCoinUtil::setOnBlueCoinFlagCurrentFile(5);
         mSysInfoWindow->requestResume();
         mSysInfoWindow->mIconAButton->requestResume();
         requestResume();
@@ -234,9 +233,7 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
         MR::showPaneRecursive(actor, "ShaBlueCoinStage");
 
         if (rangeTotal > -1) {
-            char paneName[0xA];
-            snprintf(paneName, 0xA, "ShaCoin%d", rangeTotal);
-            MR::showPaneRecursive(actor, paneName);
+            BlueCoinUtil::getBlueCoinPaneNameFromTable(actor, 0);
         }
     }
     else

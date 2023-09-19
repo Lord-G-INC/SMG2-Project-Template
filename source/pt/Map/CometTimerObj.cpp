@@ -27,19 +27,19 @@ void CometTimerObj::init(const JMapInfoIter& rIter) {
 
     mLayout = new TimeLimitLayout(1);
     mLayout->setDisplayModeOnNormal(true);
-    MR::connectToSceneLayout(mLayout);
     mLayout->initWithoutIter();
+    MR::connectToSceneLayout(mLayout);
 }
 
 void CometTimerObj::movement() {
-        if (MR::isValidSwitchA(this) && MR::isOnSwitchA(this) && !mIsAppeared) {
-            if (MR::isHiddenLayout(mLayout))
-                MR::showLayout(mLayout);
-                
-            mLayout->setTimeLimit(mTime * 60);
-            mLayout->appear();
-            mIsAppeared = true;
-        }
+    if (MR::isValidSwitchA(this) && MR::isOnSwitchA(this) && !mIsAppeared) {
+        if (MR::isHiddenLayout(mLayout))
+            MR::showLayout(mLayout);
+            
+        mLayout->setTimeLimit(mTime * 60);
+        mLayout->appear();
+        mIsAppeared = true;
+    }
     
     if (mLayout->isReadyToTimeUp() && mIsAppeared)
         onTimeUp();
@@ -62,5 +62,6 @@ void CometTimerObj::onTimeUp() {
         mIsAppeared = false;
         MR::hideLayout(mLayout);
     }
+    
     makeActorDead();
 }

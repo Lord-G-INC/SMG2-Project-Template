@@ -204,22 +204,6 @@ namespace pt {
 
 	kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
 	kmCall(0x802DFE04, customPowerStarLightColors);
-	/*
-	*	Silver Star Colors
-	*	A suggestion from Alex SMG and others that turned out to be really fun to make.
-	*
-	*	This will be removed if people do not use it, since it's pointless.
-	*/
 
-	/*
-	void SilverStarColors(LiveActor* actor, const JMapInfoIter& iter) {
-		MR::initUseStageSwitchWriteA(actor, iter);
-		f32 frame = 6;
-		MR::getJMapInfoArg0NoInit(iter, &frame);
-		MR::startBtpAndSetFrameAndStop(actor, "Color", frame);
-	}
-
-	kmCall(0x8035F830, SilverStarColors);
-	*/
 #endif
 	}

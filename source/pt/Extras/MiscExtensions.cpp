@@ -71,36 +71,6 @@ namespace pt {
 	kmWrite32(0x80254884, 0x7FA5EB78); // mr r5, r29
 	kmCall(0x8025488C, CustomFlagTextures);
 
-	///*
-	//* Shell-casting Magikoopa
-	//*/
-	//void initNewKameck(Kameck *pActor, const JMapInfoIter &rIter) {
-	//	pActor->initJMapParam(rIter);
-	//
-	//	if (MR::isValidInfo(rIter)) {
-	//		if (MR::isObjectName(rIter, "KameckJetTurtle")) {
-	//			pActor->mBeamType = KAMECK_BEAM_TURTLE;
-	//		}
-	//	}
-	//}
-	//
-	//kmCall(0x801A49D4, initNewKameck);
-	//
-	///*
-	//* While carrying over stuff from the first game, they forgot to update parts of the KameckTurtle actor. Therefore,
-	//* it will crash the game and cause various other problems. First of all, it tries to load the animation from SMG1,
-	//* which does not exist anymore (Koura.brk was renamed to Color.brk). Also, Mario won't try to pull in the shell
-	//* due to the shell's actor name being wrong. For some reason it expects a specific actor name...
-	//* Lastly, the actor should be dead by default, but they made it appear nevertheless.
-	//*/
-	//void initFixKameckTurtle(LiveActor *pActor) {
-	//	pActor->mName = "�J���b�N�r�[���p�J��";
-	//	MR::startBrk(pActor, "Color");
-	//}
-	//
-	//kmCall(0x801A8CFC, initFixKameckTurtle); // redirect BRK assignment to initialization fix
-	//kmWrite32(0x801A8DD0, 0x818C0038);       // Call makeActorDead instead of makeActorAppeared
-
 	/*
 	* Debugging feature: displaying the file name on the "File isn't exist" error.
 	*
@@ -274,33 +244,6 @@ namespace pt {
 	kmWrite32(0x800415A8, 0x48000050); // b 0x48
 
 	//kmWrite32(0x8048ED84, 0x38600000); // li r3, 0
-	
-	#ifdef SMSS
-	extern "C" {
-		void onSwitchB__2MRFP9LiveActor();
-		void stopStageBGM__2MRFUl();
-	}
-
-	asm void megahammerActivateSwitch() {
-		stwu r1, 0x10(r1)
-		mflr r0
-		stw r0, 0x24(r1)
-		stw r30, 0x1C(r1)
-		mr r30, r3
-		bl onSwitchB__2MRFP9LiveActor
-		li r3, 0
-		bl stopStageBGM__2MRFUl
-		lwz r0, 0x24(r1)
-		lwz r30, 0x1C(r1)
-		mtlr r0
-		addi r1, r1, 0x10
-		blr
-	}
-
-	kmWrite32(0x800DAABC, 0x60000000);
-	kmCall(0x800DFCB0, megahammerActivateSwitch);
-	kmWrite32(0x800DFCE8, 0x38600001);
-	#endif
 
 	#if defined (SMG63) || defined (ALL)
 	void SnowBallDieInWater(LiveActor* pActor, const TVec3f& rPos1, const TVec3f& rPos2) {
