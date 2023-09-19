@@ -27,7 +27,7 @@ if os.path.exists("deps") != True:
 os.chdir("deps")
 
 if os.path.exists("CodeWarrior") != True and os.path.exists("Kamek") != True:
-    subprocess.run(SYATI_SETUP)
+    subprocess.call(SYATI_SETUP)
 
 os.chdir("syati")
 
@@ -37,12 +37,12 @@ if os.path.exists("deps") != True:
 os.chdir("deps")
 
 if os.path.exists("CodeWarrior") != True and os.path.exists("Kamek") != True:
-    subprocess.run(SYATI_SETUP)
+    subprocess.call(SYATI_SETUP)
 
 os.chdir(HOME_DIR)
 
 def no_gle():
-    subprocess.run(f"python {BUILD} --nogle")
+    subprocess.call(f"python {BUILD} --nogle")
 
     bins = glob("*.bin")
 
@@ -54,7 +54,7 @@ def no_gle():
 
     os.chdir(SYATI)
 
-    subprocess.run("python buildloader.py")
+    subprocess.call("python buildloader.py")
 
     with ZipFile(ZIP, "w") as w:
         os.chdir("loader")
@@ -80,7 +80,7 @@ def no_gle():
             w.write(p.absolute(), f"CustomCode\\{p.name}")
 
 def with_gle():
-    subprocess.run(f"python {BUILD} --gle")
+    subprocess.call(f"python {BUILD} --gle")
 
     bins = glob("*.bin")
 
@@ -92,7 +92,7 @@ def with_gle():
 
     os.chdir(SYATI)
 
-    subprocess.run("python buildloader.py")
+    subprocess.call("python buildloader.py")
 
     with ZipFile(ZIP.with_name("PT Debug with GLE.zip"), "w") as w:
         os.chdir("loader")
