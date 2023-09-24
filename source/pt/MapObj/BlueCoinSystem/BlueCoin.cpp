@@ -108,9 +108,9 @@ void BlueCoin::collect() {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
         BlueCoinUtil::startCounterCountUp();
     }
+    #endif
 
     MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
-    #endif
 
     if (!MR::isGalaxyDarkCometAppearInCurrentStage()) {
         #ifdef SM64BLUECOIN
@@ -122,17 +122,4 @@ void BlueCoin::collect() {
 
     makeActorDead();
 }
-
-bool appearCustomCoinOnDarkComet() {
-    const char* name;
-
-    asm("lwz %0, 0x4(r31)" : "=r" (name));
-
-    if (MR::isGalaxyDarkCometAppearInCurrentStage() && !MR::isEqualString(name, "RedCoin") && !MR::isEqualString(name, "BlueCoin"))
-        return true;
-    
-    return false;
-}
-
-kmCall(0x8028C2EC, appearCustomCoinOnDarkComet);
 #endif

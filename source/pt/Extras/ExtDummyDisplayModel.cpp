@@ -69,4 +69,19 @@ namespace pt {
     // Skip repeated reading of Obj_arg7 field
     kmWrite32(0x801D0314, 0x7CA32B78);
     kmWrite32(0x801D0318, 0x60000000);
+
+    s32 spinCustomDisplayModels() {
+        s32 modelID = 0;
+        asm("lwz %0, 0xA4(r30)" : "=r" (modelID));
+
+        if (modelID >= 24 && modelID <= 27)
+            return 0;
+
+        return modelID;
+    }
+
+    kmCall(0x80295A10, spinCustomDisplayModels);
+    kmWrite32(0x80295A14, 0x2C030000);
+    kmWrite32(0x80295A1C, 0x2C030007);
+    kmWrite32(0x80295A24, 0x2C03000D);
 }

@@ -66,7 +66,7 @@ compiler_flags = [
 # Compiler flag for building everything in this workspace
 if "--all" in sys.argv:
     print("Building with all flags true")
-    compiler_flags.append("-DALL -DWIP -DSMSS -DCA -DSMG63 -DNOGLE")
+    compiler_flags.append("-DALL -DWIP -DSMSS -DCA -DSMG63 -DNOGLE -DGSTANDPAD")
 
 # Compiler flag for NOT having SuperHackio's project "GalaxyLevelEngine" in your workspace
 if "--nogle" in sys.argv:
@@ -81,7 +81,7 @@ if "--gle" in sys.argv:
 # Compiler flag for the Starshine Team's project "Super Mario Starshine"
 if "--smss" in sys.argv:
     print("Building with flags SMSS and GLE true")
-    print("This target builds with the Blue Coin System")
+    print("This target build with the Blue Coin System.")
     compiler_flags.append("-DSMSS -DGLE -DUSEBLUECOIN")
 
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
@@ -92,11 +92,11 @@ if "--ca" in sys.argv:
 # Compiler flag for the Alex SMG's project: "Super Mario Galaxy 63"
 if "--smg63" in sys.argv:
     print("Building with flags SMG63 and GLE true")
-    compiler_flags.append("-DSMG63 -DGLE")
+    print("This target build with the Blue Coin System.")
+    compiler_flags.append("-DSMG63 -DGLE -DUSEBLUECOIN")
 
 # Compiler flag for alternating the behavior of the Blue Coin object
 if "--usebluecoin" in sys.argv:
-    print("Building with the Blue Coin System enabled")
     compiler_flags.append("-DUSEBLUECOIN")
 
 # Compiler flag for enabling and alternating the behavior of the Blue Coin object
@@ -104,6 +104,10 @@ if "--sm64bluecoin" in sys.argv:
     print("Building with SM64 Blue Coin behavior")
     compiler_flags.append("-DUSEBLUECOIN -DSM64BLUECOIN")
 
+if "--gstandpad" in sys.argv:
+    print("Building with Aurum's GST and PAD recording systems")
+    compiler_flags.append("-DGSTANDPAD")
+    
 
 assembler_flags = [
     "-c",

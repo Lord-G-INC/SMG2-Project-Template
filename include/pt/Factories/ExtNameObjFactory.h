@@ -81,8 +81,10 @@ namespace {
 
         // Map
         { "CollectSwitchCtrl", createExtActor<pt::CollectSwitchCtrl> },
+        #ifdef GSTANDPAD
         { "GhostLuigiRecordHelper", createExtActor<gst::GhostLuigiRecordHelper> },
         { "PadRecordHelper", createExtActor<pad::PadRecordHelper> },
+        #endif
         { "PlayerSwitchCtrl", createExtActor<pt::PlayerSwitchCtrl> },
         { "SensorDetector", createExtActor<pt::SensorDetector> },
 

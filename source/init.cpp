@@ -18,15 +18,17 @@ void init() {
     #ifdef ALL
     name = "ALL";
     #elif SMSS
-    name = "SMSS (GLE)";
+    name = "SMSS (GLE + BCS)";
     #elif CA
     name = "CA (GLE)";
     #elif SMG63
-    name = "SMG63 (GLE)";
+    name = "SMG63 (GLE + BCS)";
     #elif GLE
     name = "GLE";
     #elif NOGLE
     name = "NOGLE";
+    #else
+    name = "N/A"
     #endif
 
     OSReport("SMG2PTD INIT: Created by Evanbowl and the Lord-G Inc Team\nBuilt: %s, %s\nTarget: %s\n", __DATE__, __TIME__, name);
@@ -38,8 +40,6 @@ void init() {
     for (Func* f = &__ctor_loc; f < &__ctor_end; f++) {
         (*f)();
     }
-
-
 }
 
 #if defined(TWN) || defined(KOR)

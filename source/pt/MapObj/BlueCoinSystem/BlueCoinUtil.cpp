@@ -209,6 +209,7 @@ namespace BlueCoinUtil {
 
     void spendBlueCoinCurrentFile(u8 numcoin) {
         numcoin == 0 ? 30 : numcoin;
+        
         if (getTotalBlueCoinNumCurrentFile(true) >= numcoin) {
             gBlueCoinData->spentData[getCurrentFileNum()] += numcoin;
             OSReport("(BlueCoinUtil) Transaction of %d Blue Coins accepted\n", numcoin);

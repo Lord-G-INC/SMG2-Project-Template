@@ -179,13 +179,23 @@ namespace pt {
 
 	kmCall(0x80379A84, YesNoDialogueExtensions);
 
-	void killSamboHeadIfInWater(LiveActor* pActor) {
-     if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
-        pActor->kill();
-    }
 
-    kmCall(0x801F8290, killSamboHeadIfInWater);
+
+	bool appearCustomCoinOnDarkComet() {
+	    const char* name;
+
+	    asm("lwz %0, 0x4(r31)" : "=r" (name));
+
+	    if (MR::isGalaxyDarkCometAppearInCurrentStage() && !MR::isEqualString(name, "RedCoin") && !MR::isEqualString(name, "BlueCoin"))
+	        return true;
 	
+	    return false;
+	}
+
+	kmCall(0x8028C2EC, appearCustomCoinOnDarkComet);
+	
+
+
 	#ifdef WIP
 	void restartObjInitMessage(LiveActor* pActor, const JMapInfoIter& rIter, const char* pStr) {
 		MR::processInitFunction(pActor, rIter, pStr, false);

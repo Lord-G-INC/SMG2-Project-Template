@@ -113,11 +113,17 @@ namespace pt {
 	* then run a check for Power Star color. 
 	*/
 
+	#endif
+	
+	#if defined NOGLE || defined SMG63
 	void loadPTPictureFont() {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
 
-		kmCall(0x804B8048, loadPTPictureFont);
+	kmCall(0x804B8048, loadPTPictureFont);
+	#endif
+
+	#ifdef NOGLE
 
 	s32 normalStarIcons[] = {0x37, 0x72, 0x7E, 0x7F, 0x3F, 0x80, 0x4A};
 	s32 cometStarIcons[] = {0x65, 0x7D, 0x4F, 0x7F, 0x3F, 0x82, 0x83};

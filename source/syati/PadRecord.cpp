@@ -1,3 +1,4 @@
+#ifdef GSTANDPAD
 #include "sample/PadRecord.h"
 #include "Game/System/GameSequenceInGame.h"
 #include "Game/System/PlayResultInStageHolder.h"
@@ -239,3 +240,4 @@ namespace {
     kmBranch(0x804CFB3C, pad::updateFrame);
 #endif
 }
+#endif

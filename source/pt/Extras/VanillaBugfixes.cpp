@@ -65,5 +65,13 @@ namespace pt {
 		}
 
 		kmCall(0x802AF938, fixHipDropSwitchPullStarCrash);
+
+
+		void killSamboHeadIfInWater(LiveActor* pActor) {
+    	 if (MR::isInWater(pActor->mTranslation) || MR::isBindedGroundSinkDeath(pActor))
+    	    pActor->kill();
+    	}
+	
+    	kmCall(0x801F8290, killSamboHeadIfInWater);
 	}
 }

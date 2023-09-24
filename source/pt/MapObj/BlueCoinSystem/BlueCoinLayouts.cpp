@@ -123,7 +123,7 @@ void BlueCoinCounter::exeShowTextBox() {
 }
 
 bool fixBlueCoinWindowCrash() {
-    if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy"))
+    if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy") && !MR::isStageStoryBook())
         if (!BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile())
             return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
 

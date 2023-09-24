@@ -1,3 +1,4 @@
+#ifdef GSTANDPAD
 #include "sample/GstRecord.h"
 #include "Game/NameObj/NameObjCategories.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
@@ -221,3 +222,4 @@ namespace gst {
 		MR::hideModel(this);
 	}
 }
+#endif
