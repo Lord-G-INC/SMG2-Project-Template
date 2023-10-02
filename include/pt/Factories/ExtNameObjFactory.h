@@ -38,6 +38,7 @@
 #include "pt/MapObj/DisplayStar.h"
 #include "pt/Map/CometTimerObj.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinBoard.h"
 #include "pt/MapObj/PTimerSwitch.h"
 #include "pt/MapObj/LavaSteam.h"
 
@@ -142,6 +143,7 @@ namespace {
 
         #ifdef USEBLUECOIN
             { "BlueCoin", createExtActor<BlueCoin> },
+            { "BlueCoinSign", createExtActor<BlueCoinSign> },
         #endif
 
         #ifdef NOGLE

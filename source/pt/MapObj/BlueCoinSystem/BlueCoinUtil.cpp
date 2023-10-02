@@ -180,7 +180,7 @@ namespace BlueCoinUtil {
 
     void setOnBlueCoinFlagCurrentFile(u8 flag) {
         gBlueCoinData->flags[getCurrentFileNum()][flag] = true;
-        OSReport("(BlueCoinUtil) Flag %d set on file %d, Flag num: %d\n", flag, getCurrentFileNum(), getCurrentFileNum()*flag);
+        OSReport("(BlueCoinUtil) Flag %d set on file %d, Flag num: %d\n", flag, getCurrentFileNum(), getCurrentFileNum()*(flag+1));
     }
 
     bool isOnBlueCoinFlagCurrentFile(u8 flag) {

@@ -1,4 +1,4 @@
-#if defined (ALL) || defined (SMSS) || defined (CA) || defined (SMG63)
+#if defined (ALL) || defined (CA) || defined (SMG63)
 
 #include "syati.h"
 #include "Game/Screen/PauseMenu.h"
