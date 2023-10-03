@@ -28,7 +28,7 @@ void init() {
     #elif NOGLE
     name = "NOGLE";
     #else
-    name = "N/A"
+    name = "N/A";
     #endif
 
     OSReport("SMG2PTD INIT: Created by Evanbowl and the Lord-G Inc Team\nBuilt: %s, %s\nTarget: %s\n", __DATE__, __TIME__, name);
