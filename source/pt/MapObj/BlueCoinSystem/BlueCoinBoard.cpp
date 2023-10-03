@@ -20,7 +20,7 @@
     First Concepted in 5/2023
     Started 9/24/2023
     Finished 10/1/23
-    Revealed 
+    Revealed 10/2/23
 
     Made by Evanbowl
     
@@ -62,9 +62,6 @@ bool BlueCoinSign::eventFunc(u32 yes) {
             return false;
     }
     else {
-        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
-            MR::requestMovementOn(MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR));
-
         pushNerve(&NrvBlueCoinSign::NrvOpen::sInstance);
         return false;
     }
@@ -183,9 +180,6 @@ void BlueCoinBoard::exeAppear() {
         MR::requestMovementOn(mSysInfoWindowSelect);
         MR::requestMovementOn(mSysInfoWindowBox);
 
-        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
-            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
-
         MR::startAnim(this, "Appear", 1);
         MR::startStarPointerModeChooseYesNo(this);
 
@@ -199,6 +193,9 @@ void BlueCoinBoard::exeAppear() {
 
         mBackButton->appear();
 
+        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
+            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
+
         setNerve(&NrvBlueCoinBoard::NrvSelecting::sInstance);
     }
 }
@@ -208,7 +205,7 @@ void BlueCoinBoard::control() {
         MR::copyPaneTrans(&mButtonFollowPositions[i], this, mCopyPosName[i]);
         mButtons[i]->update();
     }
-    
+
     mBlueCoinPaneRumbler->update();
 }
 
@@ -230,22 +227,6 @@ void BlueCoinBoard::exeSelecting() {
             MR::startSystemSE("SE_SY_SELECT_PAUSE_ITEM", -1, -1);
     }
 
-    if (pointedButton > -1) {
-        const char* label = "WinBase_Locked";
-
-        if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(pointedButton)) {
-            label = "WinBase_UnlockedUncleared";
-
-            if (MR::makeGalaxyStatusAccessor(STAGE_NAME).hasPowerStar(pointedButton+1))
-                label = "WinBase_UnlockedCleared";
-        }
-
-        MR::setTextBoxGameMessageRecursive(this, "TextWinBase", label);
-        MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
-    }
-    else
-        MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
-
     if (mSelectedButton > -1) {
         pointedButton = mSelectedButton;
         setNerve(&NrvBlueCoinBoard::NrvSelected::sInstance);
@@ -253,6 +234,24 @@ void BlueCoinBoard::exeSelecting() {
 
     if (mBackButton->_30)
         setNerve(&NrvBlueCoinBoard::NrvDisappear::sInstance);
+
+    if (!MR::isFirstStep(this)) {
+        if (pointedButton > -1) {
+            const char* label = "WinBase_Locked";
+
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(pointedButton)) {
+                label = "WinBase_UnlockedUncleared";
+
+                if (MR::makeGalaxyStatusAccessor(STAGE_NAME).hasPowerStar(pointedButton+1))
+                    label = "WinBase_UnlockedCleared";
+            }
+
+            MR::setTextBoxGameMessageRecursive(this, "TextWinBase", label);
+            MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
+        }
+        else
+            MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
+    }
 }
 
 void BlueCoinBoard::exeDisappear() { 
@@ -274,16 +273,13 @@ void BlueCoinBoard::exeDisappear() {
 }
 
 void BlueCoinBoard::exeSelected() {
-    if (MR::isFirstStep(this))
+    if (MR::isFirstStep(this)) {
         MR::requestMovementOff(mBackButton);
-
-    if (mButtons[mSelectedButton]->isTimingForSelectedSe())
         MR::startSystemSE("SE_SY_PAUSE_OFF", -1, -1);
+    }
 
     if (MR::isStep(this, 25)) {
-        for (s32 i = 0; i < 8; i++) {
-            mButtons[i]->forceToWait();
-        }
+        mButtons[mSelectedButton]->forceToWait();
 
         if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(mSelectedButton))
             setNerve(&NrvBlueCoinBoard::NrvConfirmPlayStage::sInstance);
