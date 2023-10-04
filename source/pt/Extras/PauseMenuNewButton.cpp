@@ -1,4 +1,4 @@
-#if defined (ALL) || defined (CA) || defined (SMG63)
+#if defined ALL || defined CA || defined SMSS || defined SMG63
 
 #include "syati.h"
 #include "Game/Screen/PauseMenu.h"
@@ -6,6 +6,12 @@
 kmWrite32(0x804712C0, 0x3860006C); // li r3, 0x6C
 
 // init hook
+
+#ifdef SMSS 
+#define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || (MR::isEqualStageName("YosshiHomeGalaxy") && MR::getCurrentScenarioNo() == 1)
+#else
+#define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || MR::isEqualStageName("PeachCastleGalaxy")
+#endif
 
 void setButtonAnimNames(ButtonPaneController* pButton) {
     pButton->mAnimNameAppear = "ButtonAppear_restartbutton";
@@ -24,9 +30,9 @@ void PauseMenuInitNewButton(PauseMenu* pPauseMenu, const Nerve* pNerve) {
 
     MR::createAndAddPaneCtrl(pPauseMenu, "NewButton", 1);
 
-    if (!(MR::isStageMarioFaceShipOrWorldMap() || MR::isEqualStageName("PeachCastleGalaxy"))) {
+    if (!(STAGE_CHECK)) {
         pPauseMenu->mButtonNew = new ButtonPaneController(pPauseMenu, "NBackNew", "BoxButton4", 0, 1);
-        pPauseMenu->mButtonNew->_26 = false;
+        pPauseMenu->mButtonNew->mFadeAfterSelect = false;
     
         MR::setTextBoxFormatRecursive(pPauseMenu, "Text4", L"Restart Stage");
 

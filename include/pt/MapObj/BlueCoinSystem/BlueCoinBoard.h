@@ -34,7 +34,7 @@ public:
     char mBoxButtonName[8][12];
     char mButtonName[8][13];
     char mButtonTxtName[8][13];
-    char mFollowPosName[8][9];
+    char mButtonFollow[8][9];
     char mCopyPosName[8][12];
     s32 mSelectedButton;
     s32 mBlueCoinNumToDisplay;

@@ -40,7 +40,7 @@ void BlueCoinSign::init(const JMapInfoIter& rIter) {
 
     initialize(rIter, caps, 0, 0, 0);
 
-    mTalkCtrl->_50 = 0;
+    mTalkCtrl->mShowFrame = false;
 
     MR::registerEventFunc(mTalkCtrl, TalkMessageFunc(this, &eventFunc));
 
@@ -62,6 +62,9 @@ bool BlueCoinSign::eventFunc(u32 yes) {
             return false;
     }
     else {
+        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
+            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
+            
         pushNerve(&NrvBlueCoinSign::NrvOpen::sInstance);
         return false;
     }
@@ -136,19 +139,19 @@ void BlueCoinBoard::init(const JMapInfoIter& rIter) {
     MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= 100 ? "BlueCoinPos100" : "BlueCoinPos10");
 
     for (s32 i = 0; i < 8; i++) {
-        snprintf(mBoxButtonName[i], 12, "BoxButton%d", i);
-        snprintf(mButtonName[i], 13, "CoinButton%d", i);
-        snprintf(mButtonTxtName[i], 13, "Button%dText", i);
-        snprintf(mFollowPosName[i], 9, "Button%d", i);
-        snprintf(mCopyPosName[i], 12, "Button%dPos", i);
+        sprintf(mBoxButtonName[i], "BoxButton%d", i);
+        sprintf(mButtonName[i], "CoinButton%d", i);
+        sprintf(mButtonTxtName[i], "Button%dText", i);
+        sprintf(mButtonFollow[i], "Button%d", i);
+        sprintf(mCopyPosName[i], "Button%dPos", i);
 
-        MR::createAndAddPaneCtrl(this, mFollowPosName[i], 1);
+        MR::createAndAddPaneCtrl(this, mButtonFollow[i], 1);
 
         mButtons[i] = new ButtonPaneController(this, mButtonName[i], mBoxButtonName[i], 0, 1);
-        mButtons[i]->_26 = false;
+        mButtons[i]->mFadeAfterSelect = false;
 
-        MR::setFollowPos(&mButtonFollowPositions[i], this, mFollowPosName[i]);
-        MR::setFollowTypeReplace(this, mFollowPosName[i]);
+        MR::setFollowPos(&mButtonFollowPositions[i], this, mButtonFollow[i]);
+        MR::setFollowTypeReplace(this, mButtonFollow[i]);
     }
 }
 
@@ -192,9 +195,6 @@ void BlueCoinBoard::exeAppear() {
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
 
         mBackButton->appear();
-
-        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
-            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
 
         setNerve(&NrvBlueCoinBoard::NrvSelecting::sInstance);
     }
