@@ -229,7 +229,6 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     if (rangeCollected > -1) {
         MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeCollected, 0);
     
-        MR::showPane(actor, "StageInfo");
         MR::showPaneRecursive(actor, "ShaBlueCoinStage");
 
         if (rangeTotal > -1) {

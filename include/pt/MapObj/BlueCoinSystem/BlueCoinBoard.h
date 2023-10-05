@@ -31,6 +31,7 @@ public:
     SysInfoWindow* mSysInfoWindowBox;
     CountUpPaneRumbler* mBlueCoinPaneRumbler;
     BackButtonCancelB* mBackButton;
+    JMapInfo* mTable;
     char mBoxButtonName[8][12];
     char mButtonName[8][13];
     char mButtonTxtName[8][13];
