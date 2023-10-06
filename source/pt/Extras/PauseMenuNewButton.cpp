@@ -8,7 +8,7 @@ kmWrite32(0x804712C0, 0x3860006C); // li r3, 0x6C
 // init hook
 
 #ifdef SMSS 
-#define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || (MR::isEqualStageName("YosshiHomeGalaxy") && MR::getCurrentScenarioNo() == 1)
+#define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || (MR::isEqualStageName("YosshiHomeGalaxy") && MR::getCurrentScenarioNo() == 1) || MR::isEqualStageName("PrisonGalaxy")
 #else
 #define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || MR::isEqualStageName("PeachCastleGalaxy")
 #endif
