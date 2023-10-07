@@ -215,6 +215,11 @@ namespace pt {
 					MR::sendMsgAwayJump(pSender, pReceiver);
 				}
 
+				if (MR::isMsgInvincibleAttack(msg)) {
+					kill();
+					// TODO: Death animation
+				}
+
 				return true;
 			}
 			else {
