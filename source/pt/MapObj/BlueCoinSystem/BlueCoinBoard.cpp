@@ -58,10 +58,7 @@ bool BlueCoinSign::eventFunc(u32 yes) {
         else
             return false;
     }
-    else {
-        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR))
-            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
-            
+    else {  
         pushNerve(&NrvBlueCoinSign::NrvOpen::sInstance);
         return false;
     }
@@ -200,6 +197,11 @@ void BlueCoinBoard::exeAppear() {
         MR::requestMovementOn(mBackButton);
         MR::requestMovementOn(mSysInfoWindowSelect);
         MR::requestMovementOn(mSysInfoWindowBox);
+
+        if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR)) {
+            MR::requestMovementOn(MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR));
+            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
+        }
 
         MR::startAnim(this, "Appear", 1);
         MR::startStarPointerModeChooseYesNo(this);
