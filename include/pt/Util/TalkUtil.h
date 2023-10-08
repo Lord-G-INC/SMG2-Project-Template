@@ -5,4 +5,5 @@
 
 namespace pt {
     void setMessageArg(TalkMessageCtrl *pTalkCtrl, const wchar_t *pText);
+    void setTextBoxArgNumberNumberFontRecursive(LayoutActor* pLayout, const char* paneName, s32 num, s32 index);
 };

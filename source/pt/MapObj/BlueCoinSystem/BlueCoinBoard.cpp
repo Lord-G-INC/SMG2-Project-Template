@@ -181,13 +181,12 @@ void BlueCoinBoard::exeAppear() {
                 MR::setTextBoxArgStringRecursive(this, mButtonTxtName[i], MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
             else {
-                char labelLocked[32];
                 s32 priceFromTable = 0;
-
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
-                snprintf(labelLocked, 32, "BoardButton_Locked_Price%d", priceFromTable);
-                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], labelLocked);
+
+                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], "BoardButton_Locked");
                 MR::setTextBoxArgNumberRecursive(this, mButtonTxtName[i], i+1, 0);
+                pt::setTextBoxArgNumberNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
             }
 
             mButtons[i]->appear();
@@ -272,13 +271,12 @@ void BlueCoinBoard::exeSelecting() {
                 MR::setTextBoxArgStringRecursive(this, "TextWinBase", MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
             else {
-                char labelLocked[28];
                 s32 priceFromTable = 0;
-
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", pointedButton);
-                snprintf(labelLocked, 32, "WinBase_Locked_Price%d", priceFromTable);
-                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", labelLocked);
+
+                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_Locked");
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
+                pt::setTextBoxArgNumberNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
             }
         }
         else
