@@ -46,7 +46,7 @@ void BlueCoinSign::init(const JMapInfoIter& rIter) {
     makeActorAppeared();
 }
 
-bool BlueCoinSign::eventFunc(u32 yes) {
+bool BlueCoinSign::eventFunc(u32 eventParam) {
     if (isNerve(&NrvBlueCoinSign::NrvOpen::sInstance)) {
         if (MR::isDead(pBoard)) {
             if (pBoard->mHasSpentBlueCoins)
@@ -183,7 +183,7 @@ void BlueCoinBoard::exeAppear() {
 
                 MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], "BoardButton_Locked");
                 MR::setTextBoxArgNumberRecursive(this, mButtonTxtName[i], i+1, 0);
-                pt::setTextBoxArgNumberNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
+                pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
             }
 
             mButtons[i]->appear();
@@ -278,7 +278,7 @@ void BlueCoinBoard::exeSelecting() {
 
                 MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_Locked");
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
-                pt::setTextBoxArgNumberNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
+                pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
             }
         }
         else

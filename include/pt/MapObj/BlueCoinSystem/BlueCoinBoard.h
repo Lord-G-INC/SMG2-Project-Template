@@ -59,7 +59,7 @@ class BlueCoinSign : public NPCActor {
 public:
     BlueCoinSign(const char* pName);
     virtual void init(const JMapInfoIter& rIter);
-    bool eventFunc(u32 yes);
+    bool eventFunc(u32 eventParam);
     void exeWait();
     void exeOpen();
 
