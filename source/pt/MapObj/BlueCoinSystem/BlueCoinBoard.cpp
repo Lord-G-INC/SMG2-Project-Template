@@ -78,15 +78,15 @@ void BlueCoinSign::exeOpen() {
 }
 
 namespace NrvBlueCoinSign {
-	void NrvWait::execute(Spine* pSpine) const {
+    void NrvWait::execute(Spine* pSpine) const {
         ((BlueCoinSign*)pSpine->mExecutor)->exeWait();
-	}
+    }
 
-	void NrvOpen::execute(Spine* pSpine) const {
+    void NrvOpen::execute(Spine* pSpine) const {
         ((BlueCoinSign*)pSpine->mExecutor)->exeOpen();
-	}
+    }
 
-	NrvWait(NrvWait::sInstance);
+    NrvWait(NrvWait::sInstance);
     NrvOpen(NrvOpen::sInstance);
 }
 
@@ -158,9 +158,30 @@ void BlueCoinBoard::appear() {
     LayoutActor::appear();
 }
 
+const char* BlueCoinBoard::getLabelName(const char* pName, s32 num) {
+    const char* nameFromTable;
+    s32 scenarioNoFromTable;
+    MR::getCsvDataStr(&nameFromTable, mTable, "StageName", num);
+    MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", num);
+
+    const char* galaxyState = "Locked";
+
+    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(num)) {
+        galaxyState = "UnlockedUncleared";
+
+        if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
+            galaxyState = "UnlockedCleared";
+    }
+
+    const char* str = new char[32];
+    snprintf((char*)str, 32, "%s_%s", pName, galaxyState);
+
+    return str;
+}
+
 void BlueCoinBoard::exeAppear() {
     if (MR::isFirstStep(this)) {
-        s32 numShines = 0;
+        s32 numStars = 0;
 
         for (s32 i = 0; i < 8; i++) {
             const char* nameFromTable;
@@ -168,28 +189,23 @@ void BlueCoinBoard::exeAppear() {
             MR::getCsvDataStr(&nameFromTable, mTable, "StageName", i);
             MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", i);
 
+            MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], getLabelName("BoardButton", i));
+
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
-                const char* label = "BoardButton_UnlockedUncleared";
-
-                if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-                    label = "BoardButton_UnlockedCleared";
-
-                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], label);
                 MR::setTextBoxArgStringRecursive(this, mButtonTxtName[i], MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
 
-                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], "BoardButton_Locked");
                 MR::setTextBoxArgNumberRecursive(this, mButtonTxtName[i], i+1, 0);
-                pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
+                pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 0);
             }
 
             mButtons[i]->appear();
 
             if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-                numShines++;
+                numStars++;
         }
 
         mHasSpentBlueCoins = false;
@@ -209,7 +225,7 @@ void BlueCoinBoard::exeAppear() {
         mBlueCoinNumToDisplay = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true);
 
         MR::setTextBoxNumberRecursive(this, "CounterBlueCoin", mBlueCoinNumToDisplay);
-        MR::setTextBoxNumberRecursive(this, "CounterStar", numShines);
+        MR::setTextBoxNumberRecursive(this, "CounterStar", numStars);
 
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
@@ -256,29 +272,21 @@ void BlueCoinBoard::exeSelecting() {
         setNerve(&NrvBlueCoinBoard::NrvDisappear::sInstance);
 
     if (!MR::isFirstStep(this)) {
-        if (pointedButton > -1) {
-            const char* nameFromTable;
-            s32 scenarioNoFromTable;
+        const char* nameFromTable;
+        MR::getCsvDataStr(&nameFromTable, mTable, "StageName", pointedButton);
 
-            MR::getCsvDataStr(&nameFromTable, mTable, "StageName", pointedButton);
-            MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", pointedButton);
+        if (pointedButton > -1) {
+            MR::setTextBoxGameMessageRecursive(this, "TextWinBase", getLabelName("WinBase", pointedButton));
 
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(pointedButton)) {
-                const char* label = "WinBase_UnlockedUncleared";
-
-                if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-                    label = "WinBase_UnlockedCleared";
-            
-                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", label);
                 MR::setTextBoxArgStringRecursive(this, "TextWinBase", MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", pointedButton);
 
-                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_Locked");
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
-                pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
+                pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 0);
             }
         }
         else
@@ -407,7 +415,7 @@ void BlueCoinBoard::exeConfirmPlayStage() {
             MR::startSystemWipeCircleWithCaptureScreen(90);
             MR::stopStageBGM(60);
             GameSequenceFunction::requestChangeScenarioSelect(nameFromTable);
-    	    GameSequenceFunction::requestChangeStage(nameFromTable, scenarioNoFromTable, scenarioNoFromTable, JMapIdInfo(0, 0));
+            GameSequenceFunction::requestChangeStage(nameFromTable, scenarioNoFromTable, scenarioNoFromTable, JMapIdInfo(0, 0));
         }
         else
             setNerve(&NrvBlueCoinBoard::NrvSelecting::sInstance);
@@ -415,19 +423,19 @@ void BlueCoinBoard::exeConfirmPlayStage() {
 }
 
 namespace NrvBlueCoinBoard {
-	void NrvAppear::execute(Spine* pSpine) const {
+    void NrvAppear::execute(Spine* pSpine) const {
         ((BlueCoinBoard*)pSpine->mExecutor)->exeAppear();
-	}
+    }
 
-	void NrvSelecting::execute(Spine* pSpine) const {
+    void NrvSelecting::execute(Spine* pSpine) const {
         ((BlueCoinBoard*)pSpine->mExecutor)->exeSelecting();
-	}
+    }
 
-	void NrvDisappear::execute(Spine* pSpine) const {
+    void NrvDisappear::execute(Spine* pSpine) const {
         ((BlueCoinBoard*)pSpine->mExecutor)->exeDisappear();
-	}
+    }
 
-	void NrvHide::execute(Spine* pSpine) const {}
+    void NrvHide::execute(Spine* pSpine) const {}
 
     void NrvSelected::execute(Spine* pSpine) const {
         ((BlueCoinBoard*)pSpine->mExecutor)->exeSelected();
@@ -453,7 +461,7 @@ namespace NrvBlueCoinBoard {
         ((BlueCoinBoard*)pSpine->mExecutor)->exeConfirmPlayStage();
     }
 
-	NrvAppear(NrvAppear::sInstance);
+    NrvAppear(NrvAppear::sInstance);
     NrvSelecting(NrvSelecting::sInstance);
     NrvDisappear(NrvDisappear::sInstance);
     NrvHide(NrvHide::sInstance);

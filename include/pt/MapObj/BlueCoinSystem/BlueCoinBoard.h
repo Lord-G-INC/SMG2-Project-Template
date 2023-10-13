@@ -14,6 +14,7 @@ public:
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
     virtual void appear();
+    const char* getLabelName(const char* pName, s32 num);
     void exeAppear();
     void exeSelecting();
     void exeDisappear();
