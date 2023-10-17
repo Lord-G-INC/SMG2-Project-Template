@@ -371,8 +371,10 @@ void BlueCoinBoard::exeCountDownBlueCoin() {
         setNerve(&NrvBlueCoinBoard::NrvChangeButtonText::sInstance);
     }
 
+    if (mBlueCoinNumToDisplay == 99)
+        MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, "BlueCoinPos10");
+
     MR::setTextBoxNumberRecursive(this, "CounterBlueCoin", mBlueCoinNumToDisplay);  
-    MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, mBlueCoinNumToDisplay >= 100 ? "BlueCoinPos100" : "BlueCoinPos10");
 }
 
 void BlueCoinBoard::exeNotEnoughBlueCoins() {

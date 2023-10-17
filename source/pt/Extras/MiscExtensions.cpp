@@ -271,20 +271,4 @@ namespace pt {
 	kmWrite32(0x80301C64, 0x7FA3EB78);
 	kmCall(0x80301C6C, SnowBallDieInWater);
 	#endif
-
-	//void yes(char* pStr1, const char* pStr2) {
-	//	strcat(pStr1, pStr2);
-	//	OSReport("%s, %s\n", pStr1, pStr2);
-	//}
-//
-	//kmCall(0x80088C10, yes);
-	
-	//void stinkyAudioLib(AudSoundNameConverter* pConverter, int* pInt, const char* pStr) {
-	//	pConverter->getSoundID(pInt, pStr);
-	//	OSReport("amogus: %p, %d, %s\n", pConverter, *pInt, pStr);
-	//}
-//
-	//kmCall(0x8005B3E8, stinkyAudioLib);
-	//kmCall(0x8005B424, stinkyAudioLib);
-	//kmCall(0x8005AE94, stinkyAudioLib);
 } 

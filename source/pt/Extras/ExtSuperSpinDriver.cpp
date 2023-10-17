@@ -5,7 +5,7 @@
 #include "pt/Extras/JUTTextureHolder.h"
 
 /*
-* Author: Aurum
+* Authors: Evanbowl and Lord Giganticus
 */
 
 namespace pt {

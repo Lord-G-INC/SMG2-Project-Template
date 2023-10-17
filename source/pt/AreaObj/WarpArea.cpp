@@ -17,7 +17,6 @@ WarpArea::WarpArea(const char* pName) : AreaObj(pName) {
 	mElapsed = 0;
 	mCanWarp = false;
 	mPos.set(0.0f, 0.0f, 0.0f);
-	mErrorLayout = new ErrorLayout(); // Error layout used for displaying messages on screen if a WarpArea function fails.
 }
 
 void WarpArea::init(const JMapInfoIter& rIter) {
@@ -26,8 +25,6 @@ void WarpArea::init(const JMapInfoIter& rIter) {
 
 	if (mFadeCloseTime < 0)
 		mFadeCloseTime = 45;
-
-	mErrorLayout->initWithoutIter();
 }
 
 void WarpArea::movement() {
@@ -57,7 +54,6 @@ void WarpArea::movement() {
 				MR::setPlayerPosAndWait(WarpAreaDestPos); // Teleports the player to WarpAreaDestPos[mObjArg0].
 			
 				if (!MR::findNamePos(WarpAreaDestPos, &mPos, &mPos)) { // Check if the specified general position exists
-					mErrorLayout->printf(mPrintErrors, "Failed. WarpArea position %s isn't exist.", WarpAreaDestPos); //If not, then print a message on screen.
 					NameObjFunction::requestMovementOff(this);
 				}
 			}
@@ -78,7 +74,6 @@ void WarpArea::movement() {
 			else { // This will only appear if a galaxy transition fails, specifically if the specified index is not in the bcsv
 				MR::openSystemWipeCircle(45);
 				MR::onPlayerControl(1);
-				mErrorLayout->printf(mPrintErrors, "Failed. BCSV Index %d isn't exist.", mPosID);
 				NameObjFunction::requestMovementOff(this);
 				}
 			}

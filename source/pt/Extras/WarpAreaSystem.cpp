@@ -150,30 +150,5 @@ namespace WarpAreaStageTable {
 	}
 
 	kmCall(0x804B44D0, setWipeOnStageLoad); //sub_804B4490 + 0x40
-	
-
-	// Error Layout Code
 }
-
-	ErrorLayout::ErrorLayout() : LayoutActor("TextLayout", 0) {}
-
-	void ErrorLayout::init(const JMapInfoIter& rIter) {
-		MR::connectToSceneLayout(this);
-		initLayoutManager("TextLayout", 0);
-		MR::setTextBoxFormatRecursive(this, "Text00", L"");
-		appear();
-	}
-
-	//This function prints text to the TxtText and ShaText panes.
-	void ErrorLayout::printf(bool canPrint, const char* format, ...) {
-		va_list arg;
-		char string[128];
-
-		va_start(arg, format);
-		vsnprintf(string, sizeof(string), format, arg);
-		va_end(arg);
-
-		if (canPrint)
-			MR::setTextBoxFormatRecursive(this, "Text00", L"%s", string);
-	}
 #endif
