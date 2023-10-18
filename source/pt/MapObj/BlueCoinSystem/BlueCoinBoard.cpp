@@ -129,12 +129,13 @@ void BlueCoinBoard::init(const JMapInfoIter& rIter) {
     mTable = new JMapInfo();
     mTable->attach(gBoardDataTable);
 
-    MR::createAndAddPaneCtrl(this, "Misc", 1);
+    checkBoardProgress();
 
+    MR::createAndAddPaneCtrl(this, "Misc", 1);
     MR::createAndAddPaneCtrl(this, "StarCounter", 1);
     MR::createAndAddPaneCtrl(this, "BlueCoinCounter", 1);
+    
     MR::setFollowPos(&mBlueCoinCounterFollowPos, this, "BlueCoinCounter");
-    MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= 100 ? "BlueCoinPos100" : "BlueCoinPos10");
 
     for (s32 i = 0; i < 8; i++) {
         sprintf(mBoxButtonName[i], "BoxButton%d", i);
@@ -158,27 +159,6 @@ void BlueCoinBoard::appear() {
     LayoutActor::appear();
 }
 
-const char* BlueCoinBoard::getLabelName(const char* pName, s32 num) {
-    const char* nameFromTable;
-    s32 scenarioNoFromTable;
-    MR::getCsvDataStr(&nameFromTable, mTable, "StageName", num);
-    MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", num);
-
-    const char* galaxyState = "Locked";
-
-    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(num)) {
-        galaxyState = "UnlockedUncleared";
-
-        if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-            galaxyState = "UnlockedCleared";
-    }
-
-    const char* str = new char[32];
-    snprintf((char*)str, 32, "%s_%s", pName, galaxyState);
-
-    return str;
-}
-
 void BlueCoinBoard::exeAppear() {
     if (MR::isFirstStep(this)) {
         s32 numStars = 0;
@@ -191,9 +171,8 @@ void BlueCoinBoard::exeAppear() {
 
             MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], getLabelName("BoardButton", i));
 
-            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i))
                 MR::setTextBoxArgStringRecursive(this, mButtonTxtName[i], MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
-            }
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
@@ -202,10 +181,10 @@ void BlueCoinBoard::exeAppear() {
                 pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 0);
             }
 
-            mButtons[i]->appear();
-
             if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
                 numStars++;
+
+            mButtons[i]->appear();
         }
 
         mHasSpentBlueCoins = false;
@@ -229,6 +208,8 @@ void BlueCoinBoard::exeAppear() {
 
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
+
+        MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) > 99 ? "BlueCoinPos100" : "BlueCoinPos10");
 
         mBackButton->appear();
 
@@ -284,7 +265,6 @@ void BlueCoinBoard::exeSelecting() {
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", pointedButton);
-
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
                 pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 0);
             }
@@ -422,6 +402,49 @@ void BlueCoinBoard::exeConfirmPlayStage() {
         else
             setNerve(&NrvBlueCoinBoard::NrvSelecting::sInstance);
     }
+}
+
+const char* BlueCoinBoard::getLabelName(const char* pName, s32 num) {
+    const char* nameFromTable;
+    s32 scenarioNoFromTable;
+    MR::getCsvDataStr(&nameFromTable, mTable, "StageName", num);
+    MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", num);
+
+    const char* galaxyState = "Locked";
+
+    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(num)) {
+        galaxyState = "UnlockedUncleared";
+
+        if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
+            galaxyState = "UnlockedCleared";
+    }
+
+    const char* str = new char[32];
+    snprintf((char*)str, 32, "%s_%s", pName, galaxyState);
+
+    return str;
+}
+
+void BlueCoinBoard::checkBoardProgress() {
+    s32 completedStages = 0;
+
+    if (!BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
+        for (s32 i = 0; i < 8; i++) {
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
+                const char* nameFromTable;
+                s32 scenarioNoFromTable;
+                MR::getCsvDataStr(&nameFromTable, mTable, "StageName", i);
+                MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", i);
+
+                if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
+                    completedStages++;
+            }
+        }
+
+        if (completedStages == 8)
+            BlueCoinUtil::setBlueCoinBoardCompletedCurrentFile();
+    }
+
 }
 
 namespace NrvBlueCoinBoard {

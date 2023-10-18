@@ -2,9 +2,16 @@
 #pragma once
 #include "syati.h"
 
+/// @brief Structure of the contents of BlueCoinData.bin
+/// @param collectionData Blue Coin Collection Flags
+/// @param flags Blue Coin Board Unlock Flags
+/// @param isCompletedBoard Blue Coin Board Full Completion
+/// @param spentData Spent Blue Coin Amounts
+/// @param hasSeenTextBox Has Seen One-Time Text Box
 struct BlueCoinData {
     bool** collectionData;
     bool flags[3][8];
+    bool isCompletedBoard[3];
     u8 spentData[3];
     bool hasSeenTextBox[3];
 };
@@ -46,6 +53,16 @@ namespace BlueCoinUtil {
     /// @return bool 
     bool isBlueCoinGotCurrentFile(u8 id);
    
+    /// @brief Checks the specified BlueCoinFlag on the current file.
+    /// @param flag File ID
+    /// @return bool
+    void setOnBlueCoinFlagCurrentFile(u8 flag);
+
+    /// @brief Checks the specified BlueCoinFlag on the current file.
+    /// @param flag Flag ID
+    /// @return bool
+    bool isOnBlueCoinFlagCurrentFile(u8 flag);
+
     /// @brief Checks the one-time "OnFirstBlueCoin" flag
     /// @return bool
     bool hasSeenBlueCoinTextBoxCurrentFile();
@@ -56,16 +73,6 @@ namespace BlueCoinUtil {
     /// @brief Checks if the one-time "OnFirstBlueCoin" text box is being displayed.
     /// @return bool
     bool isBlueCoinTextBoxAppeared();
-
-    /// @brief Checks the specified BlueCoinFlag on the current file.
-    /// @param flag File ID
-    /// @return bool
-    void setOnBlueCoinFlagCurrentFile(u8 flag);
-
-    /// @brief Checks the specified BlueCoinFlag on the current file.
-    /// @param flag Flag ID
-    /// @return bool
-    bool isOnBlueCoinFlagCurrentFile(u8 flag);
 
     /// @brief Wipes Blue Coin data on the target file and triggers a save.
     /// @param file File ID
@@ -87,6 +94,13 @@ namespace BlueCoinUtil {
     /// @return s32
     s32 getSpentBlueCoinNumCurrentFile();
 
+    /// @brief Checks if the Blue Board Completed flag on the current save file is true
+    /// @return bool
+    bool isBlueCoinBoardCompletedCurrentFile();
+
+    /// @brief Sets the Blue Board Completed flag on the current save file to true
+    void setBlueCoinBoardCompletedCurrentFile();
+
     /// @brief Gets the collected number of collected blue coins.
     /// @param file 
     /// @param ignoreSpent Do not count spent blue coins.
@@ -104,6 +118,9 @@ namespace BlueCoinUtil {
     /// @return s32
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly);
 
+    /// @brief Gets the value in the "TexID" field. pStageName is used to select the target row.
+    /// @param pLayout Source LayoutActor
+    /// @param pStageName Target Stage Name
     void getBlueCoinPaneNameFromTable(LayoutActor* pLayout, const char* pStageName);
 
     /// @brief Creates a Blue Coin that can be used for spawning. The Blue Coin will not be created if -1 is passed into id. In that case, 0 will be returned.

@@ -14,7 +14,6 @@ public:
     virtual void init(const JMapInfoIter& rIter);
     virtual void control();
     virtual void appear();
-    const char* getLabelName(const char* pName, s32 num);
     void exeAppear();
     void exeSelecting();
     void exeDisappear();
@@ -24,6 +23,8 @@ public:
     void exeNotEnoughBlueCoins();
     void exeChangeButtonText();
     void exeConfirmPlayStage();
+    const char* getLabelName(const char* pName, s32 num);
+    void checkBoardProgress();
 
     ButtonPaneController* mButtons[8];
     TVec2f mButtonFollowPositions[8];

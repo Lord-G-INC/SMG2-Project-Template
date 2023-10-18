@@ -9,11 +9,12 @@ BlueCoinData* gBlueCoinData;
 
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
-#define BINSIZE 795
+#define BINSIZE 798
 
 #define FLAGS_LOCATION 765
-#define SPENT_LOCATION 789
-#define TEXTBOX_LOCATION 792
+#define BOARD_LOCATION 789
+#define SPENT_LOCATION 792
+#define TEXTBOX_LOCATION 795
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -46,8 +47,10 @@ namespace BlueCoinUtil {
             }
 
             for (s32 i = 0; i < 3; i++) {
-                gBlueCoinData->spentData[i] = buffer[24+i];
-                gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[27+i];
+                gBlueCoinData->isCompletedBoard[i] = (bool)buffer[(BOARD_LOCATION-765)+i];
+                gBlueCoinData->spentData[i] = buffer[(SPENT_LOCATION-765)+i];
+                gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[(TEXTBOX_LOCATION-765)+i];
+
 
                 if (gBlueCoinData->spentData[i] > getTotalBlueCoinNum(i, false))
                     OSReport("(BlueCoinUtil) Discrepancy found on save file %d\n", i);
@@ -72,6 +75,7 @@ namespace BlueCoinUtil {
                 s32 flagidx = 0;
 
                 for (int i = 0; i < 3; i++) {
+                    buffer[BOARD_LOCATION+i] = gBlueCoinData->isCompletedBoard[i];
                     buffer[SPENT_LOCATION+i] = gBlueCoinData->spentData[i];
                     buffer[TEXTBOX_LOCATION+i] = (bool)gBlueCoinData->hasSeenTextBox[i];
 
@@ -109,13 +113,16 @@ namespace BlueCoinUtil {
             }
         }
 
-        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
         getTotalBlueCoinNum(0, false), 
         getTotalBlueCoinNum(1, false), 
         getTotalBlueCoinNum(2, false),
         flagstr[0],
         flagstr[1],
         flagstr[2],
+        gBlueCoinData->isCompletedBoard[0] ? "Yes" : "No",
+        gBlueCoinData->isCompletedBoard[1] ? "Yes" : "No",
+        gBlueCoinData->isCompletedBoard[2] ? "Yes" : "No",
         gBlueCoinData->spentData[0],
         gBlueCoinData->spentData[1],
         gBlueCoinData->spentData[2],
@@ -128,6 +135,7 @@ namespace BlueCoinUtil {
     void clearBlueCoinData() {
         for (int i = 0; i < 3; i++) {
             memset(gBlueCoinData->collectionData[i], 0, 255);
+            gBlueCoinData->hasSeenTextBox[i] = 0;
             gBlueCoinData->spentData[i] = 0;
             gBlueCoinData->hasSeenTextBox[i] = 0;
 
@@ -147,6 +155,8 @@ namespace BlueCoinUtil {
             gBlueCoinData->collectionData[i] = new bool[255];
             memset(gBlueCoinData->collectionData[i], 0, 255);
             gBlueCoinData->hasSeenTextBox[i] = 0;
+            gBlueCoinData->isCompletedBoard[i] = 0;
+            gBlueCoinData->spentData[i] = 0;
         }
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
     }
@@ -189,11 +199,12 @@ namespace BlueCoinUtil {
 
     void resetAllBlueCoin(u8 file) {
         memset(gBlueCoinData->collectionData[file - 1], 0, 255);
-        gBlueCoinData->spentData[file - 1] = 0;
-        gBlueCoinData->hasSeenTextBox[file - 1] = 0;
+        gBlueCoinData->isCompletedBoard[file-1] = 0;
+        gBlueCoinData->spentData[file-1] = 0;
+        gBlueCoinData->hasSeenTextBox[file-1] = 0;
 
         for (int i = 0; i < 8; i++) {
-            gBlueCoinData->flags[file - 1][i] = 0;
+            gBlueCoinData->flags[file-1][i] = 0;
         }
 
         saveBlueCoinData();
@@ -233,11 +244,22 @@ namespace BlueCoinUtil {
                 total++;
         }
 
-        return ignoreSpent ? total -= getSpentBlueCoinNum(file) : total;
+        if (ignoreSpent) 
+            return total -= getSpentBlueCoinNum(file);
+        else
+            return total;
     }
 
     s32 getTotalBlueCoinNumCurrentFile(bool ignoreSpent) {
         return getTotalBlueCoinNum(getCurrentFileNum(), ignoreSpent);
+    }
+
+    bool isBlueCoinBoardCompletedCurrentFile() {
+        return gBlueCoinData->isCompletedBoard[getCurrentFileNum()];
+    }
+
+    void setBlueCoinBoardCompletedCurrentFile() {
+        gBlueCoinData->isCompletedBoard[getCurrentFileNum()] = true;
     }
 
     void startCounterCountUp() {
