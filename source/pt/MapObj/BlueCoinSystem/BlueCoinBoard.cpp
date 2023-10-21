@@ -209,6 +209,12 @@ void BlueCoinBoard::exeAppear() {
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
 
+        if (BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
+            MR::showPaneRecursive(this, "TextComplete");
+            MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_Complete");
+            MR::hidePaneRecursive(this, "BlueCoinCounter");
+        }
+
         MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) > 99 ? "BlueCoinPos100" : "BlueCoinPos10");
 
         mBackButton->appear();
@@ -320,7 +326,7 @@ void BlueCoinBoard::exeConfirmUnlock() {
     }
 
     if (MR::isDead(mSysInfoWindowSelect)) {
-        if (mSysInfoWindowSelect->isSelectedYes()) {
+        if (mSysInfoWindowSelect->isSelectedYes() && !BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
             
             if (BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= priceFromTable)
                 setNerve(&NrvBlueCoinBoard::NrvCountDownBlueCoin::sInstance);
