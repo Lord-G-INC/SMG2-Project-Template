@@ -52,8 +52,17 @@ namespace BlueCoinUtil {
                 gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[(TEXTBOX_LOCATION-765)+i];
 
 
-                if (gBlueCoinData->spentData[i] > getTotalBlueCoinNum(i, false))
-                    OSReport("(BlueCoinUtil) Discrepancy found on save file %d\n", i);
+                if (gBlueCoinData->spentData[i] > getTotalBlueCoinNum(i, false)) {
+                    u8 total = getTotalBlueCoinNum(i, false);
+                    u8 spent = gBlueCoinData->spentData[i];
+
+                    OSReport("(BlueCoinUtil) Discrepancy found on save file %d, c: %d, s: %d, c-s: %d\n", i+1, total, spent, total-spent);
+
+                    while (total-gBlueCoinData->spentData[i] < 0) {
+                        gBlueCoinData->spentData[i]--;
+                    }
+
+                }
             }
 
             delete [] buffer;
