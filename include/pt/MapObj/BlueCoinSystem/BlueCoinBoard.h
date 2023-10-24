@@ -41,6 +41,7 @@ public:
     char mCopyPosName[8][12];
     s32 mSelectedButton;
     s32 mBlueCoinNumToDisplay;
+    s32 mTotalBlueCoinPrices;
     bool mHasSpentBlueCoins;
 };
 

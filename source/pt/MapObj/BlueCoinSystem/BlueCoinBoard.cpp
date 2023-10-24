@@ -104,6 +104,7 @@ BlueCoinBoard::BlueCoinBoard(const char* pName) : LayoutActor(pName, 0) {
     mBackButton = 0;
     mHasSpentBlueCoins = 0;
     mTable = 0;
+    mTotalBlueCoinPrices = 0;
 }
 
 void BlueCoinBoard::init(const JMapInfoIter& rIter) {
@@ -151,6 +152,10 @@ void BlueCoinBoard::init(const JMapInfoIter& rIter) {
 
         MR::setFollowPos(&mButtonFollowPositions[i], this, mButtonFollow[i]);
         MR::setFollowTypeReplace(this, mButtonFollow[i]);
+
+        s32 priceFromTable = 0;
+        MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
+        mTotalBlueCoinPrices += priceFromTable;
     }
 }
 
@@ -162,12 +167,16 @@ void BlueCoinBoard::appear() {
 void BlueCoinBoard::exeAppear() {
     if (MR::isFirstStep(this)) {
         s32 numStars = 0;
+        const char* nameFromTable;
+        s32 scenarioNoFromTable;
 
         for (s32 i = 0; i < 8; i++) {
-            const char* nameFromTable;
-            s32 scenarioNoFromTable;
+
             MR::getCsvDataStr(&nameFromTable, mTable, "StageName", i);
             MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", i);
+
+            if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
+                numStars++;
 
             MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], getLabelName("BoardButton", i));
 
@@ -178,11 +187,8 @@ void BlueCoinBoard::exeAppear() {
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
 
                 MR::setTextBoxArgNumberRecursive(this, mButtonTxtName[i], i+1, 0);
-                pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 0);
+                pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
             }
-
-            if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-                numStars++;
 
             mButtons[i]->appear();
         }
@@ -209,12 +215,16 @@ void BlueCoinBoard::exeAppear() {
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
 
-        if (BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
+        if (BlueCoinUtil::getSpentBlueCoinNumCurrentFile() == mTotalBlueCoinPrices) {
             MR::showPaneRecursive(this, "TextComplete");
-            MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_Complete");
             MR::hidePaneRecursive(this, "BlueCoinCounter");
-        }
 
+            if (BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile())
+                MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_Complete");
+            else
+                MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_AllSpent");
+        }
+        
         MR::copyPaneTrans(&mBlueCoinCounterFollowPos, this, BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) > 99 ? "BlueCoinPos100" : "BlueCoinPos10");
 
         mBackButton->appear();
@@ -261,10 +271,10 @@ void BlueCoinBoard::exeSelecting() {
     if (!MR::isFirstStep(this)) {
         const char* nameFromTable;
         MR::getCsvDataStr(&nameFromTable, mTable, "StageName", pointedButton);
-
+    
         if (pointedButton > -1) {
             MR::setTextBoxGameMessageRecursive(this, "TextWinBase", getLabelName("WinBase", pointedButton));
-
+    
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(pointedButton)) {
                 MR::setTextBoxArgStringRecursive(this, "TextWinBase", MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
@@ -272,7 +282,7 @@ void BlueCoinBoard::exeSelecting() {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", pointedButton);
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
-                pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 0);
+                pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
             }
         }
         else
@@ -315,7 +325,7 @@ void BlueCoinBoard::exeSelected() {
 }
 
 void BlueCoinBoard::exeConfirmUnlock() {
-    s32 priceFromTable = 0;
+    s32 priceFromTable;
     MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", mSelectedButton);
 
     if (MR::isFirstStep(this)) {
@@ -381,6 +391,12 @@ void BlueCoinBoard::exeChangeButtonText() {
 
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_UnlockedUncleared");
         MR::setTextBoxArgStringRecursive(this, "TextWinBase", MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
+
+        if (BlueCoinUtil::getSpentBlueCoinNumCurrentFile() == mTotalBlueCoinPrices) {
+            MR::showPaneRecursive(this, "TextComplete");
+            MR::hidePaneRecursive(this, "BlueCoinCounter");
+            MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_AllSpent");
+        }
     }
 
     if (MR::isStep(this, 30))
@@ -425,8 +441,8 @@ const char* BlueCoinBoard::getLabelName(const char* pName, s32 num) {
             galaxyState = "UnlockedCleared";
     }
 
-    const char* str = new char[32];
-    snprintf((char*)str, 32, "%s_%s", pName, galaxyState);
+    char* str = new char[32];
+    snprintf(str, 32, "%s_%s", pName, galaxyState);
 
     return str;
 }
