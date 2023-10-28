@@ -259,4 +259,30 @@ void setBlueCoinCounterFileInfo(LayoutActor* pLayout, const Nerve* pNerve) {
 }
 
 kmCall(0x8046D9BC, setBlueCoinCounterFileInfo);
+
+void initGalaxyInfoBlueCoinCount(LayoutActor* actor) {
+    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalax", counterPictureFonts2);
+}
+
+//#ifdef NOGLE
+//    kmCall(0x804A952C, initGalaxyInfoBlueCoinCount);
+//#endif
+
+void setGalaxyInfoBlueCoinCount(LayoutActor* actor, const char* pGalaxyName, const wchar_t* pWStr) {
+    MR::setTextBoxMessageRecursive(actor, "StarIcon", pWStr);
+
+    s32 rangeNum = BlueCoinUtil::getBlueCoinRangeData(pGalaxyName, true);
+    MR::hidePaneRecursive(actor, "BlueCoin");
+
+    if (rangeNum != -1) {
+        MR::showPane(actor, "BlueCoin");
+        MR::showPaneRecursive(actor, "ShaBlueCoinGalax");
+        BlueCoinUtil::getBlueCoinPaneNameFromTable(actor, pGalaxyName);
+        MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalax", L"%ls%d", counterPictureFonts2, rangeNum);
+    }
+}
+//#ifdef NOGLE
+//kmWrite32(0x804A95E4, 0x809B003C);
+//kmCall(0x804A95E8, setGalaxyInfoBlueCoinCount);
+//#endif
 #endif

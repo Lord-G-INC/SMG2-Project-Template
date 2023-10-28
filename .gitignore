@@ -12,3 +12,4 @@ CustomCode*.bin
 deps/Kamek.7z
 *.bat
 *.map
+*.asm

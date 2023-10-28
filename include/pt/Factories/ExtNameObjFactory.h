@@ -137,7 +137,7 @@ namespace {
         { "SwingRope", createExtActor<SwingRope> },
 
         // Misc PTD
-        #ifdef ALL
+        #ifdef WIP
             { "LavaSteam", createExtActor<LavaSteam> },
         #endif
 

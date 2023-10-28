@@ -115,7 +115,7 @@ namespace pt {
 
 	#endif
 	
-	#if defined NOGLE || defined SMG63
+	#if defined NOGLE || defined SMG63 || defined ALL
 	void loadPTPictureFont() {
 		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
 	}
