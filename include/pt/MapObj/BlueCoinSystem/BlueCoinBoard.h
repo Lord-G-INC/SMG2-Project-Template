@@ -1,4 +1,4 @@
-#if defined USEBLUECOIN && !defined SM64BLUECOIN
+#if defined USEBLUECOIN && !defined SM64BLUECOIN && defined SMSS
 #pragma once
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
@@ -56,7 +56,7 @@ namespace NrvBlueCoinBoard {
     NERVE(NrvNotEnoughBlueCoins);
     NERVE(NrvChangeButtonText);
     NERVE(NrvConfirmPlayStage);
-}
+};
 
 class BlueCoinSign : public NPCActor {
 public:

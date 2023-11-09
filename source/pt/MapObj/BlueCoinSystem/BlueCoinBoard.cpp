@@ -1,4 +1,4 @@
-#if defined USEBLUECOIN && !defined SM64BLUECOIN && defined SMSS || defined ALL
+#if defined USEBLUECOIN && !defined SM64BLUECOIN && defined SMSS
 #include "pt/MapObj/BlueCoinSystem/BlueCoinBoard.h"
 #include "pt/Util.h"
 
