@@ -212,4 +212,4 @@ namespace pt {
 	kmCall(0x802DFE04, customPowerStarLightColors);
 
 #endif
-	}
+}
