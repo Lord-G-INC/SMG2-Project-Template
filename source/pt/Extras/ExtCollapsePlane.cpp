@@ -4,17 +4,15 @@
 namespace pt {
     kmWrite32(0x8033EF04, 0x386000E8); // li r3, 0xE8
 
-	void CollapsePlaneInit(CollapsePlane* pActor, const JMapInfoIter& rIter, HitSensor* pSensor, MtxPtr pMtx) {
+	void CollapsePlaneInit(CollapsePlane* pActor, const JMapInfoIter& rIter, MapObjActorInitInfo& rInfo) {
 		pActor->mRespawnTime = -1;
 		MR::getJMapInfoArg1NoInit(rIter, &pActor->mRespawnTime);
 		MR::useStageSwitchReadA(pActor, rIter);
-		OSReport("%d\n", pActor->mRespawnTime);
-		
-		MR::initCollisionPartsAutoEqualScale(pActor, "Move", pSensor, pMtx);
+
+        pActor->initialize(rIter, rInfo);
 	}
 
-	kmWrite32(0x802902BC, 0x7FA4EB78); // mr r4, r29
-	kmCall(0x802902C0, CollapsePlaneInit);
+	kmCall(0x8029016C, CollapsePlaneInit);
 
     void CollapsePlaneDecideNerve(CollapsePlane* pActor, const Nerve* pNerve) {
         if (pActor->mRespawnTime > -1)
