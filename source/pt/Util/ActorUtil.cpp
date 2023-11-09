@@ -49,7 +49,7 @@ namespace pt {
 	
 	//Loads an arc and a selected file into memory.
 	void* loadArcAndFile(const char *pArc, const char *pFile) {
-		JKRArchive* arc = MR::mountArchive(pArc, MR::getStationedHeapGDDR3(), false);
+		JKRArchive* arc = MR::mountArchive(pArc, MR::getStationedHeapNapa(), false);
 		void* file = arc->getResource(pFile);
 	
 		if (arc && file) {
