@@ -143,6 +143,9 @@ namespace {
 
         #ifdef USEBLUECOIN
             { "BlueCoin", createExtActor<BlueCoin> },
+        #endif
+
+        #if defined USEBLUECOIN && !defined SM64BLUECOIN && defined SMSS
             { "BlueCoinSign", createExtActor<BlueCoinSign> },
         #endif
 

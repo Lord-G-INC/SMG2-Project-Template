@@ -1,3 +1,4 @@
+#ifdef SMSS
 #pragma once
 #include "JSystem/JKernel/JKRArchive.h"
 #include "syati.h"
@@ -83,3 +84,4 @@ public:
   MR::BitArray *bitFlags; //_34
   u16 iconCount;          //_38
 };
+#endif

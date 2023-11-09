@@ -1,3 +1,4 @@
+#ifdef NOGLE
 #include "pt/Extras/WarpAreaSystem.h"
 #include "Game/Util.h"
 #include "pt/Util/ActorUtil.h"
@@ -17,8 +18,6 @@
 * This feature is exclusive to PTD.
 * This feature is disabled on GLE builds.
 */
-
-#ifdef NOGLE
 
 void* sWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
 static s32 gLastTableIndex = -1;
