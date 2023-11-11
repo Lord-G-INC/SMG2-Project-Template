@@ -43,7 +43,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 9);
+    MR::joinToGroupArray(this, rIter, "RedCoin", 24);
     MR::calcGravity(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity); // Y Appear Launch Velocity. Calculates gravity.

@@ -3,6 +3,7 @@
 	#include "syati.h"
     #include "Game/Screen/CountUpPaneRumbler.h"
     #include "pt/MapObj/RedCoinSystem/RedCoin.h"
+    #include "pt/MapObj/RedCoinSystem/RedCoinLayouts.h"
 
     class RedCoinController : public LiveActor {
     public:
@@ -12,16 +13,13 @@
         virtual void movement();
         void startCountUp(LiveActor* pRedCoin);
         //void resetAllRedCoins();
-        void appearCounterIfHidden();
-        void updateCounter();
         void calcCounterVisibility();
         void calcCounterTimer();
         void calcRedCoinCounterPlayerPos();
     
-        LayoutActor* mRedCoinCounter;
+        RedCoinCounter* mRedCoinCounter;
         LayoutActor* mRedCoinCounterPlayer;
         LiveActor* mLastRedCoin;
-        CountUpPaneRumbler* mRumbler;
         s32 mNumCoins;
         s32 mElapsed;
         s32 mPowerStarCheck; // Obj_arg1
