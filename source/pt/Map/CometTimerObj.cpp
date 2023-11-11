@@ -8,22 +8,19 @@
 * Work in progress. Exclusive to PTD.
 */
 
-CometTimerObj::CometTimerObj(const char* pName) : LiveActor(pName) {
+CometTimerObj::CometTimerObj(const char* pName) : NameObj(pName) {
     mTime = 60;
     mKillPlayer = false;
     mIsAppeared = false;
+    mStageSwitchCtrl = 0;
 }
 
 void CometTimerObj::init(const JMapInfoIter& rIter) {
-    MR::initDefaultPos(this, rIter);
     MR::connectToSceneMapObjMovement(this);
     MR::getJMapInfoArg0NoInit(rIter, &mTime);
     MR::getJMapInfoArg1NoInit(rIter, &mKillPlayer);
-    MR::invalidateClipping(this);
 
-    MR::useStageSwitchReadA(this, rIter);
-    MR::useStageSwitchReadB(this, rIter);
-    MR::useStageSwitchWriteDead(this, rIter);
+    mStageSwitchCtrl = MR::createStageSwitchCtrl(this, rIter);
 
     mLayout = new TimeLimitLayout(1);
     mLayout->setDisplayModeOnNormal(true);
@@ -32,7 +29,7 @@ void CometTimerObj::init(const JMapInfoIter& rIter) {
 }
 
 void CometTimerObj::movement() {
-    if (MR::isValidSwitchA(this) && MR::isOnSwitchA(this) && !mIsAppeared) {
+    if (mStageSwitchCtrl->isValidSwitchA() && mStageSwitchCtrl->isOnSwitchA() && !mIsAppeared) {
         if (MR::isHiddenLayout(mLayout))
             MR::showLayout(mLayout);
             
@@ -44,10 +41,9 @@ void CometTimerObj::movement() {
     if (mLayout->isReadyToTimeUp() && mIsAppeared)
         onTimeUp();
 
-    if (MR::isOnSwitchB(this)) {
+    if (mStageSwitchCtrl->isOnSwitchB()) {
         mIsAppeared = false;
         MR::hideLayout(mLayout);
-        makeActorDead();
     }
 }
 
@@ -55,13 +51,12 @@ void CometTimerObj::onTimeUp() {
     if (mKillPlayer)
         MR::forceKillPlayerByGroundRace();
     else {
-        if (MR::isValidSwitchDead(this))
-            MR::onSwitchDead(this);
+        if (mStageSwitchCtrl->isValidSwitchDead())
+            mStageSwitchCtrl->onSwitchDead();
 
         MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
         mIsAppeared = false;
         MR::hideLayout(mLayout);
     }
     
-    makeActorDead();
 }
