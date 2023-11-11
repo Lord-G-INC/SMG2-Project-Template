@@ -49,8 +49,6 @@ void BlueCoinSign::init(const JMapInfoIter& rIter) {
 bool BlueCoinSign::eventFunc(u32 eventParam) {
     if (isNerve(&NrvBlueCoinSign::NrvOpen::sInstance)) {
         if (MR::isDead(pBoard)) {
-            if (pBoard->mHasSpentBlueCoins)
-                BlueCoinUtil::startCounterCountUp();
 
             popNerve();
             return true;
@@ -72,7 +70,6 @@ void BlueCoinSign::exeWait() {
 
 void BlueCoinSign::exeOpen() {
     if (MR::isFirstStep(this)) {
-        MR::startSystemSE("SE_SY_STAR_RESULT_PANEL_OPEN", -1, -1);
         pBoard->appear();
     }
 }
@@ -204,6 +201,8 @@ void BlueCoinBoard::exeAppear() {
             ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
         }
 
+        MR::startSystemSE("SE_SY_STAR_RESULT_PANEL_OPEN", -1, -1);
+
         MR::startAnim(this, "Appear", 1);
         MR::startStarPointerModeChooseYesNo(this);
 
@@ -303,6 +302,10 @@ void BlueCoinBoard::exeDisappear() {
     }
 
     if (MR::isStep(this, 50)) {
+
+        if (mHasSpentBlueCoins)
+            BlueCoinUtil::startCounterCountUp();
+
         MR::endStarPointerMode(this);
         kill();
     }

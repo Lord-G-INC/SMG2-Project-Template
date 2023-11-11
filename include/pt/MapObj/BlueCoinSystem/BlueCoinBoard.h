@@ -27,13 +27,13 @@ public:
     void checkBoardProgress();
 
     ButtonPaneController* mButtons[8];
-    TVec2f mButtonFollowPositions[8];
-    TVec2f mBlueCoinCounterFollowPos;
     SysInfoWindow* mSysInfoWindowSelect;
     SysInfoWindow* mSysInfoWindowBox;
     CountUpPaneRumbler* mBlueCoinPaneRumbler;
     BackButtonCancelB* mBackButton;
     JMapInfo* mTable;
+    TVec2f mButtonFollowPositions[8];
+    TVec2f mBlueCoinCounterFollowPos;
     char mBoxButtonName[8][12];
     char mButtonName[8][13];
     char mButtonTxtName[8][13];
