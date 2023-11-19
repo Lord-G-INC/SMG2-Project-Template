@@ -21,11 +21,6 @@ void RedCoinCounter::init(const JMapInfoIter& rIter) {
     initNerve(&NrvRedCoinCounter::NrvHide::sInstance);
 }
 
-//void RedCoinCounter::appear() {
-//    setNerve(&NrvRedCoinCounter::NrvAppear::sInstance);
-//    LayoutActor::appear();
-//}
-
 void RedCoinCounter::control() {
     mPaneRumbler->update();
 }
@@ -38,6 +33,8 @@ void RedCoinCounter::setStarIcon(s32 starID, s32 iconID) {
 
 void RedCoinCounter::startCountUp(s32 hasAllCoins) {
     mRedCoinCount++;
+
+    MR::setTextBoxNumberRecursive(this, "Counter", mRedCoinCount);
 
     if (hasAllCoins)
         setNerve(&NrvRedCoinCounter::NrvCountUpComplete::sInstance);
@@ -58,9 +55,8 @@ void RedCoinCounter::exeAppearWithUpdate() {
         MR::startAnim(this, "Wait", 1);
     }
 
-    if (MR::isStep(this, 30)) {
+    if (MR::isStep(this, 30))
         startCountUp(false);
-    }
 }
 
 void RedCoinCounter::exeDisappear() {
@@ -74,7 +70,6 @@ void RedCoinCounter::exeDisappear() {
 void RedCoinCounter::exeCountUp() {
     if (MR::isFirstStep(this)) {
         MR::startPaneAnim(this, "Counter", "Flash", 0);
-        MR::setTextBoxNumberRecursive(this, "Counter", mRedCoinCount);
         MR::emitEffect(this, "RedCoinCounterLight");
         mPaneRumbler->start();
     }
@@ -83,7 +78,6 @@ void RedCoinCounter::exeCountUp() {
 void RedCoinCounter::exeCountUpComplete() {
     if (MR::isFirstStep(this)) {
         MR::startPaneAnim(this, "Counter", "FlashLoop", 0);
-        MR::setTextBoxNumberRecursive(this, "Counter", mRedCoinCount);
         MR::emitEffect(this, "RedCoinCounterLight");
         mPaneRumbler->start();
     }

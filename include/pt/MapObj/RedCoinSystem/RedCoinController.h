@@ -12,7 +12,6 @@
         virtual void init(const JMapInfoIter& rIter);
         virtual void movement();
         void startCountUp(LiveActor* pRedCoin);
-        //void resetAllRedCoins();
         void calcCounterVisibility();
         void calcCounterTimer();
         void calcRedCoinCounterPlayerPos();
