@@ -52,19 +52,19 @@ namespace pt {
 	*/
 
 	ResTIMG* CustomFlagTextures(LiveActor* pActor, const char* pStr, const JMapInfoIter& rIter) {
-		s32 flagBti = 0;
+		s32 flagTex = 0;
 		char* outArcStr = new char[24];
-		char* outBtiStr = new char[24];
-		MR::getJMapInfoArg0NoInit(rIter, &flagBti);
+		char* outTexStr = new char[24];
+		MR::getJMapInfoArg0NoInit(rIter, &flagTex);
 
 		snprintf(outArcStr, 24, "%s.arc", pStr);
 
-		if (flagBti < 1)
-			snprintf(outBtiStr, 24, "%s.bti", pStr);
+		if (flagTex < 1)
+			snprintf(outTexStr, 24, "%s.bti", pStr);
 		else
-			snprintf(outBtiStr, 24, "%s%d.bti", pStr, flagBti);
+			snprintf(outTexStr, 24, "%s%d.bti", pStr, flagTex);
 			
-		return MR::loadTexFromArc(pActor, outArcStr, outBtiStr);
+		return MR::loadTexFromArc(pActor, outArcStr, outTexStr);
 	}
 
 	kmWrite32(0x80254880, 0x60000000); // nop
@@ -75,7 +75,7 @@ namespace pt {
 	* Debugging feature: displaying the file name on the "File isn't exist" error.
 	*
 	* When the game attempts to load a file into memory, it runs MR::isFileExist to check for the file, and if the file it's checking
-	* for doesn't exist, it calls OSFatal,  crashing the game. It also prints "File isn't exist" to the log.
+	* for doesn't exist, it calls OSFatal, crashing the game. It also prints "File isn't exist" to the log.
 	*
 	* Here, the MR::isFileExist call is replaced with a call to this new function, that prints the file name with the error, if the checked file is missing.
 	*
@@ -235,8 +235,8 @@ namespace pt {
 	
 	// Suggested by Xandog
 	const wchar_t* CustomGreenStarNames(GalaxyStatusAccessor accessor, const char* pStageName, s32 starid) {
-		char textName[256];
-	    snprintf(textName, 256, "ScenarioName_%s_GreenStar%d", pStageName, starid-accessor.getPowerStarNum()/2);
+		char textName[32];
+	    snprintf(textName, 32, "ScenarioName_%s_GreenStar%d", pStageName, starid-accessor.getPowerStarNum()/2);
 	
 	    TalkMessageInfo info;
 	    MessageSystem::getGameMessageDirect(&info, textName);
@@ -244,7 +244,7 @@ namespace pt {
 	    if (info.mMessage)
 	        return info.mMessage;
 	
-	    snprintf(textName, 256, "ScenarioName_GreenStar%d", starid-accessor.getPowerStarNum()/2);
+	    snprintf(textName, 32, "ScenarioName_GreenStar%d", starid-accessor.getPowerStarNum()/2);
 	    return MR::getGameMessageDirect(textName);
 	}
 	
@@ -271,4 +271,22 @@ namespace pt {
 	kmWrite32(0x80301C64, 0x7FA3EB78);
 	kmCall(0x80301C6C, SnowBallDieInWater);
 	#endif
+
+
+	bool YukkinaKillEnemy(HitSensor* pReceiver, HitSensor* pSender) {
+		bool isSensorPlayer = MR::isSensorPlayer(pReceiver);
+
+		if (!isSensorPlayer)
+			MR::sendMsgEnemyAttackExplosion(pReceiver, pSender);
+
+		return isSensorPlayer;
+	}
+
+	kmCall(0x8010A784, YukkinaKillEnemy);
+
+	s32 textColors[] = {0xFFFFFFFF, 0xDC8282FF, 0x50AA50FF, 0x508CD2FF, 0xEBC800FF, 0xB46EC8FF, 0xFFA064FF, 0xBEBEC8FF0};
+
+	void extTextColors() {
+
+	}
 } 

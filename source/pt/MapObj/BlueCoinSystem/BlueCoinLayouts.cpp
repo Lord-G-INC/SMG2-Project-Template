@@ -231,9 +231,8 @@ void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
     
         MR::showPaneRecursive(actor, "ShaBlueCoinStage");
 
-        if (rangeTotal > -1) {
+        if (rangeTotal > -1)
             BlueCoinUtil::getBlueCoinPaneNameFromTable(actor, 0);
-        }
     }
     else
         MR::hidePaneRecursive(actor, "ShaBlueCoinStage");

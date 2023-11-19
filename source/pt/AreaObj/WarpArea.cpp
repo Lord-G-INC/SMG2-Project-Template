@@ -68,6 +68,7 @@ void WarpArea::movement() {
 			if (mPosID >= 0) {
 				WarpAreaStageTable::selectWipeOpen(mFadeOpenType, mFadeOpenType);
 				MR::onPlayerControl(1);
+				MR::enableStarPointerShootStarPiece();
 				mElapsed = 0;
 				mCanWarp = false;
 			}

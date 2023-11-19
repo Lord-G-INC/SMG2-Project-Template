@@ -35,7 +35,7 @@ void BlueCoinSign::init(const JMapInfoIter& rIter) {
     caps.mInitYoshiLockOnTarget = 0;
     caps.mWaitNerve = &NrvBlueCoinSign::NrvWait::sInstance;
 
-    initialize(rIter, caps, 0, 0, 0);
+    initialize(rIter, caps, 0, 0, false);
 
     mTalkCtrl->mShowFrame = false;
 
@@ -49,7 +49,6 @@ void BlueCoinSign::init(const JMapInfoIter& rIter) {
 bool BlueCoinSign::eventFunc(u32 eventParam) {
     if (isNerve(&NrvBlueCoinSign::NrvOpen::sInstance)) {
         if (MR::isDead(pBoard)) {
-
             popNerve();
             return true;
         }
@@ -69,9 +68,8 @@ void BlueCoinSign::exeWait() {
 }
 
 void BlueCoinSign::exeOpen() {
-    if (MR::isFirstStep(this)) {
+    if (MR::isFirstStep(this))
         pBoard->appear();
-    }
 }
 
 namespace NrvBlueCoinSign {
@@ -94,14 +92,16 @@ BlueCoinBoard::BlueCoinBoard(const char* pName) : LayoutActor(pName, 0) {
         mButtonFollowPositions[i] = TVec2f(0.0f, 0.0f);
     }
 
-    mSelectedButton = -1;
     mSysInfoWindowSelect = 0;
+    mSysInfoWindowBox = 0;
     mBlueCoinPaneRumbler = 0;
-    mBlueCoinNumToDisplay = 0;
     mBackButton = 0;
-    mHasSpentBlueCoins = 0;
     mTable = 0;
+    mBlueCoinCounterFollowPos = TVec2f(0.0f, 0.0f);
+    mSelectedButton = -1;
+    mBlueCoinNumToDisplay = 0;
     mTotalBlueCoinPrices = 0;
+    mHasSpentBlueCoins = false;
 }
 
 void BlueCoinBoard::init(const JMapInfoIter& rIter) {
@@ -166,7 +166,8 @@ void BlueCoinBoard::exeAppear() {
         s32 numStars = 0;
         const char* nameFromTable;
         s32 scenarioNoFromTable;
-
+        mHasSpentBlueCoins = false;
+        
         for (s32 i = 0; i < 8; i++) {
 
             MR::getCsvDataStr(&nameFromTable, mTable, "StageName", i);
@@ -190,9 +191,7 @@ void BlueCoinBoard::exeAppear() {
             mButtons[i]->appear();
         }
 
-        mHasSpentBlueCoins = false;
 
-        MR::requestMovementOn(mBackButton);
         MR::requestMovementOn(mSysInfoWindowSelect);
         MR::requestMovementOn(mSysInfoWindowBox);
 
