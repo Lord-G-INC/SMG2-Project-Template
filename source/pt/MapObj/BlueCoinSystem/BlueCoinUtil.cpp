@@ -207,13 +207,14 @@ namespace BlueCoinUtil {
     }
 
     void resetAllBlueCoin(u8 file) {
-        memset(gBlueCoinData->collectionData[file - 1], 0, 255);
-        gBlueCoinData->isCompletedBoard[file-1] = 0;
-        gBlueCoinData->spentData[file-1] = 0;
-        gBlueCoinData->hasSeenTextBox[file-1] = 0;
+        file--;
+        memset(gBlueCoinData->collectionData[file], 0, 255);
+        gBlueCoinData->isCompletedBoard[file] = 0;
+        gBlueCoinData->spentData[file] = 0;
+        gBlueCoinData->hasSeenTextBox[file] = 0;
 
         for (int i = 0; i < 8; i++) {
-            gBlueCoinData->flags[file-1][i] = 0;
+            gBlueCoinData->flags[file][i] = 0;
         }
 
         saveBlueCoinData();

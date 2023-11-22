@@ -280,6 +280,7 @@ void setGalaxyInfoBlueCoinCount(LayoutActor* actor, const char* pGalaxyName, con
         MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinGalax", L"%ls%d", counterPictureFonts2, rangeNum);
     }
 }
+
 //#ifdef NOGLE
 //kmWrite32(0x804A95E4, 0x809B003C);
 //kmCall(0x804A95E8, setGalaxyInfoBlueCoinCount);

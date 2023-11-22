@@ -301,7 +301,6 @@ void BlueCoinBoard::exeDisappear() {
     }
 
     if (MR::isStep(this, 50)) {
-
         if (mHasSpentBlueCoins)
             BlueCoinUtil::startCounterCountUp();
 
