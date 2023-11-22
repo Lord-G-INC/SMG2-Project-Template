@@ -196,19 +196,29 @@ namespace pt {
 
 #ifdef NOGLE
 	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
-	void greenStarAppearParticleFix(LiveActor* pActor, s32 mColor) {
-		MR::emitEffect(pActor, starParticleStr[mColor == 1 || mColor == 2 ? mColor : 0]);
+	void greenStarAppearParticleFix(PowerStar* pActor) {
+		s32 color = pActor->mColor;
+
+		if (color > 2)
+			color = 0;
+
+		MR::emitEffect(pActor, starParticleStr[pActor->mColor]);
 	}
 
-	kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
+	//kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 	kmCall(0x802E0870, greenStarAppearParticleFix);
 
 	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
-	void customPowerStarLightColors(LiveActor* pActor, TVec3f pos, Color8 color, f32 f, s32 mColor) {
-		MR::requestPointLight(pActor, pos, mColor > 4 ? starLightColors[mColor - 5]: color, f, -1);
+
+	void customPowerStarLightColors(PowerStar* pActor, TVec3f pos, Color8 defcolor, f32 f) {
+		Color8 color = defcolor;
+
+		if (pActor->mColor > 4)
+			color = starLightColors[pActor->mColor - 5];
+
+		MR::requestPointLight(pActor, pos, color, f, -1);
 	}
 
-	kmWrite32(0x802DFE00, 0x80DE0130); // lwz r6, 0x130(r30)
 	kmCall(0x802DFE04, customPowerStarLightColors);
 
 #endif
