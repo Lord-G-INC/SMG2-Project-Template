@@ -1,3 +1,4 @@
 [submodule "deps/Syati"]
 	path = deps/Syati
-	url = https://github.com/Lord-G-INC/Syati
+	url = https://github.com/SMGCommunity/Syati.git
+	branch = ptd
