@@ -205,7 +205,6 @@ namespace pt {
 		MR::emitEffect(pActor, starParticleStr[pActor->mColor]);
 	}
 
-	//kmWrite32(0x802E0868, 0x809D0130); // lwz r4, 0x130(r29)
 	kmCall(0x802E0870, greenStarAppearParticleFix);
 
 	Color8 starLightColors[2] = {Color8(0, 0, 128, 0), Color8(128, 128, 128, 0)};
@@ -220,6 +219,5 @@ namespace pt {
 	}
 
 	kmCall(0x802DFE04, customPowerStarLightColors);
-
 #endif
 }
