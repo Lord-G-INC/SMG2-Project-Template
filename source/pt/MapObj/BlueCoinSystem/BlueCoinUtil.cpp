@@ -9,12 +9,12 @@ BlueCoinData* gBlueCoinData;
 
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
-#define BINSIZE 798
+#define BINSIZE 870
 
 #define FLAGS_LOCATION 765
-#define BOARD_LOCATION 789
-#define SPENT_LOCATION 792
-#define TEXTBOX_LOCATION 795
+#define BOARD_LOCATION 861
+#define SPENT_LOCATION 864
+#define TEXTBOX_LOCATION 867
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -40,7 +40,7 @@ namespace BlueCoinUtil {
             }
 
             for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 8; j++) {
+                for (int j = 0; j < 32; j++) {
                     gBlueCoinData->flags[i][j] = (bool)buffer[flagidx];
                     flagidx++;
                 }
@@ -92,7 +92,7 @@ namespace BlueCoinUtil {
                         buffer[idx++] = (bool)gBlueCoinData->collectionData[i][j];
                     }
 
-                    for (int j = 0; j < 8; j++) {
+                    for (int j = 0; j < 32; j++) {
                         buffer[FLAGS_LOCATION+flagidx] = gBlueCoinData->flags[i][j];
                         flagidx++;
                     }
@@ -112,17 +112,24 @@ namespace BlueCoinUtil {
     }
 
     void printBlueCoinSaveFileInfo() {
-        char flagstr[3][9];
+        char flagstr[3][36];
+        s32 flagidx = 0;
 
         for (s32 i = 0; i < 3; i++) {
-            flagstr[i][8] = 0;
+            flagstr[i][35] = 0;
 
-            for (s32 j = 0; j < 8; j++) {
-            flagstr[i][j] = gBlueCoinData->flags[i][j] ? 0x31 : 0x30;
+            for (s32 j = 0; j < 35; j++) {
+                if (j == 8 || j == 17 || j == 26)
+                    flagstr[i][j] = 0x20;
+                else {
+                    flagstr[i][j] = gBlueCoinData->flags[i][flagidx] ? 0x31 : 0x30;
+                    flagidx++;
+                }
             }
+        flagidx = 0;
         }
 
-        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s, f1: %s, f2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s\nf1: %s\nf2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
         getTotalBlueCoinNum(0, false), 
         getTotalBlueCoinNum(1, false), 
         getTotalBlueCoinNum(2, false),
@@ -137,8 +144,7 @@ namespace BlueCoinUtil {
         gBlueCoinData->spentData[2],
         gBlueCoinData->hasSeenTextBox[0] ? "Yes" : "No",
         gBlueCoinData->hasSeenTextBox[1] ? "Yes" : "No",
-        gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No"
-        );
+        gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No");
     }
 
     void clearBlueCoinData() {
@@ -405,40 +411,4 @@ void onTitleScreenLoad(LiveActor* pActor) {
 kmCall(0x8024F358, onTitleScreenLoad);
 
 // Misc blue coin patches
-
-void customLMSBranchConditions(TalkNodeCtrl* pCtrl, bool result) {
-    u16 condType = ((u16*)pCtrl->getCurrentNodeBranch())[3];
-    u16 condParam = ((u16*)pCtrl->getCurrentNodeBranch())[4];
-
-    if (condType == 17)
-        result = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
-    if (condType == 18)
-        result = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false) >= condParam;
-    if (condType == 19)
-        result = BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= condParam;
-
-
-    pCtrl->forwardCurrentBranchNode(result);
-}
-
-kmWrite32(0x8037B134, 0x7FC3F378); // mr r3, r30
-kmWrite32(0x8037B138, 0x7CC43378); // mr r4, r6
-kmCall(0x8037B13C, customLMSBranchConditions);
-kmWrite32(0x8037B140, 0x4BFFFE9C); // b -0x164
-
-
-
-bool customLMSEventFunctions(TalkNodeCtrl* pNode) {
-    u16 eventType = ((u16*)pNode->getCurrentNodeEvent())[2];
-    u16 eventParam = ((u16*)pNode->getCurrentNodeEvent())[5];
-
-    if (eventType == 12)
-        BlueCoinUtil::spendBlueCoinCurrentFile(eventParam);
-    if (eventType == 13)
-        BlueCoinUtil::startCounterCountUp();
-
-    return pNode->isExistNextNode();
-}
-
-kmCall(0x8037B38C, customLMSEventFunctions);
 #endif

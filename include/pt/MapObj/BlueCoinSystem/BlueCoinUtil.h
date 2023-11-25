@@ -10,7 +10,7 @@
 /// @param hasSeenTextBox Has Seen One-Time Text Box
 struct BlueCoinData {
     bool** collectionData;
-    bool flags[3][8];
+    bool flags[3][32];
     bool isCompletedBoard[3];
     u8 spentData[3];
     bool hasSeenTextBox[3];
