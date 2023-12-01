@@ -169,21 +169,25 @@ void BlueCoinBoard::exeAppear() {
         mHasSpentBlueCoins = false;
         
         for (s32 i = 0; i < 8; i++) {
-
             MR::getCsvDataStr(&nameFromTable, mTable, "StageName", i);
             MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", i);
 
-            if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-                numStars++;
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
+                const char* label = "BoardButton_UnlockedUncleared";
 
-            MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], getLabelName("BoardButton", i));
+                if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable)) {
+                    label = "BoardButton_UnlockedCleared";
+                    numStars++;
+                }
 
-            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i))
+                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], label);
                 MR::setTextBoxArgStringRecursive(this, mButtonTxtName[i], MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
+            }
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", i);
 
+                MR::setTextBoxGameMessageRecursive(this, mButtonTxtName[i], "BoardButton_Locked");
                 MR::setTextBoxArgNumberRecursive(this, mButtonTxtName[i], i+1, 0);
                 pt::setTextBoxArgStringNumberFontRecursive(this, mButtonTxtName[i], priceFromTable, 1);
             }
@@ -267,18 +271,27 @@ void BlueCoinBoard::exeSelecting() {
         setNerve(&NrvBlueCoinBoard::NrvDisappear::sInstance);
 
     if (!MR::isFirstStep(this)) {
-        const char* nameFromTable;
-        MR::getCsvDataStr(&nameFromTable, mTable, "StageName", pointedButton);
-    
         if (pointedButton > -1) {
-            MR::setTextBoxGameMessageRecursive(this, "TextWinBase", getLabelName("WinBase", pointedButton));
+            const char* nameFromTable;
+            s32 scenarioNoFromTable;
+
+            MR::getCsvDataStr(&nameFromTable, mTable, "StageName", pointedButton);
+            MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", pointedButton);
     
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(pointedButton)) {
+                const char* label = "WinBase_UnlockedUncleared";
+
+                if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
+                    label = "WinBase_UnlockedCleared";
+
+                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", label);
                 MR::setTextBoxArgStringRecursive(this, "TextWinBase", MR::getGalaxyNameOnCurrentLanguage(nameFromTable), 0);
             }
             else {
                 s32 priceFromTable = 0;
                 MR::getCsvDataS32(&priceFromTable, mTable, "BlueCoinPrice", pointedButton);
+                
+                MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_Locked");
                 MR::setTextBoxArgNumberRecursive(this, "TextWinBase", pointedButton+1, 0);
                 pt::setTextBoxArgStringNumberFontRecursive(this, "TextWinBase", priceFromTable, 1);
             }
@@ -425,27 +438,6 @@ void BlueCoinBoard::exeConfirmPlayStage() {
         else
             setNerve(&NrvBlueCoinBoard::NrvSelecting::sInstance);
     }
-}
-
-const char* BlueCoinBoard::getLabelName(const char* pName, s32 num) {
-    const char* nameFromTable;
-    s32 scenarioNoFromTable;
-    MR::getCsvDataStr(&nameFromTable, mTable, "StageName", num);
-    MR::getCsvDataS32(&scenarioNoFromTable, mTable, "ScenarioNo", num);
-
-    const char* galaxyState = "Locked";
-
-    if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(num)) {
-        galaxyState = "UnlockedUncleared";
-
-        if (MR::makeGalaxyStatusAccessor(nameFromTable).hasPowerStar(scenarioNoFromTable))
-            galaxyState = "UnlockedCleared";
-    }
-
-    char* str = new char[32];
-    snprintf(str, 32, "%s_%s", pName, galaxyState);
-
-    return str;
 }
 
 void BlueCoinBoard::checkBoardProgress() {

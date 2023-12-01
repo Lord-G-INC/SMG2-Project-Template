@@ -97,7 +97,7 @@ namespace BlueCoinUtil {
                         flagidx++;
                     }
                 }
-
+                
                 code = NANDWrite(&info, buffer, BINSIZE);
 
                 if (code != 0 && code != BINSIZE)
@@ -113,11 +113,11 @@ namespace BlueCoinUtil {
 
     void printBlueCoinSaveFileInfo() {
         char flagstr[3][36];
-        s32 flagidx = 0;
-
+  
         for (s32 i = 0; i < 3; i++) {
             flagstr[i][35] = 0;
-
+            s32 flagidx = 0;
+            
             for (s32 j = 0; j < 35; j++) {
                 if (j == 8 || j == 17 || j == 26)
                     flagstr[i][j] = 0x20;
@@ -126,7 +126,6 @@ namespace BlueCoinUtil {
                     flagidx++;
                 }
             }
-        flagidx = 0;
         }
 
         OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s\nf1: %s\nf2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
@@ -154,7 +153,7 @@ namespace BlueCoinUtil {
             gBlueCoinData->spentData[i] = 0;
             gBlueCoinData->hasSeenTextBox[i] = 0;
 
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < 32; j++) {
                 gBlueCoinData->flags[i][j] = 0;
             }
         }
@@ -219,7 +218,7 @@ namespace BlueCoinUtil {
         gBlueCoinData->spentData[file] = 0;
         gBlueCoinData->hasSeenTextBox[file] = 0;
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 32; i++) {
             gBlueCoinData->flags[file][i] = 0;
         }
 

@@ -23,7 +23,6 @@ public:
     void exeNotEnoughBlueCoins();
     void exeChangeButtonText();
     void exeConfirmPlayStage();
-    const char* getLabelName(const char* pName, s32 num);
     void checkBoardProgress();
 
     ButtonPaneController* mButtons[8];
