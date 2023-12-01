@@ -1,12 +1,14 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
+
 namespace pt {
     void customLMSBranchConditions(TalkNodeCtrl* pCtrl, bool result) {
         u16 condType = ((u16*)pCtrl->getCurrentNodeBranch())[3];
         u16 condParam = ((u16*)pCtrl->getCurrentNodeBranch())[4];
 
         switch (condType) {
+            #if defined USEBLUECOIN && !defined SM64BLUECOIN
             case 30:
                 result = BlueCoinUtil::isBlueCoinGotCurrentFile(condParam);
             break;
@@ -22,6 +24,7 @@ namespace pt {
             case 34:
                 result = BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile();
             break;
+            #endif
         }
 
         pCtrl->forwardCurrentBranchNode(result);
@@ -37,6 +40,7 @@ namespace pt {
         u16 eventParam = ((u16*)pNode->getCurrentNodeEvent())[5];
 
         switch (eventType) {
+            #if defined USEBLUECOIN && !defined SM64BLUECOIN
             case 30:
                 BlueCoinUtil::spendBlueCoinCurrentFile(eventParam);
             break;
@@ -46,6 +50,7 @@ namespace pt {
             case 32:
                 BlueCoinUtil::setOnBlueCoinFlagCurrentFile(eventParam);
             break;
+            #endif
         }
 
         return pNode->isExistNextNode();
