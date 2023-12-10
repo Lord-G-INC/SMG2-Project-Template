@@ -113,9 +113,11 @@ namespace BlueCoinUtil {
 
     void printBlueCoinSaveFileInfo() {
         char flagstr[3][36];
-  
+        s32 numcoins[3];
+
         for (s32 i = 0; i < 3; i++) {
             flagstr[i][35] = 0;
+            numcoins[i] = 0;
             s32 flagidx = 0;
             
             for (s32 j = 0; j < 35; j++) {
@@ -126,12 +128,17 @@ namespace BlueCoinUtil {
                     flagidx++;
                 }
             }
+
+            for (s32 j = 0; j < 255; j++) {
+                if (gBlueCoinData->collectionData[i][j])
+                    numcoins[i]++;
+            }
         }
 
         OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s\nf1: %s\nf2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
-        getTotalBlueCoinNum(0, false), 
-        getTotalBlueCoinNum(1, false), 
-        getTotalBlueCoinNum(2, false),
+        numcoins[0], 
+        numcoins[1], 
+        numcoins[2],
         flagstr[0],
         flagstr[1],
         flagstr[2],
