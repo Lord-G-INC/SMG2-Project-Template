@@ -35,13 +35,6 @@ namespace pt {
 
 
 	/*
-	* The Green Launch Star is coded to load a model from SuperSpinDriverEmpty.arc. This was used for the transparent model
-	* in SMG1 to mark its position before all green stars are collected. However, we have no use of this property in SMG2,
-	* so we can safely disable this here. This also improves memory usage since this model would be loaded at all times.
-	*/
-	kmWrite32(0x8031E2A4, 0x60000000); // NOP call to initEmptyModel.
-
-	/*
 	* Custom Flag Textures
 	*
 	* Requires a BTI added to the target Flag.arc ending with a number.
@@ -283,10 +276,4 @@ namespace pt {
 	}
 
 	kmCall(0x8010A784, YukkinaKillEnemy);
-
-	s32 textColors[] = {0xFFFFFFFF, 0xDC8282FF, 0x50AA50FF, 0x508CD2FF, 0xEBC800FF, 0xB46EC8FF, 0xFFA064FF, 0xBEBEC8FF0};
-
-	void extTextColors() {
-
-	}
-} 
+}

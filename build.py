@@ -66,7 +66,7 @@ compiler_flags = [
 # Compiler flag for building everything in this workspace
 if "--all" in sys.argv:
     print("Building with all flags true")
-    compiler_flags.append("-DALL -DSMSS -DCA -DSMG63 -DNOGLE -DGSTANDPAD")
+    compiler_flags.append("-DALL -DWIP -DSMSS -DCA -DSMG63 -DNOGLE -DGSTANDPAD")
 
 # Compiler flag for NOT having SuperHackio's project "GalaxyLevelEngine" in your workspace
 if "--nogle" in sys.argv:

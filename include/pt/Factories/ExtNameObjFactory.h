@@ -113,7 +113,7 @@ namespace {
         { "ScrewSwitchReverse", createExtActor<pt::ScrewSwitchReverse> },
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
-        { "SuperSpinDriverGreen", pt::createSuperSpinDriverCustomColor<2> },
+        { "SuperSpinDriverGreen", pt::createSuperSpinDriverCustomColor<1> },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
         { "ValveSwitch", createExtActor<pt::ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<pt::WatchTowerRotateStep>},

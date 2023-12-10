@@ -14,11 +14,11 @@ namespace pt {
 
 	kmCall(0x8029016C, CollapsePlaneInit);
 
-    void CollapsePlaneDecideNerve(CollapsePlane* pActor, const Nerve* pNerve) {
+    void CollapsePlaneDecideNerve(CollapsePlane* pActor) {
         if (pActor->mRespawnTime > -1)
             pActor->setNerve(&NewNrvCollapsePlane::NrvReturn::sInstance);
         else
-            pActor->setNerve(pNerve);
+            pActor->setNerve(&NrvCollapsePlane::CollapsePlaneNrvEnd::sInstance);
     }
 
     kmCall(0x802903D8, CollapsePlaneDecideNerve);
