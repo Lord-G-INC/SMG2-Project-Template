@@ -10,15 +10,16 @@ public:
     //virtual void appear();
     virtual void control();
     void setStarIcon(s32 starID, s32 iconID);
-    void startCountUp(s32 hasAllCoins);
+    void startCountUp(s32 count, bool hasAllCoins);
     void exeAppear();
     void exeAppearWithUpdate();
     void exeDisappear();
     void exeCountUp();
-    void exeCountUpComplete();
+    void exeComplete();
 
     CountUpPaneRumbler* mPaneRumbler;
     s32 mRedCoinCount;
+    bool mHasAllRedCoins;
 };
 
 namespace NrvRedCoinCounter {
@@ -26,6 +27,6 @@ namespace NrvRedCoinCounter {
     NERVE(NrvAppearWithUpdate);
     NERVE(NrvDisappear);
     NERVE(NrvCountUp);
-    NERVE(NrvCountUpComplete);
+    NERVE(NrvComplete);
     NERVE(NrvHide); 
 };

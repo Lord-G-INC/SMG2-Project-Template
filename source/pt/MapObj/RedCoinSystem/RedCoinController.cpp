@@ -58,7 +58,7 @@ void RedCoinController::movement() {
     if (!MR::isHiddenLayout(mRedCoinCounterPlayer))
         calcRedCoinCounterPlayerPos();
         
-    calcCounterVisibility();
+    //calcCounterVisibility();
 
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
@@ -106,12 +106,7 @@ void RedCoinController::startCountUp(LiveActor* pRedCoin) {
     
     mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
 
-    if (mNumCoins == 1) {
-        mRedCoinCounter->setNerve(&NrvRedCoinCounter::NrvAppearWithUpdate::sInstance);
-        mRedCoinCounter->appear();
-    }
-    else
-        mRedCoinCounter->startCountUp(mHasAllRedCoins);
+    mRedCoinCounter->startCountUp(mNumCoins, mHasAllRedCoins);
 
     calcRedCoinCounterPlayerPos();
     MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", mNumCoins);
@@ -149,18 +144,18 @@ void RedCoinController::calcCounterVisibility() {
     bool blueCoin = false;
 
     #if defined USEBLUECOIN && !defined SM64BLUECOIN
-    blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
+        blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
 
-    if (blueCoin) {
-        requestResume();
-        mRedCoinCounter->requestResume();
-    }
+        if (blueCoin) {
+            requestResume();
+            mRedCoinCounter->requestResume();
+        }
     #endif
 
     if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || blueCoin)
-        mRedCoinCounter->setNerve(&NrvRedCoinCounter::NrvDisappear::sInstance);
+        MR::hideLayout(mRedCoinCounter);
     else {
         if (mIsValidCounterAppear)
-            mRedCoinCounter->setNerve(&NrvRedCoinCounter::NrvAppear::sInstance);
+            MR::showLayout(mRedCoinCounter);
     }   
 }
