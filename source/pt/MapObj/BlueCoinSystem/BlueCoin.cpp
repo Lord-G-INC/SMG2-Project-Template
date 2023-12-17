@@ -38,7 +38,12 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
     initHitSensor(1);
-    MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
+
+    #ifdef SMG63
+        MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 120.0f, TVec3f(0.0f, 0.0f, 0.0f));
+    #else
+        MR::addHitSensor(this, "BlueCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
+    #endif
 
     MR::initShadowVolumeSphere(this, 50.0f);
     MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
@@ -102,7 +107,12 @@ void BlueCoin::collect() {
     #ifdef SM64BLUECOIN
     MR::emitEffect(this, "BlueCoinGet"); 
     #else
-    MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet");  
+
+    #if defined SMG63 && !defined ALL 
+        MR::emitEffect(this, "BlueCoinGet"); 
+    #else
+        MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet"); 
+    #endif
 
     if (!BlueCoinUtil::isBlueCoinGotCurrentFile(mID)) {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
@@ -110,7 +120,11 @@ void BlueCoin::collect() {
     }
     #endif
 
-    MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
+    #if defined SMG63 && !defined ALL 
+        MR::startSystemSE("SE_SY_TICO_COIN", -1, -1);
+    #else
+        MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
+    #endif
 
     if (!MR::isGalaxyDarkCometAppearInCurrentStage()) {
         #ifdef SM64BLUECOIN

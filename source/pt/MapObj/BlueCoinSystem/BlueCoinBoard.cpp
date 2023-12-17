@@ -195,7 +195,6 @@ void BlueCoinBoard::exeAppear() {
             mButtons[i]->appear();
         }
 
-
         MR::requestMovementOn(mSysInfoWindowSelect);
         MR::requestMovementOn(mSysInfoWindowBox);
 
