@@ -30,6 +30,7 @@
 #include "sample/PadRecord.h"
 
 // PTD Includes
+#include "pt/AreaObj/ChildSwitchArea.h"
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/MapObj/SwitchBox.h"
 #include "pt/MapObj/RedCoinSystem/RedCoin.h"
@@ -63,6 +64,7 @@ namespace {
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         // AreaObj
+        { "ChildSwitchArea", createExtActor<pt::ChildSwitchArea> },
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
         { "ForbidJumpArea", NameObjFactory::createNameObj<AreaObj> },
         { "ForbidWaterSearchArea", NameObjFactory::createNameObj<AreaObj> },
