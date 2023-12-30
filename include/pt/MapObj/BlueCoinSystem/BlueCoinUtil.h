@@ -4,7 +4,7 @@
 
 /// @brief Structure of the contents of BlueCoinData.bin
 /// @param collectionData Blue Coin Collection Flags
-/// @param flags Blue Coin Board Unlock Flags
+/// @param flags Blue Coin Flags
 /// @param isCompletedBoard Blue Coin Board Full Completion
 /// @param spentData Spent Blue Coin Amounts
 /// @param hasSeenTextBox Has Seen One-Time Text Box

@@ -47,10 +47,8 @@ namespace pt {
         }
         
         #if defined USEBLUECOIN && !defined SM64BLUECOIN
-        if (modelId == 25) {
-            if (BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
+            if (modelId == 25 && BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
                 modelId = 26;
-        }
         #endif
         
         DummyDisplayModelInfo *pInfo = &cNewDummyDisplayModels[modelId - 15];

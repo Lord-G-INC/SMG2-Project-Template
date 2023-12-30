@@ -27,11 +27,17 @@ namespace BlueCoinUtil {
         }
 
         if (code == 0) {
-            u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
+            u8* buffer = new(0x20) u8[BINSIZE];
             code = NANDRead(&info, buffer, BINSIZE);
+
             if (code != 0 && code != BINSIZE) {
-                OSPanic(__FILE__, __LINE__, "BlueCoinData.bin read failed. NANDRead code: %d", code);
+                char* errstr = new char[165];
+                snprintf(errstr, 165, "Blue Coin Read Error\nExpected size of %d\nNANDRead code: %d\nDelete BlueCoinData.bin and try again.\n\nData locations:\nFlags: %d\nBoard: %d\nSpent: %d\nTextbox: %d", BINSIZE, code, FLAGS_LOCATION, BOARD_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
+		        u32 fg = 0xFFFFFFFF;
+                u32 bg = 0;
+                OSFatal(&fg, &bg, errstr);
             }
+
             s32 flagidx = 0;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 255; j++) {
@@ -79,7 +85,7 @@ namespace BlueCoinUtil {
             code = NANDOpen("BlueCoinData.bin", &info, 3);
             if (code == 0) {
                 NANDSeek(&info, 0, 0);
-                u8* buffer = new (JKRHeap::sSystemHeap, 0x20) u8[BINSIZE];
+                u8* buffer = new(0x20) u8[BINSIZE];
                 s32 idx = 0;
                 s32 flagidx = 0;
 
@@ -100,8 +106,14 @@ namespace BlueCoinUtil {
                 
                 code = NANDWrite(&info, buffer, BINSIZE);
 
-                if (code != 0 && code != BINSIZE)
-                    OSPanic(__FILE__, __LINE__, "BlueCoinData.bin write failed. NANDWrite code: %d", code);
+                if (code != 0 && code != BINSIZE) {
+                    char* errstr = new char[132];
+                    snprintf(errstr, 132, "Blue Coin Write Error\nExpected size of %d\nNANDRead code: %d\n\nData locations:\nFlags: %d\nBoard: %d\nSpent: %d\nTextbox: %d", BINSIZE, code, FLAGS_LOCATION, BOARD_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
+		            u32 fg = 0xFFFFFFFF;
+                    u32 bg = 0;
+                    OSFatal(&fg, &bg, errstr);
+                }
+
 
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
@@ -121,7 +133,7 @@ namespace BlueCoinUtil {
             s32 flagidx = 0;
             
             for (s32 j = 0; j < 35; j++) {
-                if (j == 8 || j == 17 || j == 26)
+                if (j == 8 || j == 17 || j == 26) // hoping to solve this with math
                     flagstr[i][j] = 0x20;
                 else {
                     flagstr[i][j] = gBlueCoinData->flags[i][flagidx] ? 0x31 : 0x30;
@@ -150,7 +162,8 @@ namespace BlueCoinUtil {
         gBlueCoinData->spentData[2],
         gBlueCoinData->hasSeenTextBox[0] ? "Yes" : "No",
         gBlueCoinData->hasSeenTextBox[1] ? "Yes" : "No",
-        gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No");
+        gBlueCoinData->hasSeenTextBox[2] ? "Yes" : "No"
+        );
     }
 
     void clearBlueCoinData() {
@@ -183,8 +196,7 @@ namespace BlueCoinUtil {
     }
 
     s32 getCurrentFileNum() {
-        SaveDataHandleSequence *saveDataHandleSequence = GameDataFunction::getSaveDataHandleSequence();
-        return *(s32 *)((char *) (saveDataHandleSequence) + 0x10) - 1;
+        return GameDataFunction::getSaveDataHandleSequence()->mCurrentFileNum-1;
     }
 
     void setBlueCoinGotCurrentFile(u8 id) {

@@ -13,7 +13,8 @@ namespace pt {
 	}
 
 	void setTextBoxArgStringNumberFontRecursive(LayoutActor* pLayout, const char* paneName, s32 num, s32 index) {
-		s32 digits = log10(num)+1;
+		s32 digits = num == 0 ? 1 : log10(num)+1;
+
 		wchar_t* str = new wchar_t[12];
 		swprintf(str, 12, L"\u000E\u000A\u0001%lc%lc%d", 2+digits*2, digits*2, num);
         MR::setTextBoxArgStringRecursive(pLayout, paneName, str, index);
