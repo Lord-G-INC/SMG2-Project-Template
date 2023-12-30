@@ -48,6 +48,6 @@ void SMG63Area::movement() {
 }
 
 const char* SMG63Area::getManagerName() const {
-    return "ForbidWaterSearch";
+    return "SMG63Area";
 }
 #endif

@@ -82,7 +82,7 @@ void WarpArea::movement() {
 	}
 
 	const char* WarpArea::getManagerName() const {
-		return "BindEnd";
+		return "WarpArea";
 	}
 }
 #endif

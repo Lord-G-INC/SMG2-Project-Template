@@ -80,6 +80,6 @@ namespace pt
 
     const char *ChildSwitchArea::getManagerName() const
     {
-        return "Onimasu";
+        return "ChildSwitchArea";
     }
 }

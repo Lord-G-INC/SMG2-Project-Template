@@ -37,6 +37,6 @@ namespace pt {
     }
 
     const char* JumpSwitchArea::getManagerName() const {
-        return "SwitchArea";
+        return "JumpSwitchArea";
     }
 }
