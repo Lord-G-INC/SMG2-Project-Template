@@ -21,13 +21,10 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mNumCoins = 0;
     mElapsed = 0;
     mHasAllRedCoins = false;
-
-    mLastRedCoin = this;
-
     mRewardCoins = false;
-    mPowerStarCheck = 0;
-    mIconID = 0x37;
     mIsValidCounterAppear = false;
+    mRedCoinCounter = 0;
+    mRedCoinPlayerCounter = 0;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -40,25 +37,31 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::joinToGroupArray(this, rIter, "RedCoin", 24);
 
     // Get Obj_args
+    s32 powerStarCheck = 0;
+    s32 iconID = 0x37;
+    s32 layoutMode = -1;
     MR::getJMapInfoArg0NoInit(rIter, &mRewardCoins); // Should the Red Coin increment the coin counter by 2?
-    MR::getJMapInfoArg1NoInit(rIter, &mPowerStarCheck); // Power Star to check for to set the collected star indicator
-    MR::getJMapInfoArg2NoInit(rIter, &mIconID); // PictureFont.brfnt entry to display
+    MR::getJMapInfoArg1NoInit(rIter, &powerStarCheck); // Power Star to check for to set the collected star indicator
+    MR::getJMapInfoArg2NoInit(rIter, &iconID); // PictureFont.brfnt entry to display
+    MR::getJMapInfoArg3NoInit(rIter, &layoutMode);
 
     // Initialize the RedCoinCounter
     mRedCoinCounter = new RedCoinCounter("RedCoinCounter");
     mRedCoinCounter->initWithoutIter();
-    mRedCoinCounter->setStarIcon(mPowerStarCheck, mIconID);
+    mRedCoinCounter->setStarIcon(powerStarCheck, iconID);
+
     // Initialize RedCoinCounterPlayer
-    mRedCoinCounterPlayer = MR::createSimpleLayout("counternumber", "RedCoinCounterPlayer", 1);
-    MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", 0);
-    MR::registerDemoSimpleCastAll(mRedCoinCounterPlayer);
+    mRedCoinPlayerCounter = new RedCoinCounterPlayer("RedCoinCounterPlayer");
+    mRedCoinPlayerCounter->initWithoutIter();
+    
+    if (layoutMode == 0) {
+        mRedCoinCounter->mLayoutMode = 0;
+        mRedCoinCounter->appear();
+    }
 }
 
-void RedCoinController::movement() {
-    if (!MR::isHiddenLayout(mRedCoinCounterPlayer))
-        calcRedCoinCounterPlayerPos();
-        
-    //calcCounterVisibility();
+void RedCoinController::movement() {    
+    calcCounterVisibility();
 
     if (mHasAllRedCoins)
         mElapsed++; // There may be a better way to do this
@@ -67,6 +70,37 @@ void RedCoinController::movement() {
         MR::onSwitchA(this);
         MR::getGroupFromArray(this)->killAll();
     }
+}
+
+// Increases both layouts by 1
+void RedCoinController::startCountUp(LiveActor* pRedCoin) {
+    mNumCoins++;
+    
+    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
+
+    mRedCoinCounter->startCountUp(mNumCoins, mHasAllRedCoins);
+
+    mRedCoinPlayerCounter->mLastRedCoin = pRedCoin;
+    mRedCoinPlayerCounter->mNumCoins = mNumCoins;
+    mRedCoinPlayerCounter->appear();
+}
+
+void RedCoinController::calcCounterVisibility() {
+    bool blueCoin = false;
+
+    #if defined USEBLUECOIN && !defined SM64BLUECOIN
+        blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
+
+        if (blueCoin) {
+            requestResume();
+            mRedCoinCounter->requestResume();
+        }
+    #endif
+
+    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || blueCoin)
+        MR::hideLayout(mRedCoinCounter);
+    else
+        MR::showLayout(mRedCoinCounter);
 }
 
 // This function is unused, but there are plans for
@@ -92,70 +126,8 @@ void RedCoinController::movement() {
 //    mNumCoins = 0;
 //    mIsValidCounterAppear = false;
 //    MR::offSwitchB(this);
-//    MR::stopAnim(mRedCoinCounterPlayer, 0);
+//    MR::stopAnim(mRedCoinPlayerCounter, 0);
 //    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
 //    MR::hideLayout(mRedCoinCounter);
 //    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
 //}
-
-// Increases both layouts by 1
-void RedCoinController::startCountUp(LiveActor* pRedCoin) {
-    mNumCoins++;
-    
-    mLastRedCoin = pRedCoin;
-    
-    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
-
-    mRedCoinCounter->startCountUp(mNumCoins, mHasAllRedCoins);
-
-    calcRedCoinCounterPlayerPos();
-    MR::setTextBoxNumberRecursive(mRedCoinCounterPlayer, "TxtText", mNumCoins);
-    MR::startAnim(mRedCoinCounterPlayer, "Appear", 0);
-    MR::showLayout(mRedCoinCounterPlayer);
-    mRedCoinCounterPlayer->appear();
-}
-
-void RedCoinController::calcRedCoinCounterPlayerPos() {
-    TVec3f pos;
-    TVec3f pos2;
-    f32 heightAdd;
-
-    if (((RedCoin*)mLastRedCoin)->mRedCoinCounterPlayerPos) {
-        pos = *MarioAccess::getPlayerActor()->getGravityVec();
-        pos2 = *MR::getPlayerPos();
-        heightAdd = 200.0f;
-    }
-    else {
-        pos = mLastRedCoin->mGravity;
-        pos2 = mLastRedCoin->mTranslation;
-        heightAdd = 150.0f;
-    }
-
-    TVec2f screenPos;
-    TVec3f newPos;
-
-    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pos2, (Vec*)&newPos, -heightAdd);
-    
-    MR::calcScreenPosition(&screenPos, newPos);
-    mRedCoinCounterPlayer->setTrans(screenPos);
-}
-
-void RedCoinController::calcCounterVisibility() {
-    bool blueCoin = false;
-
-    #if defined USEBLUECOIN && !defined SM64BLUECOIN
-        blueCoin = BlueCoinUtil::isBlueCoinTextBoxAppeared();
-
-        if (blueCoin) {
-            requestResume();
-            mRedCoinCounter->requestResume();
-        }
-    #endif
-
-    if (MR::isPowerStarGetDemoActive() || MR::isDemoActive() || MR::isPlayerDead() || MR::isTimeKeepDemoActive() || MR::isNormalTalking() || MR::isSystemTalking() || blueCoin)
-        MR::hideLayout(mRedCoinCounter);
-    else {
-        if (mIsValidCounterAppear)
-            MR::showLayout(mRedCoinCounter);
-    }   
-}

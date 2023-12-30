@@ -14,15 +14,11 @@
         void startCountUp(LiveActor* pRedCoin);
         void calcCounterVisibility();
         void calcCounterTimer();
-        void calcRedCoinCounterPlayerPos();
     
         RedCoinCounter* mRedCoinCounter;
-        LayoutActor* mRedCoinCounterPlayer;
-        LiveActor* mLastRedCoin;
+        RedCoinCounterPlayer* mRedCoinPlayerCounter;
         s32 mNumCoins;
         s32 mElapsed;
-        s32 mPowerStarCheck; // Obj_arg1
-        s32 mIconID; // Obj_arg2
 
         bool mRewardCoins; // Obj_arg0
         bool mHasAllRedCoins;

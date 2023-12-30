@@ -90,11 +90,11 @@ void RedCoin::initAfterPlacement() {
 
 
 void RedCoin::control() {
-    if (MR::isOnSwitchB(this) && MR::isHiddenModel(this) && !mIsCollected) {
-        mElapsed++;
-        
-    if (mElapsed >= mAppearDelay)
-        appearAndMove();
+    if (MR::isOnSwitchB(this) && !mIsCollected) {
+        if (mElapsed == mAppearDelay)
+            appearAndMove();
+
+    mElapsed++;
     }
 
     if (MR::isOnSwitchB(this))

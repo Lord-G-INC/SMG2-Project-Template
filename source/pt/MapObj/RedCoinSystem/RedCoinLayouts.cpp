@@ -1,8 +1,10 @@
 #include "pt/MapObj/RedCoinSystem/RedCoinLayouts.h"
+#include "pt/MapObj/RedCoinSystem/RedCoin.h"
 
 RedCoinCounter::RedCoinCounter(const char* pName) : LayoutActor(pName, false) {
     mPaneRumbler = 0;
     mRedCoinCount = 0;
+    mLayoutMode = -1;
     mHasAllRedCoins = 0;
 }
 
@@ -26,9 +28,23 @@ void RedCoinCounter::control() {
     mPaneRumbler->update();
 }
 
+void RedCoinCounter::appear() {
+    setNerve(&NrvRedCoinCounter::NrvAppear::sInstance);
+    LayoutActor::appear();
+}
+
 void RedCoinCounter::setStarIcon(s32 starID, s32 iconID) {
+
+    if (starID == 0) {
+        iconID = 0x52;
+    }
+    else {
+        if (!MR::hasPowerStarInCurrentStage(starID))
+            iconID = 0x52;
+    }
+
     wchar_t str;
-    MR::addPictureFontCode(&str, MR::hasPowerStarInCurrentStage(starID) ? iconID : 0x52);
+    MR::addPictureFontCode(&str, iconID);
     MR::setTextBoxFormatRecursive(this, "TxtStar", &str);
 }
 
@@ -36,8 +52,8 @@ void RedCoinCounter::startCountUp(s32 count, bool hasAllCoins) {
     mRedCoinCount = count;
     mHasAllRedCoins = hasAllCoins;
 
-    if (mRedCoinCount == 1) {
-        appear();
+    if (mRedCoinCount == 1 && mLayoutMode == -1) {
+        LayoutActor::appear();
         setNerve(&NrvRedCoinCounter::NrvAppearWithUpdate::sInstance);
     }
     else 
@@ -55,7 +71,6 @@ void RedCoinCounter::exeAppearWithUpdate() {
     if (MR::isFirstStep(this)) {
         MR::startAnim(this, "Appear", 0);
         MR::startAnim(this, "Wait", 1);
-        OSReport("Yes\n");
     }
 
     if (MR::isStep(this, 30))
@@ -121,4 +136,75 @@ namespace NrvRedCoinCounter {
     NrvCountUp(NrvCountUp::sInstance);
     NrvComplete(NrvComplete::sInstance);
     NrvHide(NrvHide::sInstance);
+}
+
+RedCoinCounterPlayer::RedCoinCounterPlayer(const char* pName) : LayoutActor(pName, false) {
+    mLastRedCoin = 0;
+    mNumCoins = 0;
+}
+
+void RedCoinCounterPlayer::init(const JMapInfoIter& rIter) {
+    initLayoutManager("RedCoinCounterPlayer", 2);
+    MR::registerDemoSimpleCastAll(this);
+    MR::connectToSceneLayout(this);
+    MR::createAndAddPaneCtrl(this, "Text00", 1);
+    MR::setTextBoxNumberRecursive(this, "Text00", 0);
+    initNerve(&NrvRedCoinCounterPlayer::NrvHide::sInstance);
+}
+
+void RedCoinCounterPlayer::appear() {
+    setNerve(&NrvRedCoinCounterPlayer::NrvAppear::sInstance);
+    LayoutActor::appear();
+}
+
+void RedCoinCounterPlayer::kill() {
+    setNerve(&NrvRedCoinCounterPlayer::NrvHide::sInstance);
+    LayoutActor::kill();
+}
+
+void RedCoinCounterPlayer::exeAppear() {
+    calcScreenPos();
+
+    if (MR::isFirstStep(this)) {
+        MR::startAnim(this, "Appear", 0);
+        MR::setTextBoxNumberRecursive(this, "TxtText", mNumCoins);
+    }
+    
+    MR::killAtAnimStopped(this, 0);
+}
+ 
+void RedCoinCounterPlayer::calcScreenPos() {
+    TVec3f pos;
+    TVec3f pos2;
+    f32 heightAdd;
+
+    if (((RedCoin*)mLastRedCoin)->mRedCoinCounterPlayerPos) {
+        pos = *MarioAccess::getPlayerActor()->getGravityVec();
+        pos2 = *MR::getPlayerPos();
+        heightAdd = 200.0f;
+    }
+    else {
+        pos = mLastRedCoin->mGravity;
+        pos2 = mLastRedCoin->mTranslation;
+        heightAdd = 150.0f;
+    }
+
+    TVec2f screenPos;
+    TVec3f newPos;
+
+    JMAVECScaleAdd((Vec*)&pos, (Vec*)&pos2, (Vec*)&newPos, -heightAdd);
+    
+    MR::calcScreenPosition(&screenPos, newPos);
+    setTrans(screenPos);
+}
+
+namespace NrvRedCoinCounterPlayer {
+    void NrvRedCoinCounterPlayer::NrvHide::execute(Spine* pSpine) const {}
+
+    void NrvRedCoinCounterPlayer::NrvAppear::execute(Spine* pSpine) const {
+        ((RedCoinCounterPlayer*)pSpine->mExecutor)->exeAppear();
+    }
+
+    NrvHide(NrvHide::sInstance);
+    NrvAppear(NrvAppear::sInstance);
 }
