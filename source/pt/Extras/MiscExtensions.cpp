@@ -251,7 +251,6 @@ namespace pt {
 	#if defined (SMG63) || defined (ALL)
 	void SnowBallDieInWater(LiveActor* pActor, const TVec3f& rPos1, const TVec3f& rPos2) {
 		MR::makeMtxUpNoSupportPos(&((TMtx34f*)pActor)[0x3], rPos1, rPos2);
-
 		if (MR::isInWater(pActor->mTranslation)) {
 			AreaObj* pArea = MR::getAreaObj("WaterArea", pActor->mTranslation);
 
@@ -264,7 +263,6 @@ namespace pt {
 	kmWrite32(0x80301C64, 0x7FA3EB78);
 	kmCall(0x80301C6C, SnowBallDieInWater);
 	#endif
-
 
 	bool YukkinaKillEnemy(HitSensor* pReceiver, HitSensor* pSender) {
 		bool isSensorPlayer = MR::isSensorPlayer(pReceiver);

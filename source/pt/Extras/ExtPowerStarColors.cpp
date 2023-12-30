@@ -197,12 +197,13 @@ namespace pt {
 #ifdef NOGLE
 	const char* starParticleStr[3] = {"Light", "LightBronze", "LightGreen"};
 	void greenStarAppearParticleFix(PowerStar* pActor) {
-		s32 color = pActor->mColor;
+		s32 color = 0;
 
-		if (color > 2)
-			color = 0;
+		if (color == 1 || color == 2)
+			color = pActor->mColor;
 
-		MR::emitEffect(pActor, starParticleStr[pActor->mColor]);
+
+		MR::emitEffect(pActor, starParticleStr[color]);
 	}
 
 	kmCall(0x802E0870, greenStarAppearParticleFix);
