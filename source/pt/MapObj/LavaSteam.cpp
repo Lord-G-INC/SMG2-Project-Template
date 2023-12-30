@@ -35,9 +35,26 @@ void LavaSteam::initAfterPlacement() {
 }
 
 void LavaSteam::attackSensor(HitSensor* pSender, HitSensor* pReceiver) {
-    if (isNerve(&NrvLavaSteam::HostTypeWait::sInstance) && isNerve(&NrvLavaSteam::HostTypeWaitForSwitchOn::sInstance)) {
+    f32 float_31;
+    
+    if (!isNerve(&NrvLavaSteam::HostTypeWait::sInstance) && !isNerve(&NrvLavaSteam::HostTypeWaitForSwitchOn::sInstance)) {
         if (MR::isSensorPlayerOrRide(pReceiver)) {
-            
+            float_31 = 0.69999999*pReceiver->mRadius;
+
+            if (isNerve(&NrvLavaSteam::HostTypeSteam::sInstance)){
+                _90*400.0f;
+                TVec3f test = mTranslation;
+                __asm {
+                    psq_l     f1, 0x30(r1), 0, 0
+                    psq_l     f0, 0(r4), 0, 0
+                    psq_l     f2, 8(r4), 1, 0
+                    ps_add    f0, f0, f1
+                    psq_l     f3, 0x38(r1), 1, 0
+                    ps_add    f1, f2, f3
+                    psq_st    f0, 0(r4), 0, 0
+                    psq_st    f1, 8(r4), 1, 0
+                }
+            }
         }
     }
 }
