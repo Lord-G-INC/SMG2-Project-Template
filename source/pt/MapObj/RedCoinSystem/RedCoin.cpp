@@ -161,6 +161,7 @@ void RedCoin::collect() {
         mAirBubble->kill();
     }
     
+    JUTReportConsole("Yes\n");
     // Only ever increment coins once.
     if (!mHasRewardedCoins && !MR::isGalaxyDarkCometAppearInCurrentStage()) {
         MR::incPlayerLife(1);
