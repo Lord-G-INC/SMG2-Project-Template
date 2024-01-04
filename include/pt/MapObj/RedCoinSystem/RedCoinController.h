@@ -4,7 +4,6 @@
     #include "Game/Screen/CountUpPaneRumbler.h"
     #include "pt/MapObj/RedCoinSystem/RedCoin.h"
     #include "pt/MapObj/RedCoinSystem/RedCoinLayouts.h"
-    #include "nw4r/ut/TextWriterBase.h"
 
     class RedCoinController : public LiveActor {
     public:

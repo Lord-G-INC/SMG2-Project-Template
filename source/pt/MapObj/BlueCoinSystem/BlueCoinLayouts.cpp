@@ -2,6 +2,7 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
+#include "nw4r/ut/TextWriterBase.h"
 
 // HUD
 
@@ -44,6 +45,14 @@ void BlueCoinCounter::control() {
 
     mAppearer->updateNerve();
     mPaneRumbler->update();
+
+    const wchar_t* pStr = L"123";
+    nw4r::ut::TextWriterBase<wchar_t> writer = nw4r::ut::TextWriterBase<wchar_t>();
+    writer.SetFont(*MR::getFontOnCurrentLanguage());
+    writer.SetFontSize(32.0f);
+    writer.SetupGX();
+    OSReport("X: %f, Y: %f, len: %f\n", writer.GetCursorX(), writer.GetCursorY(), writer.Printf(pStr));
+    writer.~TextWriterBase();
 }
 
 void BlueCoinCounter::exeAppear() {

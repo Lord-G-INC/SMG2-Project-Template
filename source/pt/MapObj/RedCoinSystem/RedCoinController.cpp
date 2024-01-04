@@ -70,17 +70,6 @@ void RedCoinController::movement() {
         MR::onSwitchA(this);
         MR::getGroupFromArray(this)->killAll();
     }
-
-    const char* pStr = "This is big test";
-    nw4r::ut::TextWriterBase<char> writer = nw4r::ut::TextWriterBase<char>();
-    writer.SetFont(*MR::getFontOnCurrentLanguage());
-    writer.SetFontSize(64.0f, 64.0f);
-    writer.ResetColorMapping();
-    writer.MoveCursorX(writer.CalcStringWidth(pStr, 16));
-    writer.SetupGX();
-    writer.Print(pStr, 16);
-    OSReport("X: %f, Y: %f\n", writer.GetCursorX(), writer.GetCursorY());
-    writer.~TextWriterBase();
 }
 
 // Increases both layouts by 1
