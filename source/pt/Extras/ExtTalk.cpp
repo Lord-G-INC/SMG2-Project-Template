@@ -21,9 +21,6 @@ namespace pt {
             case 33: 
                 result = BlueCoinUtil::isOnBlueCoinFlagCurrentFile(condParam);
             break;
-            case 34:
-                result = BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile();
-            break;
             #endif
         }
 

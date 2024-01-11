@@ -220,7 +220,7 @@ void BlueCoinBoard::exeAppear() {
             MR::showPaneRecursive(this, "TextComplete");
             MR::hidePaneRecursive(this, "BlueCoinCounter");
 
-            if (BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile())
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(8))
                 MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_Complete");
             else
                 MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_AllSpent");
@@ -349,7 +349,7 @@ void BlueCoinBoard::exeConfirmUnlock() {
     }
 
     if (MR::isDead(mSysInfoWindowSelect)) {
-        if (mSysInfoWindowSelect->isSelectedYes() && !BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
+        if (mSysInfoWindowSelect->isSelectedYes() && !BlueCoinUtil::isOnBlueCoinFlagCurrentFile(8)) {
             
             if (BlueCoinUtil::getTotalBlueCoinNumCurrentFile(true) >= priceFromTable)
                 setNerve(&NrvBlueCoinBoard::NrvCountDownBlueCoin::sInstance);
@@ -442,7 +442,7 @@ void BlueCoinBoard::exeConfirmPlayStage() {
 void BlueCoinBoard::checkBoardProgress() {
     s32 completedStages = 0;
 
-    if (!BlueCoinUtil::isBlueCoinBoardCompletedCurrentFile()) {
+    if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile(8)) {
         for (s32 i = 0; i < 8; i++) {
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
                 const char* nameFromTable;
@@ -456,7 +456,7 @@ void BlueCoinBoard::checkBoardProgress() {
         }
 
         if (completedStages == 8)
-            BlueCoinUtil::setBlueCoinBoardCompletedCurrentFile();
+            BlueCoinUtil::setOnBlueCoinFlagCurrentFile(8);
     }
 
 }

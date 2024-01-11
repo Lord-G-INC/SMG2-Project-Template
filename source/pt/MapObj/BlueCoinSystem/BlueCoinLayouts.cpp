@@ -2,7 +2,6 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
-#include "nw4r/ut/TextWriterBase.h"
 
 // HUD
 
@@ -45,29 +44,7 @@ void BlueCoinCounter::control() {
 
     mAppearer->updateNerve();
     mPaneRumbler->update();
-
-    const char* pStr = "this is test";
-    nw4r::ut::TextWriterBase<char> writer = nw4r::ut::TextWriterBase<char>();
-    writer.SetupGX();
-    writer.SetFont(*MR::getFontOnCurrentLanguage());    
-    //writer.UpdateVertexColor();
-    writer.ResetColorMapping();
-    writer.SetFontSize(32.0f, 32.0f);
-    writer.Printf(pStr);
-    //writer.MoveCursorY(33.0f);
-    //OSReport("X: %f, Y: %f, len: %f\n", writer.GetCursorX(), writer.GetCursorY(), writer.Printf(pStr));
-    writer.~TextWriterBase();
 }
-
-f32 test(nw4r::ut::TextWriterBase<char>* writer, u16 u) {
-    const char* pStr;
-    asm("mr %0, r23" : "=r" (pStr));
-    f32 len = ((nw4r::ut::CharWriter*)writer)->Print(u);
-    OSReport("pStr: %s, X: %f, Y: %f, len: %f, u: 0x%x\n", pStr, writer->GetCursorX(), writer->GetCursorY(), len, u);
-    return len;
-}
-
-kmCall(0x805A23F0, test);
 
 void BlueCoinCounter::exeAppear() {
     if (MR::isFirstStep(this) || MR::isStep(this, 1) && mAppearer->isDisappeared()) {

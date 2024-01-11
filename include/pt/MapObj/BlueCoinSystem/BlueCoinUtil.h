@@ -5,13 +5,11 @@
 /// @brief Structure of the contents of BlueCoinData.bin
 /// @param collectionData Blue Coin Collection Flags
 /// @param flags Blue Coin Flags
-/// @param isCompletedBoard Blue Coin Board Full Completion
 /// @param spentData Spent Blue Coin Amounts
 /// @param hasSeenTextBox Has Seen One-Time Text Box
 struct BlueCoinData {
     bool** collectionData;
     bool flags[3][32];
-    bool isCompletedBoard[3];
     u8 spentData[3];
     bool hasSeenTextBox[3];
 };
@@ -93,13 +91,6 @@ namespace BlueCoinUtil {
     /// @brief Returns the total number of spent blue coins on the currrent file.
     /// @return s32
     s32 getSpentBlueCoinNumCurrentFile();
-
-    /// @brief Checks if the Blue Board Completed flag on the current save file is true
-    /// @return bool
-    bool isBlueCoinBoardCompletedCurrentFile();
-
-    /// @brief Sets the Blue Board Completed flag on the current save file to true
-    void setBlueCoinBoardCompletedCurrentFile();
 
     /// @brief Gets the collected number of collected blue coins.
     /// @param file 

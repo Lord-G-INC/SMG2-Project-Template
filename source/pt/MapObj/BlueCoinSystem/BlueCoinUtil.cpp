@@ -9,12 +9,11 @@ BlueCoinData* gBlueCoinData;
 
 void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
-#define BINSIZE 870
+#define BINSIZE 867
 
 #define FLAGS_LOCATION 765
-#define BOARD_LOCATION 861
-#define SPENT_LOCATION 864
-#define TEXTBOX_LOCATION 867
+#define SPENT_LOCATION 861
+#define TEXTBOX_LOCATION 864
 
 namespace BlueCoinUtil {
     void loadBlueCoinData() {
@@ -30,9 +29,12 @@ namespace BlueCoinUtil {
             u8* buffer = new(0x20) u8[BINSIZE];
             code = NANDRead(&info, buffer, BINSIZE);
 
-            if (code != 0 && code != BINSIZE) {
-                char* errstr = new char[165];
-                snprintf(errstr, 165, "Blue Coin Read Error\nExpected size of %d\nNANDRead code: %d\nDelete BlueCoinData.bin and try again.\n\nData locations:\nFlags: %d\nBoard: %d\nSpent: %d\nTextbox: %d", BINSIZE, code, FLAGS_LOCATION, BOARD_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
+            u32 size;
+            NANDGetLength(&info, &size);
+
+            if (code != size) {
+                char* errstr = new char[180];
+                snprintf(errstr, 180, "Blue Coin Read Error\nExpected size of %d\nGot size %d\nNANDRead code: %d\nDelete or hex edit BlueCoinData.bin and try again.\n\nData locations:\nFlags: %d\nSpent: %d\nTextbox: %d", BINSIZE, size, code, FLAGS_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
 		        u32 fg = 0xFFFFFFFF;
                 u32 bg = 0;
                 OSFatal(&fg, &bg, errstr);
@@ -53,7 +55,6 @@ namespace BlueCoinUtil {
             }
 
             for (s32 i = 0; i < 3; i++) {
-                gBlueCoinData->isCompletedBoard[i] = (bool)buffer[(BOARD_LOCATION-765)+i];
                 gBlueCoinData->spentData[i] = buffer[(SPENT_LOCATION-765)+i];
                 gBlueCoinData->hasSeenTextBox[i] = (bool)buffer[(TEXTBOX_LOCATION-765)+i];
 
@@ -90,7 +91,6 @@ namespace BlueCoinUtil {
                 s32 flagidx = 0;
 
                 for (int i = 0; i < 3; i++) {
-                    buffer[BOARD_LOCATION+i] = gBlueCoinData->isCompletedBoard[i];
                     buffer[SPENT_LOCATION+i] = gBlueCoinData->spentData[i];
                     buffer[TEXTBOX_LOCATION+i] = (bool)gBlueCoinData->hasSeenTextBox[i];
 
@@ -106,14 +106,13 @@ namespace BlueCoinUtil {
                 
                 code = NANDWrite(&info, buffer, BINSIZE);
 
-                if (code != 0 && code != BINSIZE) {
-                    char* errstr = new char[132];
-                    snprintf(errstr, 132, "Blue Coin Write Error\nExpected size of %d\nNANDRead code: %d\n\nData locations:\nFlags: %d\nBoard: %d\nSpent: %d\nTextbox: %d", BINSIZE, code, FLAGS_LOCATION, BOARD_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
+                if (code != BINSIZE) {
+                    char* errstr = new char[180];
+                    snprintf(errstr, 180, "Blue Coin Write Error\nExpected size of %d\nNANDRead code: %d\n\nData locations:\nFlags: %d\nSpent: %d\nTextbox: %d", BINSIZE, code, FLAGS_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
 		            u32 fg = 0xFFFFFFFF;
                     u32 bg = 0;
                     OSFatal(&fg, &bg, errstr);
                 }
-
 
                 delete [] buffer;
                 OSReport("(BlueCoinUtil) BlueCoinData.bin successfully saved.\n");
@@ -147,16 +146,13 @@ namespace BlueCoinUtil {
             }
         }
 
-        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s\nf1: %s\nf2: %s\ncb0: %s, cb1: %s, cb2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
+        OSReport("Blue Coin save file info\nc0: %d, c1: %d, c2: %d\nf0: %s\nf1: %s\nf2: %s\ns0: %d, s1: %d, s2: %d\nm0: %s, m1: %s, m2: %s\n", 
         numcoins[0], 
         numcoins[1], 
         numcoins[2],
         flagstr[0],
         flagstr[1],
         flagstr[2],
-        gBlueCoinData->isCompletedBoard[0] ? "Yes" : "No",
-        gBlueCoinData->isCompletedBoard[1] ? "Yes" : "No",
-        gBlueCoinData->isCompletedBoard[2] ? "Yes" : "No",
         gBlueCoinData->spentData[0],
         gBlueCoinData->spentData[1],
         gBlueCoinData->spentData[2],
@@ -189,7 +185,6 @@ namespace BlueCoinUtil {
             gBlueCoinData->collectionData[i] = new bool[255];
             memset(gBlueCoinData->collectionData[i], 0, 255);
             gBlueCoinData->hasSeenTextBox[i] = 0;
-            gBlueCoinData->isCompletedBoard[i] = 0;
             gBlueCoinData->spentData[i] = 0;
         }
         OSReport("(BlueCoinUtil) Blue Coin array initalization complete.\n");
@@ -233,7 +228,6 @@ namespace BlueCoinUtil {
     void resetAllBlueCoin(u8 file) {
         file--;
         memset(gBlueCoinData->collectionData[file], 0, 255);
-        gBlueCoinData->isCompletedBoard[file] = 0;
         gBlueCoinData->spentData[file] = 0;
         gBlueCoinData->hasSeenTextBox[file] = 0;
 
@@ -286,14 +280,6 @@ namespace BlueCoinUtil {
 
     s32 getTotalBlueCoinNumCurrentFile(bool ignoreSpent) {
         return getTotalBlueCoinNum(getCurrentFileNum(), ignoreSpent);
-    }
-
-    bool isBlueCoinBoardCompletedCurrentFile() {
-        return gBlueCoinData->isCompletedBoard[getCurrentFileNum()];
-    }
-
-    void setBlueCoinBoardCompletedCurrentFile() {
-        gBlueCoinData->isCompletedBoard[getCurrentFileNum()] = true;
     }
 
     void startCounterCountUp() {
