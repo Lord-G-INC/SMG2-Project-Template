@@ -1,6 +1,5 @@
 #include "pt/Extras/ExtAreaObjManager.h"
 
-
 void ExtAreaObjManagers(AreaObjMgr* pManager, AreaObjContainer* pContainer, const JMapInfoIter& rIter, s32 l) {
     pManager->init(rIter);
     pContainer->mManagers.assign(pManager, pContainer->mNumManagers++);

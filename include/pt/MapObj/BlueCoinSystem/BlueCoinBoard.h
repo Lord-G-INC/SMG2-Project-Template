@@ -24,6 +24,7 @@ public:
     void exeChangeButtonText();
     void exeConfirmPlayStage();
     void checkBoardProgress();
+    void connectButtonsToDPad();
 
     ButtonPaneController* mButtons[8];
     SysInfoWindow* mSysInfoWindowSelect;

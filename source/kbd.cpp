@@ -1,3 +1,4 @@
+#ifdef KBD
 #include "revolution.h"
 extern "C" {
     s32 IOS_Ioctl(s32, s32, void *, u32, void *, u32);
@@ -251,4 +252,4 @@ int kbdver()
 {
 	return libkbdver;
 }
-
+#endif

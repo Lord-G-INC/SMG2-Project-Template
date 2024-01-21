@@ -89,9 +89,8 @@ namespace NrvBlueCoinSign {
 BlueCoinBoard::BlueCoinBoard(const char* pName) : LayoutActor(pName, 0) {
     for (s32 i = 0; i < 8; i++) {
         mButtons[i] = 0;
-        mButtonFollowPositions[i] = TVec2f(0.0f, 0.0f);
+        mButtonFollowPositions[i] = TVec2f(120.0f, 0.0f);
     }
-
     mSysInfoWindowSelect = 0;
     mSysInfoWindowBox = 0;
     mBlueCoinPaneRumbler = 0;
@@ -132,7 +131,7 @@ void BlueCoinBoard::init(const JMapInfoIter& rIter) {
     MR::createAndAddPaneCtrl(this, "Misc", 1);
     MR::createAndAddPaneCtrl(this, "StarCounter", 1);
     MR::createAndAddPaneCtrl(this, "BlueCoinCounter", 1);
-    
+
     MR::setFollowPos(&mBlueCoinCounterFollowPos, this, "BlueCoinCounter");
 
     for (s32 i = 0; i < 8; i++) {
@@ -268,6 +267,8 @@ void BlueCoinBoard::exeSelecting() {
 
     if (mBackButton->_30)
         setNerve(&NrvBlueCoinBoard::NrvDisappear::sInstance);
+
+    connectButtonsToDPad();
 
     if (!MR::isFirstStep(this)) {
         if (pointedButton > -1) {
@@ -459,6 +460,38 @@ void BlueCoinBoard::checkBoardProgress() {
             BlueCoinUtil::setOnBlueCoinFlagCurrentFile(8);
     }
 
+}
+
+// This is what happens when I am not given any symbol names
+void BlueCoinBoard::connectButtonsToDPad() {
+    #if defined (USA) || defined (PAL) || defined (JPN)
+    if (StarPointerUtil::sub_8005E720(this, 1)) {
+        //192.3 424.0 TARGET
+        //406.0, 228.0 CENTER POINT
+        //CENTER POINT - TARGET = NEW POS
+        TVec2f vec = TVec2f(-213.7f, 196.0f);
+        StarPointerUtil::addStarPointerMovePositionFromPane(this, "Counter", &vec);
+
+        for (s32 i = 0; i < 8; i++) {
+            StarPointerUtil::addStarPointerMovePositionFromPane(this, mBoxButtonName[i], StarPointerUtil::getDefaultButtonOffsetVec2());
+        }
+
+        for (s32 i = 0; i < 3; i++) {
+            StarPointerUtil::setConnectionMovePositionDown2Way(mBoxButtonName[i*2], mBoxButtonName[(i*2)+2]);
+            StarPointerUtil::setConnectionMovePositionDown2Way(mBoxButtonName[(i*2)+1], mBoxButtonName[(i*2)+3]);
+        }
+
+        for (s32 i = 0; i < 4; i++) {
+            StarPointerUtil::setConnectionMovePositionRight2Way(mBoxButtonName[i*2], mBoxButtonName[(i*2)+1]);
+        }
+    }
+    
+    StarPointerUtil::setConnectionMovePositionRight2Way("Counter", mBoxButtonName[6]);
+
+    StarPointerUtil::setDefaultAllMovePosition(mBoxButtonName[0]);
+    StarPointerUtil::sub_8005E940(this);
+    StarPointerUtil::sub_8005E790(this);
+    #endif
 }
 
 namespace NrvBlueCoinBoard {

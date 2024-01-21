@@ -174,4 +174,37 @@ kmWrite32(0x80487CA4, 0x7C641B78); // mr r4, r3 (isValid into r4)
 kmWrite32(0x80487CA8, 0x7FE3FB78); // mr r3, r31 (PauseMenu* into r3)
 kmCall(0x80487CAC, DoNewButtonAction); // Call
 kmWrite32(0x80487CB0, 0x48000008); // b 0x8 (Skip useless instructions)
+
+#if defined (USA) || defined (PAL) || defined (JPN)
+void addStarPointerMovePositionNewButton(PauseMenu* pPauseMenu, const char* pStr, TVec2f* pOffsetVec) {
+    StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, pStr, pOffsetVec);
+
+    if (pPauseMenu->mButtonNew)
+        StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, "BoxButton4", pOffsetVec);
+}
+
+kmCall(0x804875F0, addStarPointerMovePositionNewButton);
+
+void setupNewConnection1to2(PauseMenu* pPauseMenu) {
+    if (pPauseMenu->mButtonNew)
+        StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton4", "BoxButton2");
+
+    StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton1", "BoxButton2");
+}
+
+kmWrite32(0x80487640, 0x60000000);
+kmWrite32(0x80487644, 0x7FC3F378);
+kmCall(0x80487648, setupNewConnection1to2);
+
+void setupButtonConnection(PauseMenu* pPauseMenu) {
+    StarPointerUtil::setDefaultAllMovePosition("BoxButton1");
+
+    if (pPauseMenu->mButtonTop && pPauseMenu->mButtonNew) {
+        StarPointerUtil::setConnectionMovePositionRight2Way("BoxButton1", "BoxButton4");
+    }
+}
+
+kmWrite32(0x804876C0, 0x7FC3F378); // mr r3, r30
+kmCall(0x804876C4, setupButtonConnection);
+#endif
 #endif

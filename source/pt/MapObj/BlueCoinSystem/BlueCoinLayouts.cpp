@@ -28,6 +28,7 @@ void BlueCoinCounter::init(const JMapInfoIter& rIter) {
     initNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     MR::hideLayout(this);
 
+
     if (!BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile()) {
         mSysInfoWindow = MR::createSysInfoWindowMiniExecuteWithChildren();
         MR::connectToSceneLayout(mSysInfoWindow);

@@ -107,6 +107,10 @@ if "--sm64bluecoin" in sys.argv:
 if "--gstandpad" in sys.argv:
     print("Building with Aurum's GST and PAD recording systems")
     compiler_flags.append("-DGSTANDPAD")
+
+if "--kbd" in sys.argv:
+    print("Building with experimental keyboard input functionality")
+    compiler_flags.append("-DKBD")
     
 
 assembler_flags = [
