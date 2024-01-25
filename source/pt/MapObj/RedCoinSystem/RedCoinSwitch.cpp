@@ -24,7 +24,7 @@ void RedCoinSwitch::init(const JMapInfoIter& rIter) {
     MR::initCollisionParts(this, "RedCoinSwitch", getSensor("Switch"), (MtxPtr)getBaseMtx());
     MR::getJMapInfoArg0NoInit(rIter, &mTime);
     MR::getJMapInfoArg1NoInit(rIter, &mCollectedPowerStar);
-    MR::getJMapInfoArg4NoInit(rIter, &mIsKillPlayer);
+    MR::getJMapInfoArg4NoInit(rIter, &mIsNotKillPlayer);
 
     mTimeLimitLayout = new TimeLimitLayout(1);
     MR::connectToSceneLayout(mTimeLimitLayout);
@@ -55,7 +55,7 @@ void RedCoinSwitch::exeOn() {
 
 void RedCoinSwitch::control() {
     if (mTimeLimitLayout->isReadyToTimeUp()) {
-        if (this->mIsKillPlayer) 
+        if (!this->mIsNotKillPlayer) 
             MR::forceKillPlayerByGroundRace();
         else if (MR::isValidSwitchA(this)) 
             MR::offSwitchA(this);

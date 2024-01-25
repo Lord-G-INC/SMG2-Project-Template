@@ -15,5 +15,5 @@ public:
     bool isOn;
     s32 mTime;
     s32 mCollectedPowerStar;
-    bool mIsKillPlayer;
+    bool mIsNotKillPlayer;
 };
