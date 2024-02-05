@@ -107,23 +107,19 @@ void BlueCoin::collect() {
     #ifdef SM64BLUECOIN
     MR::emitEffect(this, "BlueCoinGet"); 
     #else
-
+    
     #if defined SMG63 && !defined ALL 
         MR::emitEffect(this, "BlueCoinGet"); 
+        MR::startSystemSE("SE_SY_TICO_COIN", -1, -1);
     #else
         MR::emitEffect(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClearGet" : "BlueCoinGet"); 
+        MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1);     
     #endif
 
     if (!BlueCoinUtil::isBlueCoinGotCurrentFile(mID)) {
         BlueCoinUtil::setBlueCoinGotCurrentFile(mID);
         BlueCoinUtil::startCounterCountUp();
     }
-    #endif
-
-    #if defined SMG63 && !defined ALL 
-        MR::startSystemSE("SE_SY_TICO_COIN", -1, -1);
-    #else
-        MR::startSystemSE("SE_SY_PURPLE_COIN", -1, -1); 
     #endif
 
     if (!MR::isGalaxyDarkCometAppearInCurrentStage()) {

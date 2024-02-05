@@ -468,7 +468,7 @@ void BlueCoinBoard::connectButtonsToDPad() {
     if (StarPointerUtil::sub_8005E720(this, 1)) {
         //192.3 424.0 TARGET
         //406.0, 228.0 CENTER POINT
-        //CENTER POINT - TARGET = NEW POS
+        //TARGET - CENTER POINT = NEW POS
         TVec2f vec = TVec2f(-213.7f, 196.0f);
         StarPointerUtil::addStarPointerMovePositionFromPane(this, "Counter", &vec);
 

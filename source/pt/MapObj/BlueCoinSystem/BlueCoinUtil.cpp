@@ -283,7 +283,7 @@ namespace BlueCoinUtil {
     }
 
     void startCounterCountUp() {
-        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
+        MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->startCountUp();
     }
 
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly) {
