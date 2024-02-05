@@ -245,6 +245,7 @@ kmCall(0x80487188, setPauseMenuBlueCoinCount);
 
 void initBlueCoinCounterFileInfo(LayoutActor* pLayout) {
     MR::connectToSceneLayout(pLayout);
+    MR::showPaneRecursive(pLayout, "BlueCoinFileInfo");
     MR::setTextBoxFormatRecursive(pLayout, "ShaBlueCoinFileInfo", counterPictureFonts);
 }
 

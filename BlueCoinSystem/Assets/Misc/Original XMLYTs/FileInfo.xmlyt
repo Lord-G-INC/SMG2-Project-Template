@@ -1,0 +1,1617 @@
+<?xml version="1.0" encoding="utf-8"?>
+		<xmlyt version="2.1.12BETA" brlyt_version="000a">
+			<tag type="lyt1">
+				<drawnFromMiddle>01</drawnFromMiddle>
+				<size>
+					<width>608.000000</width>
+					<height>456.000000</height>
+				</size>
+			</tag>
+			<tag type="txl1">
+				<entries>
+					<name>MyDotLine.tpl</name>
+					<name>MyFileInfoNumber.tpl</name>
+					<name>MyWindowFileInfo.tpl</name>
+				</entries>
+			</tag>
+			<tag type="fnl1">
+				<entries>
+					<name>MessageFont26.brfnt</name>
+					<name>NumberFont.brfnt</name>
+					<name>PictureFont.brfnt</name>
+				</entries>
+			</tag>
+			<tag type="mat1">
+				<entries name="PicFileInfoC">
+					<colors>
+						<forecolor r="255" g="120" b="120" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>1.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="PicFileInfoR">
+					<colors>
+						<forecolor r="255" g="120" b="120" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="TxtName">
+					<colors>
+						<forecolor r="20" g="20" b="20" a="0" />
+						<backcolor r="20" g="20" b="20" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="ShaName">
+					<colors>
+						<forecolor r="0" g="0" b="128" a="0" />
+						<backcolor r="0" g="0" b="128" a="50" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtFileNumber">
+					<colors>
+						<forecolor r="0" g="0" b="0" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="PicBase">
+					<colors>
+						<forecolor r="0" g="0" b="0" a="0" />
+						<backcolor r="0" g="0" b="0" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyFileInfoNumber.tpl">
+						<wrap_s>GX_MIRROR</wrap_s>
+						<wrap_t>GX_MIRROR</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.5000000000</XTrans>
+						<YTrans>0.5000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>2.0000000000</XScale>
+						<YScale>2.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="ShaStarNum">
+					<colors>
+						<forecolor r="0" g="0" b="128" a="0" />
+						<backcolor r="0" g="0" b="128" a="50" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtStarNum">
+					<colors>
+						<forecolor r="40" g="40" b="40" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="ShaFileInfoL">
+					<colors>
+						<forecolor r="0" g="0" b="0" a="0" />
+						<backcolor r="0" g="0" b="0" a="100" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="ShaFileInfoR">
+					<colors>
+						<forecolor r="0" g="0" b="0" a="0" />
+						<backcolor r="0" g="0" b="0" a="100" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="ShaFileInfoC">
+					<colors>
+						<forecolor r="0" g="0" b="0" a="0" />
+						<backcolor r="0" g="0" b="0" a="100" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>1.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="ShaCompleteIcon">
+					<colors>
+						<forecolor r="0" g="0" b="128" a="0" />
+						<backcolor r="0" g="0" b="128" a="60" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtCompleteIcon">
+					<colors>
+						<forecolor r="40" g="40" b="40" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtTime">
+					<colors>
+						<forecolor r="255" g="255" b="255" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtDay">
+					<colors>
+						<forecolor r="255" g="255" b="255" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtMissCount">
+					<colors>
+						<forecolor r="170" g="176" b="170" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="PicFileInfoL">
+					<colors>
+						<forecolor r="255" g="120" b="120" a="0" />
+						<backcolor r="255" g="255" b="255" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyWindowFileInfo.tpl">
+						<wrap_s>GX_CLAMP</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.0000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>1.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="TxtMessage">
+					<colors>
+						<forecolor r="255" g="165" b="165" a="0" />
+						<backcolor r="230" g="90" b="90" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="PicDotLine">
+					<colors>
+						<forecolor r="200" g="200" b="200" a="0" />
+						<backcolor r="200" g="200" b="200" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+					<texture name="MyDotLine.tpl">
+						<wrap_s>GX_REPEAT</wrap_s>
+						<wrap_t>GX_CLAMP</wrap_t>
+					</texture>
+					<TextureSRT>
+						<XTrans>0.5000000000</XTrans>
+						<YTrans>0.0000000000</YTrans>
+						<Rotate>0.0000000000</Rotate>
+						<XScale>62.0000000000</XScale>
+						<YScale>1.0000000000</YScale>
+					</TextureSRT>
+					<CoordGen>
+						<tgen_type>GX_TG_MTX2x4</tgen_type>
+						<tgen_src>GX_TG_TEX0</tgen_src>
+						<MatrixSource>GX_TEXMTX0</MatrixSource>
+						<padding>00</padding>
+					</CoordGen>
+				</entries>
+				<entries name="ShaNameJpJa">
+					<colors>
+						<forecolor r="0" g="0" b="128" a="0" />
+						<backcolor r="0" g="0" b="128" a="50" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+				<entries name="TxtNameJpJa">
+					<colors>
+						<forecolor r="20" g="20" b="20" a="0" />
+						<backcolor r="20" g="20" b="20" a="255" />
+						<colorReg3 r="255" g="255" b="255" a="255" />
+						<tev_k1 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k2 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k3 r="ff" g="ff" b="ff" a="ff" />
+						<tev_k4 r="ff" g="ff" b="ff" a="ff" />
+					</colors>
+				</entries>
+			</tag>
+			<tag type="pan1" name="RootPane" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>608.000000</width>
+					<height>456.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="pan1" name="FileInfo" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>115.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="pan1" name="FileInfoWindow" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="pic1" name="ShaFileInfoR" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>266.0000000000000000000000000</x>
+					<y>-14.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>-1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>24.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="ShaFileInfoR" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="c8" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="c8" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="ShaFileInfoC" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>4.0000000000000000000000000</x>
+					<y>-14.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>524.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="ShaFileInfoC" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="c8" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="c8" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="ShaFileInfoL" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-258.0000000000000000000000000</x>
+					<y>-14.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>24.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="ShaFileInfoL" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="c8" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="c8" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="PicFileInfoR" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>262.0000000000000000000000000</x>
+					<y>-10.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>-1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>24.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="PicFileInfoR" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="ff" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="PicFileInfoC" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-0.0000000000000000000000000</x>
+					<y>-10.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>524.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="PicFileInfoC" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="ff" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="PicFileInfoL" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-262.0000000000000000000000000</x>
+					<y>-10.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>24.000000</width>
+					<height>100.000000</height>
+				</size>
+				<material name="PicFileInfoL" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="ff" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pic1" name="PicDotLine" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-232.0000000000000000000000000</x>
+					<y>-30.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>500.000000</width>
+					<height>8.000000</height>
+				</size>
+				<material name="PicDotLine" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="ff" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="FileNumber" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="pic1" name="PicBase" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-262.0000000000000000000000000</x>
+					<y>16.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>58.000000</width>
+					<height>58.000000</height>
+				</size>
+				<material name="PicBase" />
+				<colors>
+					<vtxColorTL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorTR r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBL r="ff" g="ff" b="ff" a="ff" />
+					<vtxColorBR r="ff" g="ff" b="ff" a="ff" />
+				</colors>
+				<coordinates>
+					<set>
+						<coordTL s="0.000000" t="0.000000" />
+						<coordTR s="1.000000" t="0.000000" />
+						<coordBL s="0.000000" t="1.000000" />
+						<coordBR s="1.000000" t="1.000000" />
+					</set>
+				</coordinates>
+			</tag>
+			<tag type="txt1" name="TxtFileNumber" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-263.0000000000000000000000000</x>
+					<y>16.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>40.000000</width>
+					<height>40.000000</height>
+				</size>
+				<length>0004-0004</length>
+				<material name="TxtFileNumber" />
+				<font index="1">
+					<xsize>32.000000</xsize>
+					<ysize>32.000000</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Center" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00300000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="FileName" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="ShaNameJpJa" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-229.0000000000000000000000000</x>
+					<y>-8.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>310.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>0012-0012</length>
+				<material name="ShaNameJpJa" />
+				<font index="0">
+					<xsize>36.450001</xsize>
+					<ysize>44.549999</ysize>
+					<charsize>3.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>30cb30f330c630f330fb30bf30ed30fc0000</text>
+			</tag>
+			<tag type="txt1" name="TxtNameJpJa" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-232.0000000000000000000000000</x>
+					<y>-5.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>310.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>0012-0012</length>
+				<material name="TxtNameJpJa" />
+				<font index="0">
+					<xsize>36.450001</xsize>
+					<ysize>44.549999</ysize>
+					<charsize>3.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>30cb30f330c630f330fb30bf30ed30fc0000</text>
+			</tag>
+			<tag type="txt1" name="ShaName" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-229.0000000000000000000000000</x>
+					<y>-10.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>310.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>001e-001e</length>
+				<material name="ShaName" />
+				<font index="0">
+					<xsize>36.450001</xsize>
+					<ysize>44.549999</ysize>
+					<charsize>3.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00c500c000c200c300cc00cd00ce00cf00c700bf00b50067006a00710000</text>
+			</tag>
+			<tag type="txt1" name="TxtName" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-232.0000000000000000000000000</x>
+					<y>-7.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>310.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>001e-001e</length>
+				<material name="TxtName" />
+				<font index="0">
+					<xsize>36.450001</xsize>
+					<ysize>44.549999</ysize>
+					<charsize>3.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00c500c000c200c300cc00cd00ce00cf00c700bf00b50067006a00710000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="Star" userdata="Star">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="ShaStarNum" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>268.0000000000000000000000000</x>
+					<y>-9.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>190.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="ShaStarNum" />
+				<font index="1">
+					<xsize>41.599998</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Right" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>003700400030003000300000</text>
+			</tag>
+			<tag type="txt1" name="TxtStarNum" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>265.0000000000000000000000000</x>
+					<y>-6.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>190.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="TxtStarNum" />
+				<font index="1">
+					<xsize>41.599998</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Right" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>003700400030003000300000</text>
+			</tag>
+			<tag type="pae1"/>
+			<tag type="pan1" name="BlueCoinFileInfo" userdata="Star">
+				<visible>00</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1"/>
+			<tag type="txt1" name="ShaBlueCoinFileInfo" userdata="">
+				<visible>00</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>80.0000000000000000000000000</x>
+					<y>-9.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>190.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="ShaStarNum" />
+				<font index="1">
+					<xsize>41.599998</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Right" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text></text>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="TxtBlueCoinFileInfo" userdata="">
+				<visible>00</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-2.0000000000000000000000000</x>
+					<y>2.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>190.000000</width>
+					<height>48.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="TxtStarNum" />
+				<font index="1">
+					<xsize>41.599998</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Right" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text></text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pae1" />
+			<tag type="pan1" name="Complete" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="ShaCompleteIcon" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-279.0000000000000000000000000</x>
+					<y>-32.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>42.000000</width>
+					<height>42.000000</height>
+				</size>
+				<length>0004-0004</length>
+				<material name="ShaCompleteIcon" />
+				<font index="2">
+					<xsize>35.200001</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Center" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00500000</text>
+			</tag>
+			<tag type="txt1" name="TxtCompleteIcon" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-281.0000000000000000000000000</x>
+					<y>-30.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>42.000000</width>
+					<height>42.000000</height>
+				</size>
+				<length>0004-0004</length>
+				<material name="TxtCompleteIcon" />
+				<font index="2">
+					<xsize>41.599998</xsize>
+					<ysize>41.599998</ysize>
+					<charsize>0.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Center" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00500000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="SaveTime" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="TxtDay" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-232.0000000000000000000000000</x>
+					<y>26.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>100.000000</width>
+					<height>24.000000</height>
+				</size>
+				<length>0016-0016</length>
+				<material name="TxtDay" />
+				<font index="0">
+					<xsize>16.200001</xsize>
+					<ysize>19.800001</ysize>
+					<charsize>1.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>0032003000300037002f00300038002f003300300000</text>
+			</tag>
+			<tag type="txt1" name="TxtTime" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-124.0000000000000000000000000</x>
+					<y>26.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>48.000000</width>
+					<height>24.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="TxtTime" />
+				<font index="0">
+					<xsize>16.200001</xsize>
+					<ysize>19.800001</ysize>
+					<charsize>1.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>00300030003a003000300000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="MissCounter" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="TxtMissCount" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Right" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>261.0000000000000000000000000</x>
+					<y>26.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>80.000000</width>
+					<height>24.000000</height>
+				</size>
+				<length>000c-000c</length>
+				<material name="TxtMissCount" />
+				<font index="0">
+					<xsize>16.200001</xsize>
+					<ysize>19.800001</ysize>
+					<charsize>1.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Right" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>003000300030003000300000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pan1" name="Message" userdata="@style">
+				<visible>01</visible>
+				<WidescreenAffected>01</WidescreenAffected>
+				<flag>01</flag>
+				<origin x="Center" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>0.0000000000000000000000000</x>
+					<y>0.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>30.000000</width>
+					<height>40.000000</height>
+				</size>
+			</tag>
+			<tag type="pas1" />
+			<tag type="txt1" name="TxtMessage" userdata="">
+				<visible>01</visible>
+				<WidescreenAffected>00</WidescreenAffected>
+				<flag>00</flag>
+				<origin x="Left" y="Center" />
+				<alpha>ff</alpha>
+				<padding>00</padding>
+				<translate>
+					<x>-232.0000000000000000000000000</x>
+					<y>-45.0000000000000000000000000</y>
+					<z>0.0000000000000000000000000</z>
+				</translate>
+				<rotate>
+					<x>0.00000000000000000000</x>
+					<y>0.00000000000000000000</y>
+					<z>0.00000000000000000000</z>
+				</rotate>
+				<scale>
+					<x>1.0000000000</x>
+					<y>1.0000000000</y>
+				</scale>
+				<size>
+					<width>500.000000</width>
+					<height>24.000000</height>
+				</size>
+				<length>0032-0032</length>
+				<material name="TxtMessage" />
+				<font index="0">
+					<xsize>16.200001</xsize>
+					<ysize>19.800001</ysize>
+					<charsize>2.000000</charsize>
+					<linesize>0.000000</linesize>
+					<alignment x="Left" y="Center" />
+					<whatAmI>00</whatAmI>
+				</font>
+				<topcolor r="ff" g="ff" b="ff" a="ff" />
+				<bottomcolor r="ff" g="ff" b="ff" a="ff" />
+				<text>30c130b330683042305f30893057304459275192967aff0130c130b330683042305f30893057304459275192967aff010000</text>
+			</tag>
+			<tag type="pae1" />
+			<tag type="pae1" />
+			<tag type="pae1" />
+			<tag type="grp1" name="RootGroup" />
+		</xmlyt>
