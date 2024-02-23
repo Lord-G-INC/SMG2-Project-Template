@@ -1,4 +1,4 @@
-#include "sample/NumberedSwitchArea.h"
+#include "pt/AreaObj/NumberedSwitchArea.h"
 #include "Game/Util.h"
 #include "Game/AreaObj/AreaObj.h"
 
