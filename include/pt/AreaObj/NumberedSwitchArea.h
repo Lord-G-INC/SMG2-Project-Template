@@ -5,15 +5,18 @@
 #include "syati.h"
 #include "Game/AreaObj/AreaObj.h"
 
-class NumberedSwitchArea : public AreaObj {
-public:
-    NumberedSwitchArea(const char *pName);
-    virtual void init(const JMapInfoIter &rIter);
-    virtual void movement();
-    virtual const char* getManagerName() const;
+namespace pt
+{
+    class NumberedSwitchArea : public AreaObj {
+    public:
+        NumberedSwitchArea(const char *pName);
+        virtual void init(const JMapInfoIter &rIter);
+        virtual void movement();
+        virtual const char* getManagerName() const;
 
-    s32 mTime;
-    bool mIsSwActive;
+        s32 mTime;
+        bool mIsSwActive;
 
-    #define mSwNum mObjArg0
-};  
+        #define mSwNum mObjArg0
+    };
+}

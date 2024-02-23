@@ -12,33 +12,34 @@
  * 
  *  Obj_arg0: The amount needed to activate SW_A.
 */
-
-NumberedSwitchArea::NumberedSwitchArea(const char *pName) : AreaObj(pName) {
-    mTime = 0;
-    mIsSwActive = false;
-}
-
-void NumberedSwitchArea::init(const JMapInfoIter &rIter) {
-    AreaObj::init(rIter);
-    MR::connectToSceneAreaObj(this);
-}
-
-void NumberedSwitchArea::movement() {
-    if (isInVolume(*MR::getPlayerPos())) {
-        if (isOnSwitchB() && !mIsSwActive) {
-            mTime++;
-            mIsSwActive = true;
-            if (mTime == mSwNum) {
-                onSwitchA();
-                mTime = 0;
+namespace pt {
+    NumberedSwitchArea::NumberedSwitchArea(const char *pName) : AreaObj(pName) {
+        mTime = 0;
+        mIsSwActive = false;
+    }
+    
+    void NumberedSwitchArea::init(const JMapInfoIter &rIter) {
+        AreaObj::init(rIter);
+        MR::connectToSceneAreaObj(this);
+    }
+    
+    void NumberedSwitchArea::movement() {
+        if (isInVolume(*MR::getPlayerPos())) {
+            if (isOnSwitchB() && !mIsSwActive) {
+                mTime++;
+                mIsSwActive = true;
+                if (mTime == mSwNum) {
+                    onSwitchA();
+                    mTime = 0;
+                }
+            }
+            if (!isOnSwitchB()) {
+                mIsSwActive = false;
             }
         }
-        if (!isOnSwitchB()) {
-            mIsSwActive = false;
-        }
     }
-}
-
-const char* NumberedSwitchArea::getManagerName() const {
-    return "NumberedSwitchArea";
+    
+    const char* NumberedSwitchArea::getManagerName() const {
+        return "NumberedSwitchArea";
+    }
 }
