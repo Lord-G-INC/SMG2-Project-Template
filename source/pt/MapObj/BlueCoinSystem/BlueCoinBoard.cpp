@@ -17,6 +17,9 @@
     Finished 10/1/23
     Revealed 10/2/23
 
+    Uses Blue Coin Flags 0-8.
+    0-7 are used for each button, and 8 is the Completion flag.
+
     Made by Evanbowl
     
     I thank SPG64, Lord Giganticus, and Xandog for very helpful feedback.
@@ -215,11 +218,11 @@ void BlueCoinBoard::exeAppear() {
         MR::setTextBoxGameMessageRecursive(this, "TextWinBase", "WinBase_NoSelection");
         MR::setTextBoxGameMessageRecursive(this, "TextTitle", "Board_Title");
 
-        if (BlueCoinUtil::getSpentBlueCoinNumCurrentFile() == mTotalBlueCoinPrices) {
+        if (BlueCoinUtil::getSpentBlueCoinNumCurrentFile() >= mTotalBlueCoinPrices) {
             MR::showPaneRecursive(this, "TextComplete");
             MR::hidePaneRecursive(this, "BlueCoinCounter");
 
-            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(8))
+            if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(BLUE_COIN_BOARD_COMPLETE))
                 MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_Complete");
             else
                 MR::setTextBoxGameMessageRecursive(this, "TextComplete", "WinBase_AllSpent");
@@ -443,7 +446,7 @@ void BlueCoinBoard::exeConfirmPlayStage() {
 void BlueCoinBoard::checkBoardProgress() {
     s32 completedStages = 0;
 
-    if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile(8)) {
+    if (!BlueCoinUtil::isOnBlueCoinFlagCurrentFile(BLUE_COIN_BOARD_COMPLETE)) {
         for (s32 i = 0; i < 8; i++) {
             if (BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i)) {
                 const char* nameFromTable;
@@ -457,7 +460,7 @@ void BlueCoinBoard::checkBoardProgress() {
         }
 
         if (completedStages == 8)
-            BlueCoinUtil::setOnBlueCoinFlagCurrentFile(8);
+            BlueCoinUtil::setOnBlueCoinFlagCurrentFile(BLUE_COIN_BOARD_COMPLETE);
     }
 
 }

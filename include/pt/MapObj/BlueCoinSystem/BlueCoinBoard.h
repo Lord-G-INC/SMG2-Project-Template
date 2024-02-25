@@ -8,6 +8,8 @@
 #include "Game/Screen/BackButton.h"
 #include "Game/Map/PauseBlur.h"
 
+#define BLUE_COIN_BOARD_COMPLETE 8
+
 class BlueCoinBoard : public LayoutActor {
 public:
     BlueCoinBoard(const char* pName);
