@@ -1,6 +1,6 @@
 #include "syati.h"
 
-#ifdef CA
+#if defined CA && !defined ALL
 
 	// No HipDropSwitch timer ticking
 	kmWrite32(0x802B0468, 0x60000000);
