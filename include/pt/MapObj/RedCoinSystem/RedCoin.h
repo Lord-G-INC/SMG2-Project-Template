@@ -27,7 +27,6 @@
         f32 mLaunchVelocity; // Obj_arg0
         s32 mAppearDelay; // Obj_arg4
         s32 mElapsed;
-        bool mUseConnection; // Obj_arg1
         bool mIsInAirBubble; // Obj_arg2
         bool mInvalidateShadows; // Obj_arg3
         bool mIsCollected;

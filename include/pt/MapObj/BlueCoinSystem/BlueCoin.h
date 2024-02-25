@@ -16,6 +16,5 @@ class BlueCoin : public Coin {
 
     s32 mID;
     f32 mLaunchVelocity;
-    bool mUseConnection;
 };
 #endif

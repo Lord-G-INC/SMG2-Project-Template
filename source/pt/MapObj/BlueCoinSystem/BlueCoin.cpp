@@ -3,14 +3,25 @@
 #include "Game/MapObj/CoinHolder.h"
 
 BlueCoin::BlueCoin(const char* pName) : Coin(pName) {
+    mCoinHostInfo = 0;
+    mFlashingCtrl = 0;
+	mAirBubble = 0; 
+	mConnector = 0;
+	mShadowDropPos = TVec3f(0.0f, 0.0f, 0.0f);
+	_AC = TVec3f(0.0f, 0.0f, 0.0f);
+	_B8 = TVec3f(0.0f, 0.0f, 0.0f);
+	mLifeTime = 600;
+	mCannotTime = 0;
+	mShadowType = -1;
+	mInWater = 0;
+	mShadowCalcOn = 0;
+	mIgnoreGravity = 0;
+	mCalcShadowPrivateGravity = 0;
+	mIsPurple = 0;
+	mIsInBubble = 0;
+
     mID = 0;
     mLaunchVelocity = 250.0f;
-    mUseConnection = false;
-
-    mIsPurple = false;
-    mShadowCalcOn = true;
-    mIgnoreGravity = false;
-    mCalcShadowPrivateGravity = true;
 
     MR::createCoinRotater();
     MR::createCoinHolder();
@@ -26,8 +37,11 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     if (MR::isValidInfo(rIter)) {
         MR::getJMapInfoArg0NoInit(rIter, &mID);
         MR::getJMapInfoArg1NoInit(rIter, &mLaunchVelocity);
-        MR::getJMapInfoArg2NoInit(rIter, &mUseConnection);
+        Coin::setShadowAndPoseModeFromJMapIter(rIter);
+        Coin::initShadow(rIter);
+
         MR::processInitFunction(this, rIter, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
+        MR::setGroupClipping(this, rIter, 64);
     }
     else
         MR::processInitFunction(this, BlueCoinUtil::isBlueCoinGotCurrentFile(mID) ? "BlueCoinClear" : "BlueCoin", false);
@@ -49,8 +63,6 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
     MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
     MR::setShadowDropLength(this, 0, 1000.0f);
 
-    mConnector = new MapObjConnector(this);
-
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
     makeActorAppeared();
@@ -65,6 +77,8 @@ void BlueCoin::initAfterPlacement() {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);
     }
+
+    Coin::initAfterPlacement();
 }
 
 void BlueCoin::control() {
@@ -73,11 +87,6 @@ void BlueCoin::control() {
 }
 
 void BlueCoin::calcAndSetBaseMtx() {
-    if (mUseConnection) {
-        mConnector->connect();
-        mConnector->attachToUnder();
-    }
-
     Coin::calcAndSetBaseMtx();
 }
 

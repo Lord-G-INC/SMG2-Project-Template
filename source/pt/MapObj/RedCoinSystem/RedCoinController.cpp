@@ -67,7 +67,10 @@ void RedCoinController::movement() {
         mElapsed++; // There may be a better way to do this
 
     if (mElapsed == 140) {
-        MR::onSwitchA(this);
+        if (MR::isValidSwitchA(this)) {
+            MR::onSwitchA(this);
+        }
+        
         MR::getGroupFromArray(this)->killAll();
     }
 }

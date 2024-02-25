@@ -20,20 +20,32 @@
 
 /* --- RED COIN --- */
 RedCoin::RedCoin(const char* pName) : Coin(pName) {
+    mCoinHostInfo = 0;
+    mFlashingCtrl = 0;
+	mAirBubble = 0; 
+	mConnector = 0;
+	mShadowDropPos = TVec3f(0.0f, 0.0f, 0.0f);
+	_AC = TVec3f(0.0f, 0.0f, 0.0f);
+	_B8 = TVec3f(0.0f, 0.0f, 0.0f);
+	mLifeTime = 600;
+	mCannotTime = 0;
+	mShadowType = -1;
+	mInWater = 0;
+	mShadowCalcOn = 0;
+	mIgnoreGravity = 0;
+	mCalcShadowPrivateGravity = 0;
+	mIsPurple = 0;
+	mIsInBubble = 0;
+
+
     mIsCollected = false;
     mLaunchVelocity = 250.0f;
-    mUseConnection = false;
     mIsInAirBubble = false;
     mInvalidateShadows = false;
     mHasRewardedCoins = false;
     mAppearDelay = 0;
     mElapsed = 0;
     mRedCoinCounterPlayerPos = false;
-
-    mIsPurple = false;
-    mShadowCalcOn = true;
-    mIgnoreGravity = false;
-    mCalcShadowPrivateGravity = true;
 
     // Setup Coin
     MR::createCoinRotater();
@@ -47,12 +59,13 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::calcGravity(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity); // Y Appear Launch Velocity. Calculates gravity.
-    MR::getJMapInfoArg1NoInit(rIter, &mUseConnection); // Use MapObjConnection?
-    MR::getJMapInfoArg2NoInit(rIter, &mIsInAirBubble); // Use AirBubble?
-    MR::getJMapInfoArg3NoInit(rIter, &mInvalidateShadows); // Hide Shadows?
-    MR::getJMapInfoArg4NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay
-    MR::getJMapInfoArg5NoInit(rIter, &mRedCoinCounterPlayerPos);
-    
+    MR::getJMapInfoArg1NoInit(rIter, &mIsInAirBubble); // Use AirBubble?
+    MR::getJMapInfoArg2NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay=
+    MR::getJMapInfoArg7NoInit(rIter, &mRedCoinCounterPlayerPos);
+
+    Coin::setShadowAndPoseModeFromJMapIter(rIter); // Obj_args 3 and 4
+    Coin::initShadow(rIter); // Obj_args 5 and 6
+
     initNerve(&NrvCoin::CoinNrvFix::sInstance, 0);
 
     initHitSensor(1);
@@ -64,9 +77,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
-    mConnector = new MapObjConnector(this);
-    mConnector->attach(mTranslation);
-
     makeActorAppeared();
 
     // Can't use ActorInfo for this one...
@@ -74,8 +84,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoin::initAfterPlacement() {
-    if (!mUseConnection)
-        MR::offBind(this);
 
     if (MR::isValidSwitchB(this)) {
         MR::hideModel(this);
@@ -86,6 +94,8 @@ void RedCoin::initAfterPlacement() {
         MR::invalidateShadowAll(this);
 
     initAirBubble();
+
+    Coin::initAfterPlacement();
 }
 
 
@@ -105,10 +115,10 @@ void RedCoin::control() {
 }
 
 void RedCoin::calcAndSetBaseMtx() {
-    if (mUseConnection && !mIsCollected) {
-        mConnector->connect();
-        mConnector->attachToUnder();
-    }
+    //if (mUseConnection && !mIsCollected) {
+    //    mConnector->connect();
+    //    mConnector->attachToUnder();
+    //}
 
     Coin::calcAndSetBaseMtx();
 }
@@ -123,7 +133,7 @@ bool RedCoin::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) 
 }
 
 void RedCoin::initAirBubble() {
-    if (mIsInAirBubble && !mUseConnection && !MR::isValidSwitchB(this)) {
+    if (mIsInAirBubble && !MR::isValidSwitchB(this)) {
         mAirBubble = MR::createPartsModelNoSilhouettedMapObj(this, "空気アワ", "AirBubble", 0);
         mAirBubble->initFixedPosition(TVec3f(0.0f, 70.0f, 0.0f), TVec3f(0.0f, 0.0f, 0.0f), 0);
         MR::startAction(mAirBubble, "Move");
