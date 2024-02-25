@@ -26,7 +26,7 @@ namespace BlueCoinUtil {
     /// @brief Prints the Blue Coin counts of each save file and gBlueCoinFlag's value to the log.
     void printBlueCoinSaveFileInfo();
 
-    /// @brief Clears all Blue Coin Save File data
+    /// @brief Clears gBlueCoinData
     void clearBlueCoinData();
     
     /// @brief Initializes the BlueCoinData struct
@@ -108,6 +108,8 @@ namespace BlueCoinUtil {
     /// @param collectedCoinsOnly Only count collected coins in range.
     /// @return s32
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly);
+
+    s32 getBlueCoinRange(const char* pStageName, bool minOrMax);
 
     /// @brief Gets the value in the "TexID" field. pStageName is used to select the target row.
     /// @param pLayout Source LayoutActor

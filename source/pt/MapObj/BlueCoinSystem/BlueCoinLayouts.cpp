@@ -2,6 +2,8 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
+#include "Game/Screen/PauseMenu.h"
+
 
 // HUD
 
@@ -210,36 +212,104 @@ kmCall(0x8046590C, killBlueCoinCounter);
 
 // PAUSE MENU
 
-void initBlueCoinCounters(LayoutActor* actor) {
-    MR::connectToSceneLayoutOnPause(actor);
+void initBlueCoinStageCounters(PauseMenu* pPauseMenu) {
+    MR::connectToSceneLayoutOnPause(pPauseMenu);
 
-    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinTotal", counterPictureFonts);
-    MR::setTextBoxFormatRecursive(actor, "ShaBlueCoinStage", counterPictureFonts);
+    MR::setTextBoxFormatRecursive(pPauseMenu, "ShaBlueCoinTotal", counterPictureFonts);
+    MR::setTextBoxFormatRecursive(pPauseMenu, "ShaBlueCoinStage", counterPictureFonts);
 }
 
-kmCall(0x80486D60, initBlueCoinCounters);
+kmCall(0x80486D60, initBlueCoinStageCounters);
 
-void setPauseMenuBlueCoinCount(LayoutActor* actor, const char* pStr, s32 l) {
-    MR::setTextBoxArgNumberRecursive(actor, pStr, l, 0);
-    
+void setPauseMenuBlueCoinStageCount(LayoutActor* pPauseMenu) {
     s32 rangeCollected = BlueCoinUtil::getBlueCoinRangeData(0, true);
     s32 rangeTotal = BlueCoinUtil::getBlueCoinRangeData(0, false);
 
-    MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinTotal", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false), 0);
+    MR::setTextBoxArgNumberRecursive(pPauseMenu, "ShaBlueCoinTotal", BlueCoinUtil::getTotalBlueCoinNumCurrentFile(false), 0);
 
     if (rangeCollected > -1) {
-        MR::setTextBoxArgNumberRecursive(actor, "ShaBlueCoinStage", rangeCollected, 0);
+        MR::setTextBoxArgNumberRecursive(pPauseMenu, "ShaBlueCoinStage", rangeCollected, 0);
     
-        MR::showPaneRecursive(actor, "ShaBlueCoinStage");
+        MR::showPaneRecursive(pPauseMenu, "ShaBlueCoinStage");
 
         if (rangeTotal > -1)
-            BlueCoinUtil::getBlueCoinPaneNameFromTable(actor, 0);
+            BlueCoinUtil::getBlueCoinPaneNameFromTable(pPauseMenu, 0);
     }
     else
-        MR::hidePaneRecursive(actor, "ShaBlueCoinStage");
+        MR::hidePaneRecursive(pPauseMenu, "ShaBlueCoinStage");
 }
 
-kmCall(0x80487188, setPauseMenuBlueCoinCount);
+s32 setUpBlueCoinInfo(PauseMenu* pPauseMenu) {
+    setPauseMenuBlueCoinStageCount(pPauseMenu);
+
+    pPauseMenu->mDisplayMode = 0;
+
+    s32 rangemin = BlueCoinUtil::getBlueCoinRange(0, 0);
+
+    if (rangemin != -1) {
+        s32 totalCoins = (BlueCoinUtil::getBlueCoinRange(0, 1)-rangemin)+1;
+        s32 newLineOff = 0;
+        s32 collectedCount = 0;
+        bool newLineAdded = 0;
+        wchar_t* pWStr = new wchar_t[32];
+        wchar_t* pCompleteIcon = new wchar_t[2];
+        wchar_t* pStarIcon = new wchar_t[2];
+        wchar_t* pBButtonIcon = new wchar_t[2];
+
+        if (totalCoins > 30)
+            totalCoins = 30;
+
+        MR::addPictureFontCode(&pStarIcon[0], 0x97);
+        MR::addPictureFontCode(&pBButtonIcon[0], 0x31);
+
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", pStarIcon);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinBButton", pBButtonIcon);
+
+        MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
+        MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
+
+        MR::showPaneRecursive(pPauseMenu, "TxtCoinPage");
+        MR::showPaneRecursive(pPauseMenu, "TxtCoinBButton");
+
+        if (!MR::isStageNoPauseMenuStars()) {
+            MR::showPaneRecursive(pPauseMenu, "Stars");
+            MR::showPaneRecursive(pPauseMenu, "ScenarioTitle");
+        }
+
+        for (s32 i = 0; i < totalCoins + (totalCoins > 15) ? 1 : 0; i++) {
+            newLineAdded = 0;
+
+            if (i == totalCoins/2 && totalCoins > 15) {
+                MR::addNewLine(&pWStr[i]);
+                newLineOff++;
+                newLineAdded = true;
+            }
+            
+            if (!newLineAdded) {
+                bool isGot = BlueCoinUtil::isBlueCoinGotCurrentFile((i+rangemin)-newLineOff);
+                int icon = 0x96;
+            
+                if (isGot) {
+                    icon = 0x8A;
+                    collectedCount++;
+                }
+
+                MR::addPictureFontCode(&pWStr[i], icon);
+            }
+        }
+
+        MR::addPictureFontCode(&pCompleteIcon[0], collectedCount == totalCoins ? 0x50 : 0x52);
+
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinComplete", pCompleteIcon);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "ShaCoinListWin", pWStr);
+        }
+    else
+        pPauseMenu->mDisplayMode = 2;
+
+    return MR::getCoinNum();
+} // TxtCoinComplete
+
+kmCall(0x80487090, setUpBlueCoinInfo);
 
 // FILE INFO
 

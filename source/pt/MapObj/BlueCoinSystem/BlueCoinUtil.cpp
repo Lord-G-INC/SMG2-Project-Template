@@ -32,7 +32,7 @@ namespace BlueCoinUtil {
             u32 size;
             NANDGetLength(&info, &size);
 
-            if (code != size) {
+            if (size != BINSIZE) {
                 char* errstr = new char[180];
                 snprintf(errstr, 180, "Blue Coin Read Error\nExpected size of %d\nGot size %d\nNANDRead code: %d\nDelete or hex edit BlueCoinData.bin and try again.\n\nData locations:\nFlags: %d\nSpent: %d\nTextbox: %d", BINSIZE, size, code, FLAGS_LOCATION, SPENT_LOCATION, TEXTBOX_LOCATION);
 		        u32 fg = 0xFFFFFFFF;
@@ -283,7 +283,7 @@ namespace BlueCoinUtil {
     }
 
     void startCounterCountUp() {
-        MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->startCountUp();
+        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
     }
 
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly) {
@@ -329,6 +329,34 @@ namespace BlueCoinUtil {
         OSReport("(BlueCoinIDRangeTable) Stage name \"%s\" not found in table. -1 returned!\n", pStageName);
         return -1;
     }
+    
+    s32 getBlueCoinRange(const char* pStageName, bool minOrMax) {
+        JMapInfo table = JMapInfo();
+        table.attach(gBlueCoinBcsvTable);
+
+        const char* tableStageName;
+        s32 targetLine = -1;
+
+        if (!pStageName)
+            pStageName = MR::getCurrentStageName();
+
+        for (s32 i = 0; i < MR::getCsvDataElementNum(&table); i++) {
+            MR::getCsvDataStr(&tableStageName, &table, "StageName", i);
+
+            if (MR::isEqualString(pStageName, tableStageName)) {
+                targetLine = i;
+                break;
+            }
+        }
+
+        if (targetLine > -1) {
+            s32 val = 0;
+            MR::getCsvDataS32(&val, &table, minOrMax ? "BlueCoinRangeMax" : "BlueCoinRangeMin", targetLine);
+            return val;
+        }
+        return -1;
+    }
+
 
     void getBlueCoinPaneNameFromTable(LayoutActor* pLayout, const char* pStageName) {
         JMapInfo table = JMapInfo();

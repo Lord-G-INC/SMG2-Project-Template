@@ -2,8 +2,9 @@
 
 #include "syati.h"
 #include "Game/Screen/PauseMenu.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
-kmWrite32(0x804712C0, 0x3860006C); // li r3, 0x6C
+kmWrite32(0x804712C0, 0x38600070); // li r3, 0x70
 
 // init hook
 
@@ -21,7 +22,6 @@ void setButtonAnimNames(ButtonPaneController* pButton) {
     pButton->mAnimNameSelectOut = "ButtonSelectOut_restartbutton";
     pButton->mAnimNameWait = "ButtonWait_restartbutton";
 }
-
 
 void PauseMenuInitNewButton(PauseMenu* pPauseMenu, const Nerve* pNerve) { 
     pPauseMenu->mButtonNew = 0;
@@ -89,6 +89,37 @@ kmWrite32(0x80487560, 0x7FE3FB78); // mr r3, r31 (PauseMenu* into r3)
 kmCall(0x80487564, PauseMenuAppearNewButton); // Call
 
 bool PauseMenuIsNewButtonPointingTrigger(PauseMenu* pPauseMenu) {
+    // BLUE COIN CODE START]
+    #if defined USEBLUECOIN && !defined SM64BLUECOIN
+        if (MR::testCorePadTriggerB(0) && pPauseMenu->mDisplayMode != 2) {
+            if (pPauseMenu->mDisplayMode == 0) {
+                if (!MR::isStageNoPauseMenuStars()) {
+                    MR::hidePaneRecursive(pPauseMenu, "Stars");
+                    MR::hidePaneRecursive(pPauseMenu, "ScenarioTitle");
+                }
+
+                MR::showPaneRecursive(pPauseMenu, "ShaCoinListWin");
+                MR::showPaneRecursive(pPauseMenu, "TxtCoinComplete");
+                pPauseMenu->mDisplayMode = 1;
+            }
+            else if (pPauseMenu->mDisplayMode == 1) {
+                if (!MR::isStageNoPauseMenuStars()) {
+                    MR::showPaneRecursive(pPauseMenu, "Stars");
+                    MR::showPaneRecursive(pPauseMenu, "ScenarioTitle");
+                }
+
+                MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
+                MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
+                pPauseMenu->mDisplayMode = 0;  
+            }
+
+            wchar_t* pStarIcon = new wchar_t[2];
+            MR::addPictureFontCode(&pStarIcon[0], pPauseMenu->mDisplayMode ? 0x98 : 0x97);
+
+            MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", pStarIcon);
+        }
+    #endif
+    // END BLUE COIN CODE
     return (pPauseMenu->mButtonTop && pPauseMenu->mButtonTop->isPointingTrigger()) || (pPauseMenu->mButtonNew && pPauseMenu->mButtonNew->isPointingTrigger());
 }
 
