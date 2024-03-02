@@ -48,7 +48,7 @@ def no_gle():
 
     # Safety check
 
-    if len(bins) == 0:
+    if len(bins) == 0 or len(bins) != 5:
         print("Some CodeWarrior or Kamek error occured. Check above for it!")
         exit(1)
 
@@ -86,7 +86,7 @@ def with_gle():
 
     # Safety check
 
-    if len(bins) == 0:
+    if len(bins) == 0 or len(bins) != 5:
         print("Some CodeWarrior or Kamek error occured. Check above for it!")
         exit(1)
 
