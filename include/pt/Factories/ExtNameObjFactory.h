@@ -26,8 +26,6 @@
 #include "pt/MapObj/ScrewSwitchBase.h"
 #include "pt/MapObj/WatchTowerRotateStep.h"
 #include "pt/MapObj/WaterLeakPipe.h"
-#include "sample/GstRecord.h"
-#include "sample/PadRecord.h"
 
 // PTD Includes
 #include "pt/AreaObj/NumberedSwitchArea.h"
@@ -43,6 +41,10 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinBoard.h"
 #include "pt/MapObj/PTimerSwitch.h"
 #include "pt/MapObj/LavaSteam.h"
+#include "sample/GstRecord.h"
+#include "sample/PadRecord.h"
+#include "pt/Extras/ModSpecific/SuperMarioStarshine/GhostPlayer.h"
+#include "pt/MapObj/CrystalBox.h"
 
 class BlueStarCupsulePlanet;
 
@@ -100,6 +102,7 @@ namespace {
         { "Banekiti", createExtActor<pt::Banekiti> },
         { "BlueChip", createExtActor<pt::BlueChip> },
         { "BlueChipGroup", createExtActor<pt::BlueChipGroup> },
+        { "CrystalBox", createExtActor<CrystalBox> },
         { "CrystalSwitch", createExtActor<pt::CrystalSwitch> },
         { "DeadLeaves", createExtActor<pt::DeadLeaves> },
         { "FirePressureRadiate", createExtActor<pt::FirePressureRadiate> },
@@ -118,6 +121,7 @@ namespace {
         { "ShellfishBlueChip", NameObjFactory::createNameObj<Shellfish> },
         { "ShellfishPurpleCoin", NameObjFactory::createNameObj<Shellfish> },
         { "SuperSpinDriverGreen", pt::createSuperSpinDriverCustomColor<1> },
+        { "SwitchBox", createExtActor<SwitchBox> },
         { "UFOBlueStarCupsule", NameObjFactory::createNameObj<BlueStarCupsulePlanet> },
         { "ValveSwitch", createExtActor<pt::ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<pt::WatchTowerRotateStep>},
@@ -135,7 +139,6 @@ namespace {
         { "SuperSpinDriverBlack", pt::createSuperSpinDriverCustomColor<7> },
         { "SuperSpinDriverWhite", pt::createSuperSpinDriverCustomColor<8> },
         { "SuperSpinDriverYellow", pt::createSuperSpinDriverCustomColor<9> },
-        { "SwitchBox", createExtActor<SwitchBox> },
         
         // Ride
         { "SwingRope", createExtActor<SwingRope> },
@@ -159,6 +162,10 @@ namespace {
 
         #if defined SMG63 || defined SMSS
             { "SMG63Area", createExtActor<SMG63Area> },
+        #endif
+
+        #ifdef OPENGHOST
+            { "GhostPlayer", createExtActor<GhostPlayer>},
         #endif
     };
 

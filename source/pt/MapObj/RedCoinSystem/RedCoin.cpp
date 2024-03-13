@@ -1,6 +1,6 @@
 #include "pt/MapObj/RedCoinSystem/RedCoin.h"
 #include "Game/MapObj/CoinHolder.h"
-
+#include "pt/Util/ActorUtil.h"
 /*
 * These actors are exclusive to PT Debug.
 * RedCoin, RedCoinController
@@ -59,10 +59,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::calcGravity(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity); // Y Appear Launch Velocity. Calculates gravity.
-    MR::getJMapInfoArg1NoInit(rIter, &mIsInAirBubble); // Use AirBubble?
-    MR::getJMapInfoArg2NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay=
-    MR::getJMapInfoArg7NoInit(rIter, &mRedCoinCounterPlayerPos);
-
+    MR::getJMapInfoArg1NoInit(rIter, &mRedCoinCounterPlayerPos);
+    MR::getJMapInfoArg2NoInit(rIter, &mAppearDelay); // SW_B Appear Spawn Delay
+  
     Coin::setShadowAndPoseModeFromJMapIter(rIter); // Obj_args 3 and 4
     Coin::initShadow(rIter); // Obj_args 5 and 6
 
@@ -71,9 +70,9 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     initHitSensor(1);
     MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
 
-    MR::initShadowVolumeSphere(this, 50.0f);
-    MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
-    MR::setShadowDropLength(this, 0, 1000.0f);
+    //MR::initShadowVolumeSphere(this, 50.0f);
+    //MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
+    //MR::setShadowDropLength(this, 0, 1000.0f);
 
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
@@ -153,15 +152,7 @@ void RedCoin::appearAndMove() {
 void RedCoin::collect() {
     mIsCollected = true;
 
-    RedCoinController* pController;
-    LiveActorGroup* group = MR::getGroupFromArray(this);
-    
-    for (s32 i = 0; i < group->mNumObjs; i++) {
-        if (MR::isEqualString(group->getActor(i)->mName, "RedCoinController")) {
-            pController = (RedCoinController*)group->getActor(i);
-            break;
-        }
-    }
+    RedCoinController* pController = (RedCoinController*)pt::getSpecificActorFromGroup(this, "RedCoinController");
     
     if (MR::isValidSwitchA(this))
         MR::onSwitchA(this);

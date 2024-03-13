@@ -46,9 +46,12 @@ namespace pt {
 
 		return new AnimScaleController(pAnimScaleParam);
 	}
+
+	//void* gTest = pt::loadArcAndFile("/SystemData/BlueCoinBoardDataTable.arc", "/BlueCoinBoardDataTable.bcsv");
 	
 	//Loads an arc and a selected file into memory.
 	void* loadArcAndFile(const char *pArc, const char *pFile) {
+		OSReport("Loading file %s from %s\n", pFile, pArc);
 		JKRArchive* arc = MR::mountArchive(pArc, MR::getStationedHeapNapa(), false);
 		void* file = arc->getResource(pFile);
 	
@@ -65,5 +68,18 @@ namespace pt {
 	void initShadowVolumeBox(LiveActor* pActor, const TVec3f& rPos) {
 		pActor->initShadowControllerList(1);
 		MR::addShadowVolumeBox(pActor, "ボリューム影(ボックス)", rPos, (MtxPtr)pActor->getBaseMtx());
+	}
+
+	LiveActor* getSpecificActorFromGroup(LiveActor* pActor, const char* pName) {
+		LiveActor* pObj = 0;
+    	LiveActorGroup* group = MR::getGroupFromArray(pActor);
+		
+    	for (s32 i = 0; i < group->mNumObjs; i++) {
+    	    if (MR::isEqualString(group->getActor(i)->mName, pName)) {
+    	        pObj = group->getActor(i);
+    	        break;
+    	    }
+    	}
+		return pObj;
 	}
 }

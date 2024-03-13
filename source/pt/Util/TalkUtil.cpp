@@ -18,5 +18,6 @@ namespace pt {
 		wchar_t* str = new wchar_t[12];
 		swprintf(str, 12, L"\u000E\u000A\u0001%lc%lc%d", 2+digits*2, digits*2, num);
         MR::setTextBoxArgStringRecursive(pLayout, paneName, str, index);
+		delete[] str;
 	}
 }

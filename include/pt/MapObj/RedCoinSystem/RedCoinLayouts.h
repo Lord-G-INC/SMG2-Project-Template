@@ -10,7 +10,7 @@ public:
     virtual void appear();
     virtual void control();
     void setStarIcon(s32 starID, s32 iconID);
-    void startCountUp(s32 count, bool hasAllCoins);
+    void startCountUp(s32 count, bool hasAllCoins, bool isRedCoinSwitchUsed);
     void exeAppear();
     void exeAppearWithUpdate();
     void exeDisappear();

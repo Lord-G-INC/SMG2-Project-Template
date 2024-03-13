@@ -2,7 +2,8 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
-#include "Game/Screen/PauseMenu.h"
+#include "pt/Game/Screen/PauseMenu.h"
+#include "pt/Game/Screen/CounterLayoutController.h"
 
 
 // HUD
@@ -126,9 +127,8 @@ void BlueCoinCounter::exeShowTextBox() {
 }
 
 bool fixBlueCoinWindowCrash() {
-    if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy") && !MR::isStageStoryBook())
-        if (!BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile())
-            return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
+    if (!MR::isStageFileSelect() && !MR::isEqualStageName("PeachCastleGalaxy") && !MR::isStageStoryBook() && !BlueCoinUtil::hasSeenBlueCoinTextBoxCurrentFile())
+        return MR::isPlayerDead() || BlueCoinUtil::isBlueCoinTextBoxAppeared();
 
     return MR::isPlayerDead();
 }
@@ -159,9 +159,18 @@ namespace NrvBlueCoinCounter {
 }
 
 // Add 0x4 to CounterLayoutController for BlueCoinCounter ptr
-kmWrite32(0x80471780, 0x38600050);
+//kmWrite32(0x80471780, 0x38600050);
 
-void initBlueCoinLayout(CounterLayoutController* pController) {
+CounterLayoutControllerExt* createCounterLayoutControllerExt() {
+    return new CounterLayoutControllerExt();
+}
+
+CounterLayoutControllerExt::CounterLayoutControllerExt() : CounterLayoutController() {}
+
+kmCall(0x80471780, createCounterLayoutControllerExt);
+kmWrite32(0x80471784, 0x48000010);
+
+void initBlueCoinLayout(CounterLayoutControllerExt* pController) {
     MR::connectToSceneLayout(pController);
     
     if (!MR::isStageFileSelect()) {
@@ -172,12 +181,10 @@ void initBlueCoinLayout(CounterLayoutController* pController) {
 
 kmCall(0x804657A0, initBlueCoinLayout);
 
-void appearBlueCoinLayout(CounterLayoutController* pController) {
-    if (!MR::isStageFileSelect()) {
-        if (!BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
-            ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->mWaitTime = -1;
-            pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
-        }
+void appearBlueCoinLayout(CounterLayoutControllerExt* pController) {
+    if (!MR::isStageFileSelect() && !BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
+        ((BlueCoinCounter*)pController->mPTDBlueCoinCounter)->mWaitTime = -1;
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvAppear::sInstance);
     } 
 
         pController->showAllLayout();
@@ -185,11 +192,9 @@ void appearBlueCoinLayout(CounterLayoutController* pController) {
 
 kmCall(0x80466128, appearBlueCoinLayout);
 
-void disappearBlueCoinLayout(CounterLayoutController* pController) {
-    if (!MR::isStageFileSelect()) {
-        if (!BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
-            pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
-        }
+void disappearBlueCoinLayout(CounterLayoutControllerExt* pController) {
+    if (!MR::isStageFileSelect() && !BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     }
         
     pController->hideAllLayout();
@@ -197,12 +202,10 @@ void disappearBlueCoinLayout(CounterLayoutController* pController) {
 
 kmCall(0x80466198, disappearBlueCoinLayout);
 
-void killBlueCoinCounter(CounterLayoutController* pController) {
-    if (!MR::isStageFileSelect()) {
-        if (!BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
-            MR::hideLayout(pController->mPTDBlueCoinCounter);
-            pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
-        }
+void killBlueCoinCounter(CounterLayoutControllerExt* pController) {
+    if (!MR::isStageFileSelect() && !BlueCoinUtil::isBlueCoinTextBoxAppeared()) {
+        MR::hideLayout(pController->mPTDBlueCoinCounter);
+        pController->mPTDBlueCoinCounter->setNerve(&NrvBlueCoinCounter::NrvDisappear::sInstance);
     }
 
     pController->killAllCoounter();
@@ -221,7 +224,7 @@ void initBlueCoinStageCounters(PauseMenu* pPauseMenu) {
 
 kmCall(0x80486D60, initBlueCoinStageCounters);
 
-void setPauseMenuBlueCoinStageCount(LayoutActor* pPauseMenu) {
+void setPauseMenuBlueCoinStageCount(PauseMenu* pPauseMenu) {
     s32 rangeCollected = BlueCoinUtil::getBlueCoinRangeData(0, true);
     s32 rangeTotal = BlueCoinUtil::getBlueCoinRangeData(0, false);
 
@@ -239,33 +242,63 @@ void setPauseMenuBlueCoinStageCount(LayoutActor* pPauseMenu) {
         MR::hidePaneRecursive(pPauseMenu, "ShaBlueCoinStage");
 }
 
+wchar_t* gWFlagsStr = new wchar_t[34];
+
+void setUpBlueCoinFlagsInfo(PauseMenu* pPauseMenu) {
+    bool newLineAdded = 0;
+    s32 newLineOff = 0;
+    gWFlagsStr[33] = 0;
+
+    for (s32 i = 0; i < 33; i++) {
+        newLineAdded = 0;
+
+        if (i == 16) {
+            MR::addNewLine(&gWFlagsStr[i]);
+            newLineOff++;
+            newLineAdded = true;
+        }
+
+        if (!newLineAdded) {
+            bool isOn = BlueCoinUtil::isOnBlueCoinFlagCurrentFile(i-newLineOff);
+
+            MR::addPictureFontCode(&gWFlagsStr[i], isOn ? 0x8A : 0xC0);
+        }
+    }
+
+    MR::setTextBoxFormatRecursive(pPauseMenu, "ShaCoinListFlags", gWFlagsStr);
+}
+
+wchar_t* gWStr = new wchar_t[32];
+wchar_t* gCompleteIcon = new wchar_t[2];
+wchar_t* gStarIcon = new wchar_t[2];
+wchar_t* gBButtonIcon = new wchar_t[2];
+
 s32 setUpBlueCoinInfo(PauseMenu* pPauseMenu) {
     setPauseMenuBlueCoinStageCount(pPauseMenu);
 
-    pPauseMenu->mDisplayMode = 0;
-
     s32 rangemin = BlueCoinUtil::getBlueCoinRange(0, 0);
+
+    setUpBlueCoinFlagsInfo(pPauseMenu);
+
+    ((PauseMenuExt*)pPauseMenu)->mDisplayMode = 0;
 
     if (rangemin != -1) {
         s32 totalCoins = (BlueCoinUtil::getBlueCoinRange(0, 1)-rangemin)+1;
         s32 newLineOff = 0;
         s32 collectedCount = 0;
         bool newLineAdded = 0;
-        wchar_t* pWStr = new wchar_t[32];
-        wchar_t* pCompleteIcon = new wchar_t[2];
-        wchar_t* pStarIcon = new wchar_t[2];
-        wchar_t* pBButtonIcon = new wchar_t[2];
 
         if (totalCoins > 30)
             totalCoins = 30;
 
-        MR::addPictureFontCode(&pStarIcon[0], 0x97);
-        MR::addPictureFontCode(&pBButtonIcon[0], 0x31);
+        MR::addPictureFontCode(&gStarIcon[0], 0xC1);
+        MR::addPictureFontCode(&gBButtonIcon[0], 0x31);
 
-        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", pStarIcon);
-        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinBButton", pBButtonIcon);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", gStarIcon);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinBButton", gBButtonIcon);
 
         MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
+        MR::hidePaneRecursive(pPauseMenu, "ShaCoinListFlags");
         MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
 
         MR::showPaneRecursive(pPauseMenu, "TxtCoinPage");
@@ -280,34 +313,34 @@ s32 setUpBlueCoinInfo(PauseMenu* pPauseMenu) {
             newLineAdded = 0;
 
             if (i == totalCoins/2 && totalCoins > 15) {
-                MR::addNewLine(&pWStr[i]);
+                MR::addNewLine(&gWStr[i]);
                 newLineOff++;
                 newLineAdded = true;
             }
-            
+
             if (!newLineAdded) {
                 bool isGot = BlueCoinUtil::isBlueCoinGotCurrentFile((i+rangemin)-newLineOff);
-                int icon = 0x96;
-            
+                int icon = 0xC0;
+
                 if (isGot) {
                     icon = 0x8A;
                     collectedCount++;
                 }
 
-                MR::addPictureFontCode(&pWStr[i], icon);
+                MR::addPictureFontCode(&gWStr[i], icon);
             }
         }
 
-        MR::addPictureFontCode(&pCompleteIcon[0], collectedCount == totalCoins ? 0x50 : 0x52);
+        MR::addPictureFontCode(&gCompleteIcon[0], collectedCount == totalCoins ? 0x50 : 0x52);
 
-        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinComplete", pCompleteIcon);
-        MR::setTextBoxFormatRecursive(pPauseMenu, "ShaCoinListWin", pWStr);
-        }
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinComplete", gCompleteIcon);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "ShaCoinListWin", gWStr);
+    }
     else
-        pPauseMenu->mDisplayMode = 2;
+        ((PauseMenuExt*)pPauseMenu)->mDisplayMode = 3;
 
     return MR::getCoinNum();
-} // TxtCoinComplete
+}
 
 kmCall(0x80487090, setUpBlueCoinInfo);
 

@@ -1,10 +1,19 @@
-#if defined USA || defined PAL || defined JPN
-#include "Game/MapObj/CollapsePlane.h"
-    
-namespace pt {
-    kmWrite32(0x8033EF04, 0x386000E8); // li r3, 0xE8
+#if defined USA || defined PAL || defined JPN 
+#include "pt/Game/MapObj/CollapsePlane.h"
 
-	void CollapsePlaneInit(CollapsePlane* pActor, const JMapInfoIter& rIter, MapObjActorInitInfo& rInfo) {
+CollapsePlaneExt::CollapsePlaneExt(const char* pName) : CollapsePlane(pName) {};
+
+namespace pt {
+    //kmWrite32(0x8033EF04, 0x386000E8); // li r3, 0xE8
+    CollapsePlaneExt* createCollapsePlaneExt(const char* pName) {
+        return new CollapsePlaneExt(pName);
+    }
+
+    kmCall(0x8033EF04, createCollapsePlaneExt);
+    kmWrite32(0x8033EF08, 0x48000014);
+
+
+	void CollapsePlaneInit(CollapsePlaneExt* pActor, const JMapInfoIter& rIter, MapObjActorInitInfo& rInfo) {
 		pActor->mRespawnTime = -1;
 		MR::getJMapInfoArg1NoInit(rIter, &pActor->mRespawnTime);
 		MR::useStageSwitchReadA(pActor, rIter);
@@ -14,7 +23,7 @@ namespace pt {
 
 	kmCall(0x8029016C, CollapsePlaneInit);
 
-    void CollapsePlaneDecideNerve(CollapsePlane* pActor) {
+    void CollapsePlaneDecideNerve(CollapsePlaneExt* pActor) {
         if (pActor->mRespawnTime > -1)
             pActor->setNerve(&NewNrvCollapsePlane::NrvReturn::sInstance);
         else
@@ -24,7 +33,7 @@ namespace pt {
     kmCall(0x802903D8, CollapsePlaneDecideNerve);
 }
 
-void CollapsePlane::exeReturn() {
+void CollapsePlaneExt::exeReturn() {
 	if (MR::isStep(this, mRespawnTime)) {
         MR::showMaterial(this, "PlaneMat_v");
         MR::validateCollisionParts(this);
@@ -34,7 +43,7 @@ void CollapsePlane::exeReturn() {
 
 namespace NewNrvCollapsePlane {
 	void NrvReturn::execute(Spine* pSpine) const {
-        ((CollapsePlane*)pSpine->mExecutor)->exeReturn();
+        ((CollapsePlaneExt*)pSpine->mExecutor)->exeReturn();
     };
 
 	NrvReturn(NrvReturn::sInstance);

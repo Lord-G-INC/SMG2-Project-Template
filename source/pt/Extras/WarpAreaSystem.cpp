@@ -4,6 +4,7 @@
 #include "pt/Util/ActorUtil.h"
 #include "Game/System/GameSequenceInGame.h"
 #include "c_stdlib.h"
+#include "pt/init.h"
 
 /*
 * Authors: Evanbowl
@@ -19,14 +20,13 @@
 * This feature is disabled on GLE builds.
 */
 
-void* sWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
 static s32 gLastTableIndex = -1;
 
 namespace WarpAreaStageTable {
 	void readTable(s32 selectedindex, bool useErrors) {
 
 		JMapInfo table = JMapInfo();
-		table.attach(sWarpAreaStageTableBCSV);
+		table.attach(gWarpAreaStageTableBCSV);
 		s32 elementNum = MR::getCsvDataElementNum(&table);
 		s32 targetLine = -1;
 		s32 index;
@@ -133,7 +133,7 @@ namespace WarpAreaStageTable {
 	// Doesn't work
 	void setWipeOnStageLoad() {
 		JMapInfo table = JMapInfo();
-		table.attach(sWarpAreaStageTableBCSV);
+		table.attach(gWarpAreaStageTableBCSV);
 
 		s32 wipeType = 0;
 		s32 wipeTime = 0;

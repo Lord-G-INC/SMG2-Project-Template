@@ -5,6 +5,7 @@
 #include "revolution.h"
 #include "kamek/hooks.h"
 #include "JSystem/JKernel/JKRArchive.h"
+#include "pt/init.h"
 
 /* ---------------------------------------------------------------------
    FileSelectData
@@ -16,7 +17,7 @@
    File Select Table loading and unloading
 */
 
-void *FileSelectDataTable = pt::loadArcAndFile("/ObjectData/FileSelectData.arc", "/FileSelectData.bcsv");
+
 s32 tableNum;
 
 void loadFileDataTable(LiveActor *pActor)
@@ -28,7 +29,7 @@ void loadFileDataTable(LiveActor *pActor)
   if (MR::isFileExist("/ObjectData/FileSelectData.arc", false))
   {
     JMapInfo JMapTable = JMapInfo();
-    JMapTable.attach(FileSelectDataTable);
+    JMapTable.attach(gFileSelectDataTable);
     tableNum = MR::getCsvDataElementNum(&JMapTable);
   }
   else
@@ -68,7 +69,7 @@ kmCall(0x8024C6B4, getFileIconMessage);
 void createFellows(FileSelectItem item)
 {
   JMapInfo JMapTable = JMapInfo();
-  JMapTable.attach(FileSelectDataTable);
+  JMapTable.attach(gFileSelectDataTable);
   for (int i = 0; i < tableNum; i++)
   {
     // Get model name
@@ -190,7 +191,7 @@ kmCall(0x8025221C, invalidateAllUnusedIcon);
 float getIconFloat(int fellowID)
 {
   JMapInfo JMapTable = JMapInfo();
-  JMapTable.attach(FileSelectDataTable);
+  JMapTable.attach(gFileSelectDataTable);
   float fellowFloat = 0.0;
   MR::getCsvDataF32(&fellowFloat, &JMapTable, "play_frame", fellowID);
   return fellowFloat;

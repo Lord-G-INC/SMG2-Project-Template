@@ -1,6 +1,7 @@
 #ifdef ALL
 #include "pt/LayoutActor/TimerLayout.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
+#include "pt/Game/Screen/GameSceneLayoutHolder.h"
 
 /*
 * Clear Time In Stage Layout
@@ -11,6 +12,9 @@
 */
 
 //#ifdef ALL
+
+GameSceneLayoutHolderExt::GameSceneLayoutHolderExt() : GameSceneLayoutHolder() {}
+
 namespace pt {
 
 s32 numScenario = 1; // Checked scenario is 1 by default.
@@ -45,7 +49,7 @@ void TimerLayout::control() {
 				numScenario = 1;
 
 		if (!MR::isPowerStarGetDemoActive()) {
-			currTime = GameSequenceFunction::getGameSequenceInGame()->getPlayResultInStageHolder()->mCurrentClearTime + 1;
+			currTime = GameSequenceFunction::getGameSequenceInGame()->getPlayResultInStageHolder()->mStageClearTime + 1;
 			savedTime = GameDataFunction::makeSomeGalaxyStorage(MR::getCurrentStageName())->getScenarioAccessor(numScenario)->mBestTime;
 
 			MR::makeClearTimeString(currTimeDisplay, currTime);
@@ -110,15 +114,21 @@ namespace NrvTimerLayout {
 	NrvOnStarGet(NrvOnStarGet::sInstance);
 }
 
-void initTimerLayout(GameSceneLayoutHolder* holder, const char* pStr) {
-	MR::joinToNameObjGroup(holder, pStr);
-	
-	holder->mTimerLayout = new TimerLayout();
-	holder->mTimerLayout->initWithoutIter();
+GameSceneLayoutHolderExt* createGameSceneLayoutHolderExt() {
+	return new GameSceneLayoutHolderExt();
 }
 
-kmWrite32(0x8045A0A4, 0x38600048); // li r3, 0x48
-kmCall(0x80471650, initTimerLayout);
+kmCall(0x8045A0A4, createGameSceneLayoutHolderExt);
+kmWrite32(0x8045A0A8, 0x48000874);
 
+void initTimerLayout(GameSceneLayoutHolderExt* pHolder, const char* pStr) {
+	MR::joinToNameObjGroup(pHolder, pStr);
+	if (!MR::isStageFileSelect()) {
+		pHolder->mTimeLayout = new TimerLayout();
+		pHolder->mTimeLayout->initWithoutIter();
+	}
+}
+
+kmCall(0x80471650, initTimerLayout);
 }
 #endif

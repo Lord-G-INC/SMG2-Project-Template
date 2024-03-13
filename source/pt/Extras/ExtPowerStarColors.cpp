@@ -114,14 +114,6 @@ namespace pt {
 	*/
 
 	#endif
-	
-	#if defined NOGLE || defined SMG63 || defined ALL
-	void loadPTPictureFont() {
-		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
-	}
-
-	kmCall(0x804B8048, loadPTPictureFont);
-	#endif
 
 	#ifdef NOGLE
 
@@ -201,7 +193,6 @@ namespace pt {
 
 		if (color == 1 || color == 2)
 			color = pActor->mColor;
-
 
 		MR::emitEffect(pActor, starParticleStr[color]);
 	}

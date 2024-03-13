@@ -4,6 +4,7 @@
 #include "Game/Util.h"
 #include "pt/Util/ActorUtil.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
+#include "pt/init.h"
 
 namespace pt {
 
@@ -24,13 +25,12 @@ namespace pt {
 namespace StageEventDataTable {
 
 	const char* flags;
-	void* StageEventDataTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/StageEventDataTable.bcsv");
 		
 	//StageEventDataTable Parser
 	bool readTable(const char* value, const char* stageName) {
 
 		JMapInfo* StageDataTable = new JMapInfo();
-		StageDataTable->attach(StageEventDataTableBCSV);
+		StageDataTable->attach(gStageEventDataTableBCSV);
 
 		for (s32 i = 0; i < MR::getCsvDataElementNum(StageDataTable); i++) {
 			const char *exceptStage = 0;

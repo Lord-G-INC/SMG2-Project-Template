@@ -2,12 +2,13 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "Game/Screen/GameSceneLayoutHolder.h"
+#include "pt/Game/Screen/CounterLayoutController.h"
 #include "pt/Util/ActorUtil.h"
 #include "Game/NPC/TalkMessageCtrl.h"
+#include "pt/init.h"
 
 BlueCoinData* gBlueCoinData;
-
-void* gBlueCoinBcsvTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
 
 #define BINSIZE 867
 
@@ -242,8 +243,9 @@ namespace BlueCoinUtil {
     bool isBlueCoinTextBoxAppeared() {
         if (hasSeenBlueCoinTextBoxCurrentFile())
             return false;
-        else
-            return MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
+        else {
+            return ((CounterLayoutControllerExt*)MR::getGameSceneLayoutHolder()->mCounterLayoutController)->mPTDBlueCoinCounter->isNerve(&NrvBlueCoinCounter::NrvShowTextBox::sInstance);
+        }
     }
 
     void spendBlueCoinCurrentFile(u8 numcoin) {
@@ -283,12 +285,12 @@ namespace BlueCoinUtil {
     }
 
     void startCounterCountUp() {
-        ((BlueCoinCounter*)MR::getGameSceneLayoutHolder()->mCounterLayoutController->mPTDBlueCoinCounter)->startCountUp();
+        ((BlueCoinCounter*)((CounterLayoutControllerExt*)MR::getGameSceneLayoutHolder()->mCounterLayoutController)->mPTDBlueCoinCounter)->startCountUp();
     }
 
     s32 getBlueCoinRangeData(const char* pStageName, bool collectedCoinsOnly) {
         JMapInfo table = JMapInfo();
-        table.attach(gBlueCoinBcsvTable);
+        table.attach(gBlueCoinIDRangeTable);
 
         const char* tableStageName;
         s32 targetLine = -1;
@@ -332,7 +334,7 @@ namespace BlueCoinUtil {
     
     s32 getBlueCoinRange(const char* pStageName, bool minOrMax) {
         JMapInfo table = JMapInfo();
-        table.attach(gBlueCoinBcsvTable);
+        table.attach(gBlueCoinIDRangeTable);
 
         const char* tableStageName;
         s32 targetLine = -1;
@@ -360,7 +362,7 @@ namespace BlueCoinUtil {
 
     void getBlueCoinPaneNameFromTable(LayoutActor* pLayout, const char* pStageName) {
         JMapInfo table = JMapInfo();
-        table.attach(gBlueCoinBcsvTable);
+        table.attach(gBlueCoinIDRangeTable);
 
         const char* tableStageName;
         s32 targetLine = -1;
@@ -388,8 +390,8 @@ namespace BlueCoinUtil {
     LiveActor* createBlueCoinForSpawning(LiveActor* pSourceActor, s32 id) {
         if (id > -1) {
             BlueCoin* coin = new BlueCoin("BlueCoinS");
-            coin->mID = id;
             MR::addToCoinHolder(pSourceActor, coin);
+            coin->mID = id;
             coin->initWithoutIter();
             MR::hideModel(coin);
             MR::invalidateHitSensors(coin);

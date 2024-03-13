@@ -1,5 +1,6 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "Game/NPC/TalkNodeCtrl.h"
 
 
 namespace pt {

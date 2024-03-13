@@ -1,7 +1,9 @@
 #include "syati.h"
 #include "Game/Util.h"
 #include "Game/Screen/LayoutActor.h"
+#include "Game/Screen/GameSceneLayoutHolder.h"
 #include "Game/NPC/TalkMessageCtrl.h"
+#include "Game/NPC/TalkNodeCtrl.h"
 #include "pt/Util/ActorUtil.h"
 
 /*
@@ -32,6 +34,14 @@ namespace pt {
 	}
 
 	kmCall(0x800413F0, getErrorMessage); // MR::getGameMessageDirect will return the error message instead of NULL
+
+	#if defined NOGLE || defined SMG63 || defined SMSS || defined ALL
+	void loadPTPictureFont() {
+		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
+	}
+
+	kmCall(0x804B8048, loadPTPictureFont);
+	#endif
 
 
 	/*
@@ -196,7 +206,7 @@ namespace pt {
 		s32 msgID = -1;
 		MR::getJMapInfoMessageID(rIter, &msgID);
 
-		LayoutActor* pLayout = MR::createSimpleLayout("textlyt", "TextLayout", 0);
+		LayoutActor* pLayout = (LayoutActor*)MR::createSimpleLayout("textlyt", "TextLayout", 0);
 		pLayout->initWithoutIter();
 
 		MR::setTextBoxFormatRecursive(pLayout, "Text00", L"");
@@ -248,7 +258,7 @@ namespace pt {
 
 	//kmWrite32(0x8048ED84, 0x38600000); // li r3, 0
 
-	#if defined (SMG63) || defined (ALL)
+	#if defined SMG63 || defined ALL
 	void SnowBallDieInWater(LiveActor* pActor, const TVec3f& rPos1, const TVec3f& rPos2) {
 		MR::makeMtxUpNoSupportPos(&((TMtx34f*)pActor)[0x3], rPos1, rPos2);
 		if (MR::isInWater(pActor->mTranslation)) {

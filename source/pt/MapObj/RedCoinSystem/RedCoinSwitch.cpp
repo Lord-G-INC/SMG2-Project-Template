@@ -1,4 +1,5 @@
 #include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
+#include "pt/MapObj/RedCoinSystem/RedCoinController.h"
 #include "pt/Util/ActorUtil.h"
 
 /*
@@ -10,75 +11,116 @@
 * Exclusive to PTD.
 */
 
+//kmWrite32(0x80371FA0, 0x38600048); // li r3, 0x48
+
+//void initTimerLayout(TimeLimitLayout* pLayout) {
+//    pLayout->mIsNoKill = false;
+//}
+//kmCall(0x80371F94, initTimerLayout);
+//
+//void useNewTimeLayoutAnim(TimeLimitLayout* pLayout, const char* pStr, u32 l) {
+//    MR::startAnim(pLayout, "Appear_NoKill", l);
+//    OSReport("Test: %d\n", pLayout->mIsNoKill);
+//}
+//
+//kmCall(0x804A3B0C, useNewTimeLayoutAnim);
+//
 RedCoinSwitch::RedCoinSwitch(const char* pName) : LiveActor(pName) {
-    isOn = false;
+    mRedCoinController = 0;
     mTime = 0;
-    mCollectedPowerStar = -1;
+    mMode = 0;
 }
 
 void RedCoinSwitch::init(const JMapInfoIter& rIter) {
-    
     MR::processInitFunction(this, rIter, false);
+    MR::joinToGroupArray(this, rIter, "RedCoin", 24);
+    initNerve(&NrvRedCoinSwitch::NrvWait::sInstance, 0);
     initHitSensor(1);
 	MR::addHitSensorMapObj(this, "Switch", 1, 75.0f, TVec3f(0.0f, 150.0f, 0.0f));
     MR::initCollisionParts(this, "RedCoinSwitch", getSensor("Switch"), (MtxPtr)getBaseMtx());
     MR::getJMapInfoArg0NoInit(rIter, &mTime);
-    MR::getJMapInfoArg1NoInit(rIter, &mCollectedPowerStar);
-    MR::getJMapInfoArg4NoInit(rIter, &mIsNotKillPlayer);
+    MR::getJMapInfoArg1NoInit(rIter, &mMode);
 
     mTimeLimitLayout = new TimeLimitLayout(1);
+
+    //if (mMode == 1)
+    //    mTimeLimitLayout->mIsNoKill = true;
+
     MR::connectToSceneLayout(mTimeLimitLayout);
     mTimeLimitLayout->setDisplayModeOnNormal(1);
     mTimeLimitLayout->initWithoutIter();
-    
+  
     makeActorAppeared();
+}
 
-    if (mCollectedPowerStar > 0 && MR::hasPowerStarInCurrentStage(mCollectedPowerStar) || MR::isValidSwitchAppear(this)) {
-        MR::invalidateHitSensors(this);
-        MR::hideModel(this);
+void RedCoinSwitch::initAfterPlacement() {
+    mRedCoinController = (RedCoinController*)pt::getSpecificActorFromGroup(this, "RedCoinController");
+}
+
+void RedCoinSwitch::exePress() {
+    if (MR::isFirstStep(this)) {
+        MR::startAction(this, "Press");
         MR::invalidateCollisionParts(this);
+        MR::invalidateClipping(this);
+
+        mTimeLimitLayout->setTimeLimit(mTime * 60);
+        mTimeLimitLayout->appear();
+
+        if (MR::isValidSwitchA(this))
+            MR::onSwitchA(this);
+
+        if (mRedCoinController) {
+            mRedCoinController->appearFromSwitch();
+        }
     }
 }
 
-void RedCoinSwitch::exeOn() {
-    MR::startAction(this, "Press");
-    MR::invalidateCollisionParts(this);
-    MR::invalidateClipping(this);
-    isOn = true;
-    
-    mTimeLimitLayout->setTimeLimit(mTime * 60);
-    mTimeLimitLayout->appear();
-
-    if (MR::isValidSwitchA(this))
-        MR::onSwitchA(this);
+void RedCoinSwitch::exeRelease() {
+    if (MR::isFirstStep(this)) {
+        MR::startAction(this, "Release");
+        MR::validateCollisionParts(this);
+        MR::invalidateClipping(this);
+        setNerve(&NrvRedCoinSwitch::NrvWait::sInstance);
+    }
 }
 
 void RedCoinSwitch::control() {
     if (mTimeLimitLayout->isReadyToTimeUp()) {
-        if (!this->mIsNotKillPlayer) 
+        if (mMode == 0) {
             MR::forceKillPlayerByGroundRace();
-        else if (MR::isValidSwitchA(this)) 
-            MR::offSwitchA(this);
-    }
+        }
+        if (mMode == 1 && mRedCoinController) {
+            mRedCoinController->resetAllRedCoins();
+            setNerve(&NrvRedCoinSwitch::NrvRelease::sInstance);
+        }
 
-    if (MR::isValidSwitchB(this))
-        if (MR::isOnSwitchB(this)) 
-            mTimeLimitLayout->kill();
+        mTimeLimitLayout->kill();
+    }
 
     if (MR::isPowerStarGetDemoActive())
         mTimeLimitLayout->kill();
-            
-    if (MR::isValidSwitchAppear(this) && !isOn)
-        if (MR::isOnSwitchAppear(this)) {
-            MR::validateHitSensors(this);
-            MR::showModel(this);
-            MR::validateCollisionParts(this);
-        }
 }
 
 bool RedCoinSwitch::receiveMessage(u32 msg, HitSensor* pSender, HitSensor* pReceiver) {
-	if (MR::isMsgPlayerHipDropFloor(msg) && !isOn)
-        exeOn();
+	if (MR::isMsgPlayerHipDropFloor(msg) && !isNerve(&NrvRedCoinSwitch::NrvPress::sInstance))
+        setNerve(&NrvRedCoinSwitch::NrvPress::sInstance);
 
 		return false;
+}
+
+namespace NrvRedCoinSwitch {
+    void NrvWait::execute(Spine* pSpine) const {
+    }
+
+    void NrvPress::execute(Spine* pSpine) const {
+        ((RedCoinSwitch*)pSpine->mExecutor)->exePress();  
+    }
+
+    void NrvRelease::execute(Spine* pSpine) const {
+        ((RedCoinSwitch*)pSpine->mExecutor)->exeRelease(); 
+    }
+
+    NrvWait(NrvWait::sInstance);
+    NrvPress(NrvPress::sInstance);
+    NrvRelease(NrvRelease::sInstance);
 }

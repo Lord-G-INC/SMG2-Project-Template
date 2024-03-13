@@ -25,6 +25,8 @@ RedCoinController::RedCoinController(const char* pName) : LiveActor(pName) {
     mIsValidCounterAppear = false;
     mRedCoinCounter = 0;
     mRedCoinPlayerCounter = 0;
+    mRedCoinSwitch = 0;
+    mLinkedCoins = 0;
 }
 
 void RedCoinController::init(const JMapInfoIter& rIter) {
@@ -33,7 +35,6 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::invalidateClipping(this);
     MR::registerDemoSimpleCastAll(this);
     MR::useStageSwitchWriteA(this, rIter);
-    MR::useStageSwitchReadB(this, rIter);
     MR::joinToGroupArray(this, rIter, "RedCoin", 24);
 
     // Get Obj_args
@@ -60,18 +61,42 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     }
 }
 
+void RedCoinController::initAfterPlacement() {
+    mRedCoinSwitch = (RedCoinSwitch*)pt::getSpecificActorFromGroup(this, "RedCoinSwitch");
+    LiveActorGroup* group = MR::getGroupFromArray(this);
+
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (MR::isEqualString(group->getActor(i)->mName, "RedCoin")) {
+            mLinkedCoins++;
+
+            if (mRedCoinSwitch) {
+                MR::hideModel(group->getActor(i));
+                MR::invalidateShadowAll(group->getActor(i));
+                MR::invalidateHitSensors(group->getActor(i));
+            }
+        }
+    }
+}
+
 void RedCoinController::movement() {    
     calcCounterVisibility();
 
     if (mHasAllRedCoins)
-        mElapsed++; // There may be a better way to do this
+        mElapsed++; // There may be a better way to do this, maybe nerves?
 
+    if (mElapsed == 1 && mRedCoinSwitch) {
+        mRedCoinSwitch->mTimeLimitLayout->kill();
+    }
     if (mElapsed == 140) {
         if (MR::isValidSwitchA(this)) {
             MR::onSwitchA(this);
         }
         
-        MR::getGroupFromArray(this)->killAll();
+        LiveActorGroup* group = MR::getGroupFromArray(this);
+        for (s32 i = 0; i < group->mNumObjs; i++) {
+            if (!MR::isEqualString(group->getActor(i)->mName, "RedCoinSwitch"))
+                group->getActor(i)->kill();
+        }
     }
 }
 
@@ -79,9 +104,9 @@ void RedCoinController::movement() {
 void RedCoinController::startCountUp(LiveActor* pRedCoin) {
     mNumCoins++;
     
-    mHasAllRedCoins = mNumCoins < MR::getGroupFromArray(this)->mNumObjs - 1 ? 0 : 1;
+    mHasAllRedCoins = mNumCoins == mLinkedCoins;
 
-    mRedCoinCounter->startCountUp(mNumCoins, mHasAllRedCoins);
+    mRedCoinCounter->startCountUp(mNumCoins, mHasAllRedCoins, mRedCoinSwitch);
 
     mRedCoinPlayerCounter->mLastRedCoin = pRedCoin;
     mRedCoinPlayerCounter->mNumCoins = mNumCoins;
@@ -106,31 +131,40 @@ void RedCoinController::calcCounterVisibility() {
         MR::showLayout(mRedCoinCounter);
 }
 
-// This function is unused, but there are plans for
-// this function to be included if it can be figured out.
+void RedCoinController::appearFromSwitch() {
+    mRedCoinCounter->appear();
+    LiveActorGroup* group = MR::getGroupFromArray(this);
 
-//void RedCoinController::resetAllRedCoins() {
-//    LiveActorGroup* group = MR::getGroupFromArray(this);
-//
-//    for (s32 i = 0; i < group->mNumObjs; i++) {
-//        if (!strcmp(group->getActor(i)->mName, "RedCoin")) {
-//            RedCoin* coin = ((RedCoin*)group->getActor(i));
-//            MR::hideModel(coin);
-//            MR::invalidateShadowAll(coin);
-//            MR::invalidateHitSensors(coin);
-//
-//            coin->mIsCollected = false;
-//
-//            if (coin->mIsInAirBubble)
-//                coin->mAirBubble->makeActorAppeared();
-//        }
-//    }
-//
-//    mNumCoins = 0;
-//    mIsValidCounterAppear = false;
-//    MR::offSwitchB(this);
-//    MR::stopAnim(mRedCoinPlayerCounter, 0);
-//    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
-//    MR::hideLayout(mRedCoinCounter);
-//    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
-//}
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (MR::isEqualString(group->getActor(i)->mName, "RedCoin")) {
+            MR::showModel(group->getActor(i));
+            MR::validateShadowAll(group->getActor(i));
+            MR::validateHitSensors(group->getActor(i));
+        }
+    }
+}
+
+void RedCoinController::resetAllRedCoins() {
+    LiveActorGroup* group = MR::getGroupFromArray(this);
+
+    for (s32 i = 0; i < group->mNumObjs; i++) {
+        if (MR::isEqualString(group->getActor(i)->mName, "RedCoin")) {
+            RedCoin* coin = ((RedCoin*)group->getActor(i));
+            MR::hideModel(coin);
+            MR::invalidateShadowAll(coin);
+            MR::invalidateHitSensors(coin);
+
+            coin->mIsCollected = false;
+
+            if (coin->mIsInAirBubble)
+                coin->mAirBubble->makeActorAppeared();
+        }
+    }
+
+    mNumCoins = 0;
+    mIsValidCounterAppear = false;
+    MR::stopAnim(mRedCoinPlayerCounter, 0);
+    MR::startSystemSE("SE_SY_TIMER_A_0", -1, -1);
+    mRedCoinCounter->kill();
+    MR::setTextBoxNumberRecursive(mRedCoinCounter, "Counter", 0);
+}

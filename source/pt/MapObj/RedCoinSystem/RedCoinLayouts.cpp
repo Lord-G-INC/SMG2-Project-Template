@@ -48,11 +48,11 @@ void RedCoinCounter::setStarIcon(s32 starID, s32 iconID) {
     MR::setTextBoxFormatRecursive(this, "TxtStar", &str);
 }
 
-void RedCoinCounter::startCountUp(s32 count, bool hasAllCoins) {
+void RedCoinCounter::startCountUp(s32 count, bool hasAllCoins, bool isRedCoinSwitchUsed) {
     mRedCoinCount = count;
     mHasAllRedCoins = hasAllCoins;
 
-    if (mRedCoinCount == 1 && mLayoutMode == -1) {
+    if (mRedCoinCount == 1 && mLayoutMode == -1 && !isRedCoinSwitchUsed) {
         LayoutActor::appear();
         setNerve(&NrvRedCoinCounter::NrvAppearWithUpdate::sInstance);
     }
