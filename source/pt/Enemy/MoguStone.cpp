@@ -41,9 +41,9 @@ namespace pt {
 
 	void MoguStone::calcAndSetBaseMtx() {
 		TMtx34f mtxTR;
-		mtxTR.setTrans(mTranslation);
-		mtxTR.setQuat(mRotateQuat);
-		MR::setBaseTRMtx(this, mtxTR);
+		((TPos3f*)&mtxTR)->setTrans(mTranslation);
+		((TRot3f*)&mtxTR)->setQuat(mRotateQuat);
+		MR::setBaseTRMtx(this, *(TPos3f*)&mtxTR);
 	}
 
 	void MoguStone::attackSensor(HitSensor *pSender, HitSensor *pReceiver) {

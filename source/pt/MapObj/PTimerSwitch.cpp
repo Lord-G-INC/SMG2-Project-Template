@@ -51,8 +51,8 @@ void PTimerSwitch::kill() {
 void PTimerSwitch::calcAnim() {
 	LiveActor::calcAnim();
 	TMtx34f mtx;
-	PSMTXCopy(MR::getJointMtx(this, "Move"), mtx);
-	mParts->setMtx(mtx);
+	PSMTXCopy(MR::getJointMtx(this, "Move"), (MtxPtr)&mtx);
+	mParts->setMtx(*(TPos3f*)&mtx);
 }
 
 void PTimerSwitch::control() {

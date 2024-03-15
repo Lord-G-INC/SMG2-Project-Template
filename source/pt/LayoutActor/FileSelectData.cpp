@@ -79,7 +79,7 @@ void createFellows(FileSelectItem item)
       modelName = "FileSelectDataMario"; // fallback if it fails to get the icon
 
     // Make model
-    item.modelArray->models[i] = new FileSelectModel(modelName, item._D8, "キャラフェイス");
+    item.modelArray->models[i] = new FileSelectModel(modelName, (MtxPtr)&item._D8, "キャラフェイス");
   }
 }
 

@@ -30,7 +30,7 @@ namespace pt {
 		mMsgGroup = NULL;
 		mGroupLeader = false;
 
-		PSMTXIdentity(mRadiateEffectMtx);
+		PSMTXIdentity((MtxPtr)&mRadiateEffectMtx);
 	}
 
 	void FirePressureRadiate::init(const JMapInfoIter &rIter) {
@@ -47,8 +47,8 @@ namespace pt {
 
 		// Initialize effects
 		initEffectKeeper(0, NULL, false);
-		MR::setEffectHostMtx(this, "Fire", mRadiateEffectMtx);
-		MR::setEffectHostMtx(this, "FireInd", mRadiateEffectMtx);
+		MR::setEffectHostMtx(this, "Fire", (MtxPtr)&mRadiateEffectMtx);
+		MR::setEffectHostMtx(this, "FireInd", (MtxPtr)&mRadiateEffectMtx);
 
 		// Initialize sounds
 		initSound(4, "FirePressureRadiate", NULL, TVec3f(0.0f, 0.0f, 0.0f));
@@ -149,8 +149,8 @@ namespace pt {
 	void FirePressureRadiate::updateHitSensor(HitSensor *pSensor) {
 		TVec3f frontVec, position, lineStart, lineEnd;
 
-		MR::extractMtxXDir(mRadiateEffectMtx, &frontVec);
-		MR::extractMtxTrans(mRadiateEffectMtx, &position);
+		MR::extractMtxXDir((MtxPtr)&mRadiateEffectMtx, &frontVec);
+		MR::extractMtxTrans((MtxPtr)&mRadiateEffectMtx, &position);
 		JMAVECScaleAdd(frontVec, position, lineStart, 50.0f);
 		JMAVECScaleAdd(frontVec, lineStart, lineEnd, mFlameLength - 50.0f);
 
@@ -272,7 +272,7 @@ namespace pt {
 	* SMG1, this is much shorter as we use MR::tmpMtxRotZDeg to calculate the rotation offset instead
 	* of calculating it manually.
 	*/
-	bool FirePressureRadiate::calcJointCannon(TMtx34f *pJointMtx, const JointControllerInfo &) {
+	bool FirePressureRadiate::calcJointCannon(TPos3f* pJointMtx, const JointControllerInfo &) {
 		PSMTXConcat((MtxPtr)pJointMtx, MR::tmpMtxRotZDeg(mCannonRotation), (MtxPtr)pJointMtx);
 		return true;
 	}

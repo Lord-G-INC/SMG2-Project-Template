@@ -118,7 +118,7 @@ namespace pt {
 
 		MR::moveCoord(this, mSpeed);
 		MR::moveTransToCurrentRailPos(this);
-		direction = *MR::getRailDirection(this);
+		direction = MR::getRailDirection(this);
 		pt::turnToDirectionGravityFront(this, direction);
 
 		// "Move backwards" to get trans-rotate for other parts
@@ -131,7 +131,7 @@ namespace pt {
 			MR::moveCoord(this, 1080.0f * mScale.y);
 			MR::moveTransToOtherActorRailPos(parts, this);
 
-			direction = -*MR::getRailDirection(this);
+			direction = -MR::getRailDirection(this);
 			pt::turnToDirectionGravityFront(parts, direction);
 		}
 

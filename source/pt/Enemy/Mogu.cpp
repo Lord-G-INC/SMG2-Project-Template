@@ -95,8 +95,8 @@ namespace pt {
 
 	void Mogu::calcAndSetBaseMtx() {
 		TMtx34f mtxTR;
-		MR::makeMtxUpFrontPos(&mtxTR, mUpVec, mFrontVec, mTranslation);
-		MR::setBaseTRMtx(this, mtxTR);
+		MR::makeMtxUpFrontPos((TPos3f*)&mtxTR, mUpVec, mFrontVec, mTranslation);
+		MR::setBaseTRMtx(this, *(TPos3f*)&mtxTR);
 		MR::updateBaseScale(this, mAnimScaleCtrl);
 
 		// Update wrench position

@@ -43,16 +43,16 @@ void CrystalBox::init(const JMapInfoIter& rIter) {
 }
 
 void CrystalBox::calcAndSetBaseMtx() {
-    PSMTXCopy(MR::getJointMtx(this, "CrystalBox"), mNewBaseMtx);
+    PSMTXCopy(MR::getJointMtx(this, "CrystalBox"), (MtxPtr)&mNewBaseMtx);
     TVec3f yDir;
-    mNewBaseMtx.getYDir(yDir);
+    MR::extractMtxYDir((MtxPtr)&mNewBaseMtx, &yDir);
     yDir.scale(mDisplayModelOffset);
-    MR::addTransMtx(mNewBaseMtx, yDir);
+    MR::addTransMtx((MtxPtr)&mNewBaseMtx, yDir);
 
     if (mDisplayModel)
-        MR::setBaseTRMtx(mDisplayModel, mNewBaseMtx);
+        MR::setBaseTRMtx(mDisplayModel, (MtxPtr)&mNewBaseMtx);
 
-    MR::setBaseTRMtx(this, mNewBaseMtx);
+    MR::setBaseTRMtx(this, (MtxPtr)&mNewBaseMtx);
     LiveActor::calcAndSetBaseMtx();
 }
 

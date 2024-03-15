@@ -2,8 +2,8 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
-#include "pt/Game/Screen/PauseMenu.h"
-#include "pt/Game/Screen/CounterLayoutController.h"
+#include "pt/Game/Screen/PauseMenuExt.h"
+#include "pt/Game/Screen/CounterLayoutControllerExt.h"
 
 
 // HUD

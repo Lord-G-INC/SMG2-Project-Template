@@ -1,5 +1,5 @@
 #ifdef GSTANDPAD
-#include "sample/PadRecord.h"
+#include "pt/Syati/PadRecord.h"
 #include "Game/System/GameSequenceInGame.h"
 #include "Game/System/PlayResultInStageHolder.h"
 #include "Game/System/AllData/GameSequenceFunction.h"

@@ -1,5 +1,5 @@
 #if defined USA || defined PAL || defined JPN 
-#include "pt/Game/MapObj/CollapsePlane.h"
+#include "pt/Game/MapObj/CollapsePlaneExt.h"
 
 CollapsePlaneExt::CollapsePlaneExt(const char* pName) : CollapsePlane(pName) {};
 

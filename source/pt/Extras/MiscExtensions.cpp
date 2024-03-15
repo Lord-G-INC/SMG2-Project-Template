@@ -150,15 +150,15 @@ namespace pt {
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
 
-	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
-		MR::needStageSwitchWriteA(actor, iter);
-
-		f32 frame = 0;
-		MR::getJMapInfoArg1NoInit(iter, &frame);
-		MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
-	}
-	
-	kmCall(0x802AF524, customHipDropSwitchColors);
+	//void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
+	//	MR::needStageSwitchWriteA(actor, iter);
+//
+	//	f32 frame = 0;
+	//	MR::getJMapInfoArg1NoInit(iter, &frame);
+	//	MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
+	//}
+	//
+	//kmCall(0x802AF524, customHipDropSwitchColors);
 	
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions
@@ -258,7 +258,7 @@ namespace pt {
 
 	//kmWrite32(0x8048ED84, 0x38600000); // li r3, 0
 
-	#if defined SMG63 || defined ALL
+	#ifdef DISABLED
 	void SnowBallDieInWater(LiveActor* pActor, const TVec3f& rPos1, const TVec3f& rPos2) {
 		MR::makeMtxUpNoSupportPos(&((TMtx34f*)pActor)[0x3], rPos1, rPos2);
 		if (MR::isInWater(pActor->mTranslation)) {

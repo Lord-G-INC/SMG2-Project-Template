@@ -3,7 +3,7 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 #include "Game/Screen/GameSceneLayoutHolder.h"
-#include "pt/Game/Screen/CounterLayoutController.h"
+#include "pt/Game/Screen/CounterLayoutControllerExt.h"
 #include "pt/Util/ActorUtil.h"
 #include "Game/NPC/TalkMessageCtrl.h"
 #include "pt/init.h"
@@ -81,7 +81,7 @@ namespace BlueCoinUtil {
     }
 
     void saveBlueCoinData() {
-        s32 code = NANDCreate("BlueCoinData.bin", NAND_PERM_READ_WRITE, 0);
+        s32 code = NANDCreate("BlueCoinData.bin", 0x30, 0);
         if (code == 0 || code == -6) {
             NANDFileInfo info;
             code = NANDOpen("BlueCoinData.bin", &info, 3);

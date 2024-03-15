@@ -87,12 +87,12 @@ namespace pt {
 
 	void ScrewSwitchBase::updateBindActorMtx() {
 		TMtx34f mtxTR;
-		PSMTXCopy((MtxPtr)mBindedActor->getBaseMtx(), mtxTR);
+		PSMTXCopy((MtxPtr)mBindedActor->getBaseMtx(), (MtxPtr)&mtxTR);
 		HitSensor *senBinder = getSensor("Binder");
-		mtxTR[0][3] = senBinder->mPosition.x;
-		mtxTR[1][3] = senBinder->mPosition.y;
-		mtxTR[2][3] = senBinder->mPosition.z;
-		MR::setBaseTRMtx(mBindedActor, mtxTR);
+		((MtxPtr)&mtxTR)[0][3] = senBinder->mPosition.x;
+		((MtxPtr)&mtxTR)[1][3] = senBinder->mPosition.y;
+		((MtxPtr)&mtxTR)[2][3] = senBinder->mPosition.z;
+		MR::setBaseTRMtx(mBindedActor, *(TPos3f*)&mtxTR);
 	}
 
 	ScrewSwitch::ScrewSwitch(const char* pName) : ScrewSwitchBase(pName) {
@@ -241,7 +241,7 @@ namespace pt {
 	}
 
 	ValveSwitch::ValveSwitch(const char *pName) : ScrewSwitchBase(pName) {
-		PSMTXIdentity(mCollisionMtx);
+		PSMTXIdentity((MtxPtr)&mCollisionMtx);
 		mIsReverse = false;
 	}
 
@@ -252,8 +252,8 @@ namespace pt {
 		MR::addHitSensorAtJoint(this, "Binder", "Valve", ATYPE_BINDER, 8, 150.0f, mGravity * -75.0f);
 
 		// Initialize collision
-		PSMTXCopy(MR::getJointMtx(this, "Valve"), mCollisionMtx);
-		MR::initCollisionParts(this, "ValveCol", getSensor("Binder"), mCollisionMtx);
+		PSMTXCopy(MR::getJointMtx(this, "Valve"), (MtxPtr)&mCollisionMtx);
+		MR::initCollisionParts(this, "ValveCol", getSensor("Binder"), (MtxPtr)&mCollisionMtx);
 
 		// Initialize sounds
 		initSound(4, "ValveSwitch", false, TVec3f(0.0f, 0.0f, 0.0f));
@@ -262,8 +262,8 @@ namespace pt {
 	}
 
 	void ValveSwitch::control() {
-		PSMTXCopy(MR::getJointMtx(this, "Valve"), mCollisionMtx);
-		MR::makeMtxWithoutScale(&mCollisionMtx, mCollisionMtx);
+		PSMTXCopy(MR::getJointMtx(this, "Valve"), (MtxPtr)&mCollisionMtx);
+		MR::makeMtxWithoutScale((TPos3f*)&mCollisionMtx, *(TPos3f*)&mCollisionMtx);
 	}
 
 	void ValveSwitch::exeWait() {

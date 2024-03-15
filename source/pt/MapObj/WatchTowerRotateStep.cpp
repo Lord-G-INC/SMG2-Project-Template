@@ -63,8 +63,8 @@ namespace pt {
 		TMtx34f baseMtx;
 
 		MR::calcFrontVec(&frontVec, this);
-		MR::makeMtxFrontUpPos(&baseMtx, frontVec, mRotateDeg, mTranslation);
-		MR::setBaseTRMtx(this, baseMtx);
+		MR::makeMtxFrontUpPos((TPos3f*)&baseMtx, frontVec, mRotateDeg, mTranslation);
+		MR::setBaseTRMtx(this, *(TPos3f*)&baseMtx);
 	}
 
 	void WatchTowerRotateStep::initLift(const JMapInfoIter &rIter) {

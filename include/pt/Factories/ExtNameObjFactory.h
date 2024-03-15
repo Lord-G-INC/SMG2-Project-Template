@@ -41,8 +41,8 @@
 #include "pt/MapObj/BlueCoinSystem/BlueCoinBoard.h"
 #include "pt/MapObj/PTimerSwitch.h"
 #include "pt/MapObj/LavaSteam.h"
-#include "sample/GstRecord.h"
-#include "sample/PadRecord.h"
+#include "pt/Syati/GstRecord.h"
+#include "pt/Syati/PadRecord.h"
 #include "pt/Extras/ModSpecific/SuperMarioStarshine/GhostPlayer.h"
 #include "pt/MapObj/CrystalBox.h"
 

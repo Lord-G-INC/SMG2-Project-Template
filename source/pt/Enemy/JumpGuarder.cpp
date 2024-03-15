@@ -74,10 +74,10 @@ namespace pt {
 		MR::attachSupportTicoToTarget(this);
 
 		TMtx34f mtxTRS;
-		MR::makeMtxTRS(mtxTRS, TVec3f(0.0f, 44.0f, 0.0f), mHead->mRotation, mScale);
+		MR::makeMtxTRS((MtxPtr)&mtxTRS, TVec3f(0.0f, 44.0f, 0.0f), mHead->mRotation, mScale);
 
-		PSMTXCopy(mJointMtx, mHeadMtx);
-		PSMTXConcat(mHeadMtx, mtxTRS, mHeadMtx);
+		PSMTXCopy(mJointMtx, (MtxPtr)&mHeadMtx);
+		PSMTXConcat((MtxPtr)&mHeadMtx, (MtxPtr)&mtxTRS, (MtxPtr)&mHeadMtx);
 
 		// Decrement stagger delay and ensure the value does not fall below 0
 		mStaggerDelay = (mStaggerDelay - 1) & (((u32)(mStaggerDelay - 1) >> 31) - 1);

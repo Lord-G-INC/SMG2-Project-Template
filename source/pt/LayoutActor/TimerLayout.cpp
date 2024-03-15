@@ -1,7 +1,7 @@
 #ifdef ALL
 #include "pt/LayoutActor/TimerLayout.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
-#include "pt/Game/Screen/GameSceneLayoutHolder.h"
+#include "pt/Game/Screen/GameSceneLayoutHolderExt.h"
 
 /*
 * Clear Time In Stage Layout

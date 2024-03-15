@@ -63,13 +63,13 @@ namespace pt {
 			TMtx34f baseMtx;
 
 			if (MR::isSameDirection(mFrontVec, gravity, 0.01f)) {
-				MR::makeMtxUpNoSupportPos(&baseMtx, gravity, mTranslation);
+				MR::makeMtxUpNoSupportPos((TPos3f*)&baseMtx, gravity, mTranslation);
 			}
 			else {
-				MR::makeMtxUpFrontPos(&baseMtx, gravity, mFrontVec, mTranslation);
+				MR::makeMtxUpFrontPos((TPos3f*)&baseMtx, gravity, mFrontVec, mTranslation);
 			}
 
-			MR::setBaseTRMtx(this, baseMtx);
+			MR::setBaseTRMtx(this, *(TPos3f*)&baseMtx);
 		}
 	}
 
@@ -240,11 +240,11 @@ namespace pt {
 			TVec3f upVec;
 			TMtx34f rotMtx;
 			JGeometry::negateInternal(mGravity, upVec);
-			PSMTXIdentity(rotMtx);
-			MR::makeMtxUpFront(&rotMtx, upVec, mFrontVec);
+			PSMTXIdentity((MtxPtr)&rotMtx);
+			MR::makeMtxUpFront((TPos3f*)&rotMtx, upVec, mFrontVec);
 
 			TVec3f blowVelocity(0.0f, 20.0f, mHitBackVelocity);
-			rotMtx.mult33(blowVelocity, mVelocity);
+			((TRot3f*)&rotMtx)->mult33(blowVelocity, mVelocity);
 
 			MR::startAction(this, "Blow");
 		}
@@ -270,9 +270,9 @@ namespace pt {
 
 		// Initialize up and front vectors
 		TMtx34f rotateMtx;
-		MR::makeMtxRotate(rotateMtx, mRotation);
-		MR::extractMtxYDir(rotateMtx, &mUpVec);
-		MR::extractMtxZDir(rotateMtx, &mFrontVec);
+		MR::makeMtxRotate((MtxPtr)&rotateMtx, mRotation);
+		MR::extractMtxYDir((MtxPtr)&rotateMtx, &mUpVec);
+		MR::extractMtxZDir((MtxPtr)&rotateMtx, &mFrontVec);
 
 		// Initialize sensors
 		initHitSensor(3);
@@ -338,7 +338,7 @@ namespace pt {
 
 	void CocoSambo::calcAndSetBaseMtx() {
 		TMtx34f baseMtx;
-		MR::makeMtxUpFrontPos(&baseMtx, mUpVec, mFrontVec, mTranslation);
+		MR::makeMtxUpFrontPos((TPos3f*)&baseMtx, mUpVec, mFrontVec, mTranslation);
 		MR::setBaseTRMtx(this, (MtxPtr)&baseMtx);
 
 		MR::updateBaseScale(this, mAnimScaleCtrl);

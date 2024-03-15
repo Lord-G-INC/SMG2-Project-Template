@@ -1,8 +1,8 @@
 #if defined USEBLUECOIN && !defined SM64BLUECOIN
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoin.h"
-#include "pt/Game/Enemy/Kuribo.h"
-#include "pt/Game/Enemy/SamboHead.h"
+#include "pt/Game/Enemy/KuriboExt.h"
+#include "pt/Game/Enemy/SamboHeadExt.h"
  // KURIBO
 
 KuriboExt::KuriboExt(const char* pName) : Kuribo(pName) {}

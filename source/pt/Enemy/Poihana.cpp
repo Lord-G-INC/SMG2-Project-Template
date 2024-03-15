@@ -120,8 +120,8 @@ namespace pt {
 
 	void Poihana::initAfterPlacement() {
 		TMtx34f baseMtx;
-		MR::makeMtxUpNoSupportPos(&baseMtx, -mGravity, mTranslation);
-		MR::setBaseTRMtx(this, baseMtx);
+		MR::makeMtxUpNoSupportPos((TPos3f*)&baseMtx, -mGravity, mTranslation);
+		MR::setBaseTRMtx(this, *(TPos3f*)&baseMtx);
 		MR::calcFrontVec(&mFrontVec, this);
 		MR::trySetMoveLimitCollision(this);
 	}
@@ -140,13 +140,13 @@ namespace pt {
 
 	void Poihana::calcAndSetBaseMtx() {
 		TMtx34f baseMtx;
-		MR::calcMtxFromGravityAndZAxis(&baseMtx, this, mGravity, mFrontVec);
+		MR::calcMtxFromGravityAndZAxis((TPos3f*)&baseMtx, this, mGravity, mFrontVec);
 
 		if (isNerveTypeWalkOrWait()) {
-			MR::blendMtx((MtxPtr)getBaseMtx(), baseMtx, 0.3f, baseMtx);
+			MR::blendMtx((MtxPtr)getBaseMtx(), (MtxPtr)&baseMtx, 0.3f, (MtxPtr)&baseMtx);
 		}
 
-		MR::setBaseTRMtx(this, baseMtx);
+		MR::setBaseTRMtx(this, *(TPos3f*)&baseMtx);
 		MR::updateBaseScale(this, mAnimScaleCtrl);
 	}
 
@@ -634,8 +634,8 @@ namespace pt {
 
 	void Poihana::updateBindActorMtx() {
 		TMtx34f binderMtx;
-		MR::makeMtxTR(binderMtx, mBindedActor);
-		MR::setBaseTRMtx(mBindedActor, binderMtx);
+		MR::makeMtxTR((MtxPtr)&binderMtx, mBindedActor);
+		MR::setBaseTRMtx(mBindedActor, (MtxPtr)&binderMtx);
 	}
 
 	void Poihana::endBind() {

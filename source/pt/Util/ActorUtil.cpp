@@ -14,8 +14,8 @@ namespace pt {
 
 	void turnToDirectionUpFront(LiveActor *pActor, TVec3f rUp, TVec3f rFront) {
 		TMtx34f mtx;
-		MR::makeMtxUpFront(&mtx, rUp, rFront);
-		mtx.getEulerXYZ(pActor->mRotation);
+		MR::makeMtxUpFront((TPos3f*)&mtx, rUp, rFront);
+		((TRot3f*)&mtx)->getEulerXYZ(pActor->mRotation);
 		pActor->mRotation *= 57.295776f;
 	}
 

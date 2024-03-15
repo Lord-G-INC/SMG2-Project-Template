@@ -1,5 +1,5 @@
 #ifdef GSTANDPAD
-#include "sample/GstRecord.h"
+#include "pt/Syati/GstRecord.h"
 #include "Game/NameObj/NameObjCategories.h"
 #include "Game/System/AllData/GameSequenceFunction.h"
 #include "Game/Player/MarioAccess.h"
@@ -216,7 +216,7 @@ namespace gst {
     }
 
     void GhostLuigiRecordHelper::handlePrepare() {
-        MarioAccess::setBaseMtx(*getBaseMtx());
+        MarioAccess::setBaseMtx(getBaseMtx());
         MarioAccess::setStateWait();
         MR::startBckPlayer("Wait", NULL);
         MR::hideModel(this);

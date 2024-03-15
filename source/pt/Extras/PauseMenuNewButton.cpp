@@ -1,7 +1,7 @@
 #if defined ALL || defined SMSS || defined SMG63
 
 #include "syati.h"
-#include "pt/Game/Screen/PauseMenu.h"
+#include "pt/Game/Screen/PauseMenuExt.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
 
 //kmWrite32(0x804712C0, 0x38600070); // li r3, 0x70

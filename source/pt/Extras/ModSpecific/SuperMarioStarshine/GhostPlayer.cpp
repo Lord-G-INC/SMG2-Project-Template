@@ -465,7 +465,7 @@
 			if (!MR::vecBlendSphere(&FrontVec, VecNormalize, FrontVec, 0.1f))
 				FrontVec = VecNormalize;
 
-			MR::makeMtxUpFront(getBaseMtx(), VecUnk, FrontVec);
+			MR::makeMtxUpFront((TPos3f*)getBaseMtx(), VecUnk, FrontVec);
 			//Don't update these as the gst data will reset the position instead
 			//PSMTXCopy((MtxPtr)getBaseMtx(), (MtxPtr)&mGstFileData->_8);
 			//MR::extractMtxTrans((MtxPtr)getBaseMtx(), &mTranslation);

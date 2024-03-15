@@ -77,8 +77,8 @@ namespace pt {
 		}
 
 		// Copy and store head matrix, then create head collision
-		PSMTXCopy(MR::getJointMtx(this, "Head"), mHeadMtx);
-		MR::initCollisionParts(this, "Head", getSensor("Body"), mHeadMtx);
+		PSMTXCopy(MR::getJointMtx(this, "Head"), (MtxPtr)&mHeadMtx);
+		MR::initCollisionParts(this, "Head", getSensor("Body"), (MtxPtr)&mHeadMtx);
 		MR::validateCollisionParts(this);
 
 		initNerve(&NrvBallBeamer::NrvWait::sInstance, 0);

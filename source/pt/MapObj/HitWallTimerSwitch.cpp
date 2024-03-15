@@ -60,8 +60,8 @@ namespace pt {
 	void HitWallTimerSwitch::calcAnim() {
 		LiveActor::calcAnim();
 		TMtx34f mtxCollision;
-		PSMTXCopy(MR::getJointMtx(this, "Move"), mtxCollision);
-		mMoveCollision->setMtx(mtxCollision);
+		PSMTXCopy(MR::getJointMtx(this, "Move"), (MtxPtr)&mtxCollision);
+		mMoveCollision->setMtx(*(TPos3f*)&mtxCollision);
 	}
 
 	void HitWallTimerSwitch::control() {

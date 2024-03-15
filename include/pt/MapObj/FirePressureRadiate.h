@@ -23,7 +23,7 @@ namespace pt {
 		void exeRadiateMargin();
 		void startWait();
 		void startRelax();
-		bool calcJointCannon(TMtx34f *pJointMtx, const JointControllerInfo &rJointControllerInfo);
+		bool calcJointCannon(TPos3f* pJointMtx, const JointControllerInfo &rJointControllerInfo);
 
 		JointController* mJointCtrl;
 		TMtx34f mRadiateEffectMtx;
