@@ -15,6 +15,7 @@ void* gWarpAreaStageTableBCSV;
 void* gFileSelectDataTable;
 void* gBoardDataTable;
 void* gBlueCoinIDRangeTable;
+void* gDummyDisplayModelTable;
 
 namespace {
 	// ----------------------------------------------------------------------------------------------------------------
@@ -56,8 +57,8 @@ namespace {
             BlueCoinUtil::initBlueCoinArray();
         #endif
         #ifdef NOGLE
-        gStageEventDataTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/StageEventDataTable.bcsv");
-        gWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/System/WarpAreaStageTable.bcsv");
+        gStageEventDataTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/StageEventDataTable.bcsv");
+        gWarpAreaStageTableBCSV = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/WarpAreaStageTable.bcsv");
         #endif
         #ifdef SMSS
         gFileSelectDataTable = pt::loadArcAndFile("/ObjectData/FileSelectData.arc", "/FileSelectData.bcsv");
@@ -66,6 +67,7 @@ namespace {
         gBoardDataTable = pt::loadArcAndFile("/SystemData/BlueCoinBoardDataTable.arc", "/BlueCoinBoardDataTable.bcsv");
         gBlueCoinIDRangeTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
         #endif
+        gDummyDisplayModelTable = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/DummyDisplayModelTable.bcsv");
     }
 
     kmBranch(0x804B69F4, handleCustomArchiveLoads);

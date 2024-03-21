@@ -11,8 +11,6 @@
 * Only available on the "ALL" configuration.
 */
 
-//#ifdef ALL
-
 GameSceneLayoutHolderExt::GameSceneLayoutHolderExt() : GameSceneLayoutHolder() {}
 
 namespace pt {

@@ -245,12 +245,12 @@ void setPauseMenuBlueCoinStageCount(PauseMenu* pPauseMenu) {
 wchar_t* gWFlagsStr = new wchar_t[34];
 
 void setUpBlueCoinFlagsInfo(PauseMenu* pPauseMenu) {
-    bool newLineAdded = 0;
+    bool newLineAdded = false;
     s32 newLineOff = 0;
     gWFlagsStr[33] = 0;
 
     for (s32 i = 0; i < 33; i++) {
-        newLineAdded = 0;
+        newLineAdded = false;
 
         if (i == 16) {
             MR::addNewLine(&gWFlagsStr[i]);

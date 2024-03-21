@@ -29,9 +29,9 @@ def remove_d_files():
 # ----------------------------------------------------------------------------------------------------------------------
 REGIONS = ["PAL", "USA", "JPN", "TWN", "KOR"]
 
-MWCCEPPC = dep("deps/CodeWarrior/mwcceppc.exe", "CodeWarrior compiler")
-MWASMEPPC = dep("deps/CodeWarrior/mwasmeppc.exe", "CodeWarrior assembler")
-KAMEK = dep("deps/Kamek/Kamek.exe", "Kamek linker")
+MWCCEPPC = dep("deps/Syati/deps/CodeWarrior/mwcceppc.exe", "CodeWarrior compiler")
+MWASMEPPC = dep("deps/Syati/deps/CodeWarrior/mwasmeppc.exe", "CodeWarrior assembler")
+KAMEK = dep("deps/Syati/deps/Kamek/Kamek.exe", "Kamek linker")
 SYATI_INCLUDE = dep("deps/Syati/include", "Syati include folder")
 SYATI_SYMBOLS = dep("deps/Syati/symbols", "Syati symbols folder")
 

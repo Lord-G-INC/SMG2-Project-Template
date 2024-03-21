@@ -37,7 +37,7 @@ namespace pt {
 
 	#if defined NOGLE || defined SMG63 || defined SMSS || defined ALL
 	void loadPTPictureFont() {
-		pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/Font/PictureFont.brfnt");
+		pt::loadArcAndFile("/SystemData/PictureFont.arc", "/PictureFont.brfnt");
 	}
 
 	kmCall(0x804B8048, loadPTPictureFont);
@@ -150,15 +150,15 @@ namespace pt {
 	kmWrite32(0x8025CE34, 0x7FC3F378); // mr r3, r30
 	kmCall(0x8025CE38, OceanSphereTexturePatch); // Hook
 
-	//void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
-	//	MR::needStageSwitchWriteA(actor, iter);
-//
-	//	f32 frame = 0;
-	//	MR::getJMapInfoArg1NoInit(iter, &frame);
-	//	MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
-	//}
-	//
-	//kmCall(0x802AF524, customHipDropSwitchColors);
+	void customHipDropSwitchColors(LiveActor* actor, const JMapInfoIter& iter) {
+		MR::needStageSwitchWriteA(actor, iter);
+	
+		f32 frame = 0;
+		MR::getJMapInfoArg1NoInit(iter, &frame);
+		MR::startBtpAndSetFrameAndStop(actor, "ButtonColor", frame);
+	}
+	
+	kmCall(0x802AF524, customHipDropSwitchColors);
 	
 	/*
 	* Mini Patch: Yes/No Dialogue Extensions

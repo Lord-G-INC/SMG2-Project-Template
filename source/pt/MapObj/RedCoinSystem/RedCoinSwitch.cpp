@@ -11,20 +11,6 @@
 * Exclusive to PTD.
 */
 
-//kmWrite32(0x80371FA0, 0x38600048); // li r3, 0x48
-
-//void initTimerLayout(TimeLimitLayout* pLayout) {
-//    pLayout->mIsNoKill = false;
-//}
-//kmCall(0x80371F94, initTimerLayout);
-//
-//void useNewTimeLayoutAnim(TimeLimitLayout* pLayout, const char* pStr, u32 l) {
-//    MR::startAnim(pLayout, "Appear_NoKill", l);
-//    OSReport("Test: %d\n", pLayout->mIsNoKill);
-//}
-//
-//kmCall(0x804A3B0C, useNewTimeLayoutAnim);
-//
 RedCoinSwitch::RedCoinSwitch(const char* pName) : LiveActor(pName) {
     mRedCoinController = 0;
     mTime = 0;
@@ -42,9 +28,6 @@ void RedCoinSwitch::init(const JMapInfoIter& rIter) {
     MR::getJMapInfoArg1NoInit(rIter, &mMode);
 
     mTimeLimitLayout = new TimeLimitLayout(1);
-
-    //if (mMode == 1)
-    //    mTimeLimitLayout->mIsNoKill = true;
 
     MR::connectToSceneLayout(mTimeLimitLayout);
     mTimeLimitLayout->setDisplayModeOnNormal(1);

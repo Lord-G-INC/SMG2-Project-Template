@@ -200,8 +200,9 @@ void BlueCoinBoard::exeAppear() {
         MR::requestMovementOn(mSysInfoWindowBox);
 
         if (MR::isExistSceneObj(SCENE_OBJ_PAUSE_BLUR)) {
-            MR::requestMovementOn(MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR));
-            ((PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR))->_30+=1;
+            PauseBlur* pPauseBlur = (PauseBlur*)MR::getSceneObjHolder()->getObj(SCENE_OBJ_PAUSE_BLUR);
+            MR::requestMovementOn(pPauseBlur);
+            pPauseBlur->_30+=1;
         }
 
         MR::startSystemSE("SE_SY_STAR_RESULT_PANEL_OPEN", -1, -1);

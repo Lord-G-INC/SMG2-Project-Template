@@ -57,6 +57,7 @@ void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
     MR::joinToGroupArray(this, rIter, "RedCoin", 24);
     MR::calcGravity(this);
+    MR::invalidateClipping(this);
 
     MR::getJMapInfoArg0NoInit(rIter, &mLaunchVelocity); // Y Appear Launch Velocity. Calculates gravity.
     MR::getJMapInfoArg1NoInit(rIter, &mRedCoinCounterPlayerPos);
@@ -69,11 +70,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 
     initHitSensor(1);
     MR::addHitSensor(this, "RedCoin", 0x4A, 4, 55.0f, TVec3f(0.0f, 70.0f, 0.0f));
-
-    //MR::initShadowVolumeSphere(this, 50.0f);
-    //MR::setShadowDropPositionPtr(this, 0, &mShadowDropPos);
-    //MR::setShadowDropLength(this, 0, 1000.0f);
-
     mFlashingCtrl = new FlashingCtrl(this, 1);
 
     makeActorAppeared();
@@ -88,6 +84,8 @@ void RedCoin::initAfterPlacement() {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);
     }
+    else
+        MR::offBind(this);
 
     if (mInvalidateShadows)
         MR::invalidateShadowAll(this);
@@ -114,11 +112,6 @@ void RedCoin::control() {
 }
 
 void RedCoin::calcAndSetBaseMtx() {
-    //if (mUseConnection && !mIsCollected) {
-    //    mConnector->connect();
-    //    mConnector->attachToUnder();
-    //}
-
     Coin::calcAndSetBaseMtx();
 }
 

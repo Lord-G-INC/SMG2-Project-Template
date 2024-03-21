@@ -46,8 +46,6 @@ namespace pt {
 
 		return new AnimScaleController(pAnimScaleParam);
 	}
-
-	//void* gTest = pt::loadArcAndFile("/SystemData/BlueCoinBoardDataTable.arc", "/BlueCoinBoardDataTable.bcsv");
 	
 	//Loads an arc and a selected file into memory.
 	void* loadArcAndFile(const char *pArc, const char *pFile) {

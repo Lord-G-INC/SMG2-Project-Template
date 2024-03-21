@@ -67,7 +67,6 @@ void BlueCoin::init(const JMapInfoIter& rIter) {
 
     makeActorAppeared();
 
-    // Can't use ActorInfo for this one...
     if (MR::isValidInfo(rIter))
         MR::useStageSwitchSyncAppear(this, rIter);
 }
@@ -77,6 +76,8 @@ void BlueCoin::initAfterPlacement() {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);
     }
+    else
+        MR::offBind(this);
 
     Coin::initAfterPlacement();
 }

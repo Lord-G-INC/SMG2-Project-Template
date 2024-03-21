@@ -23,6 +23,9 @@ void CrystalBox::init(const JMapInfoIter& rIter) {
 
         if (mDisplayModelID == 0)
             MR::declareCoin(this, 1);
+
+        if (mDisplayModelID == 4)
+            MR::declareStarPiece(this, 5);
         
         if (mDisplayModelID == 7)
             MR::declarePowerStar(this);
@@ -30,11 +33,17 @@ void CrystalBox::init(const JMapInfoIter& rIter) {
         if (mDisplayModelID == 8 || mDisplayModelID == 14)
             mDisplayModelOffset = -30.0f;
 
+        if (mDisplayModelID == 12)
+            mDisplayModelOffset = 45.0f;
+
         if (mDisplayModelID == 27) {
             mPurpleCoin = MR::createPurpleCoin(this, "PurpleCoinCrystalBox");
             MR::addToCoinHolder(this, mPurpleCoin);
             mPurpleCoin->initWithoutIter();
         }
+
+        if (mDisplayModelID == 28)
+            mDisplayModelOffset = 52.0f;
     }
 
     MR::startBck(this, "CrystalBox", 0);
@@ -43,16 +52,16 @@ void CrystalBox::init(const JMapInfoIter& rIter) {
 }
 
 void CrystalBox::calcAndSetBaseMtx() {
-    PSMTXCopy(MR::getJointMtx(this, "CrystalBox"), (MtxPtr)&mNewBaseMtx);
-    TVec3f yDir;
-    MR::extractMtxYDir((MtxPtr)&mNewBaseMtx, &yDir);
-    yDir.scale(mDisplayModelOffset);
-    MR::addTransMtx((MtxPtr)&mNewBaseMtx, yDir);
+    if (mDisplayModel) {
+        PSMTXCopy(MR::getJointMtx(this, "CrystalBox"), (MtxPtr)&mNewBaseMtx);
+        TVec3f yDir;
+        MR::extractMtxYDir((MtxPtr)&mNewBaseMtx, &yDir);
+        yDir.scale(mDisplayModelOffset);
+        MR::addTransMtx((MtxPtr)&mNewBaseMtx, yDir);
 
-    if (mDisplayModel)
         MR::setBaseTRMtx(mDisplayModel, (MtxPtr)&mNewBaseMtx);
+    }
 
-    MR::setBaseTRMtx(this, (MtxPtr)&mNewBaseMtx);
     LiveActor::calcAndSetBaseMtx();
 }
 
@@ -76,8 +85,12 @@ void CrystalBox::exeBreak() {
         MR::hideModel(this);
         MR::showModel(mBreakModel);
 
-        if (mDisplayModelID == 0)
+        if (mDisplayModelID == 0) {
             MR::appearCoinPop(this, mDisplayModel->mTranslation, 1);
+        }
+        else if (mDisplayModelID == 4) {
+            MR::appearStarPiece(this, mDisplayModel->mTranslation, 5, 10.0f, 40.0f, false);
+        }
         else if (mDisplayModelID == 7) {
             MR::requestAppearPowerStar(this, mDisplayModel->mTranslation);
             MR::tryDeleteEffectAll(mDisplayModel);

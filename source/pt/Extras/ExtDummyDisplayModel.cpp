@@ -1,5 +1,6 @@
 #include "syati.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "pt/init.h"
 
 namespace pt {
     /*
@@ -9,30 +10,10 @@ namespace pt {
     * all calls to MR::tryCreateDummyModel, but uses the original function to initialize the base game's items.
     */
 
-    DummyDisplayModelInfo cNewDummyDisplayModels[] = {
-        /* 15 */ { "PowerUpFire",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 16 */ { "PowerUpIce",        NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 17 */ { "PowerUpBee",        NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 18 */ { "PowerUpHopper",     NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 19 */ { "PowerUpTeresa",     NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 20 */ { "PowerUpFoo",        NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 21 */ { "PowerUpCloud",      NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 22 */ { "PowerUpRock",       NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 23 */ { "PowerUpInvincible", NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 24 */ { "RedCoin",           "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-
-        #ifdef USEBLUECOIN
-        /* 25 */ { "BlueCoin",          "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        /* 26 */ { "BlueCoinClear",     "Dummy", { 0.0f, 70.0f, 0.0f }, 16, NULL, false },
-        #endif
-
-        /* 25/27 */ { "PurpleCoin",     NULL, { 0.0f, 70.0f, 0.0f }, 16, NULL, false }
-    };
-
     DummyDisplayModel* tryCreateNewDummyModel(LiveActor *pHost, const JMapInfoIter &rIter, s32 defaultId, int v4) {
         s32 modelId = MR::getDummyDisplayModelId(rIter, defaultId);
 
-        if (modelId < 0 || modelId > 14 + sizeof(cNewDummyDisplayModels) / sizeof(cNewDummyDisplayModels[0])) {
+        if (modelId < 0) {
             return NULL;
         }
 
@@ -45,13 +26,22 @@ namespace pt {
         if (MR::isValidInfo(rIter)) {
             MR::getJMapInfoArg6NoInit(rIter, &colorId);
         }
-        
+
         #if defined USEBLUECOIN && !defined SM64BLUECOIN
             if (modelId == 25 && BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
                 modelId = 26;
         #endif
-        
-        DummyDisplayModelInfo *pInfo = &cNewDummyDisplayModels[modelId - 15];
+    
+        JMapInfo table;
+        table.attach(gDummyDisplayModelTable);
+        DummyDisplayModelInfo* pInfo = new DummyDisplayModelInfo;
+        MR::getCsvDataStr(&pInfo->mModelName, &table, "ModelName", modelId - 15);
+        MR::getCsvDataStr(&pInfo->mInitName, &table, "InitName", modelId - 15);
+        MR::getCsvDataVec(&pInfo->mOffset, &table, "Offset", modelId - 15);
+        MR::getCsvDataS32(&pInfo->_14, &table, "Unknown", modelId - 15);
+        MR::getCsvDataStr(&pInfo->mAnimName, &table, "AnimName", modelId - 15);
+        MR::getCsvDataBool(&pInfo->mHasColorChange, &table, "HasColorChange", modelId - 15);
+
         DummyDisplayModel *pModel = new DummyDisplayModel(pHost, pInfo, v4, modelId, colorId);
         pModel->initWithoutIter();
         return pModel;

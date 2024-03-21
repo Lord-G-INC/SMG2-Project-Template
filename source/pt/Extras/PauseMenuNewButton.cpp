@@ -96,7 +96,7 @@ void PauseMenuAppearNewButton(PauseMenuExt* pPauseMenu) {
 kmWrite32(0x80487560, 0x7FE3FB78); // mr r3, r31 (PauseMenuExt* into r3)
 kmCall(0x80487564, PauseMenuAppearNewButton); // Call
 
-    wchar_t* gStarIconIDList = new wchar_t[2];
+wchar_t* gStarIconIDList = new wchar_t[2];
 bool PauseMenuIsNewButtonPointingTrigger(PauseMenuExt* pPauseMenu) {
     // BLUE COIN CODE START
     #if defined USEBLUECOIN && !defined SM64BLUECOIN
