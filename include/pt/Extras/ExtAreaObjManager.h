@@ -3,6 +3,7 @@
 #include "Game/AreaObj/AreaObjContainer.h"
 
 static ManagerEntry cNewMgrTable[] = {
+    {"GCaptureBreakArea", 16, AreaObjContainer::createManager<AreaObjMgr> },
     {"WarpArea", 100, AreaObjContainer::createManager<AreaObjMgr> },
     {"JumpSwitchArea", 16, AreaObjContainer::createManager<AreaObjMgr> },
     {"ChildSwitchArea", 32, AreaObjContainer::createManager<AreaObjMgr> },

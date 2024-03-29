@@ -28,6 +28,7 @@
 #include "pt/MapObj/WaterLeakPipe.h"
 
 // PTD Includes
+#include "pt/AreaObj/GCaptureBreakArea.h"
 #include "pt/AreaObj/NumberedSwitchArea.h"
 #include "pt/AreaObj/ChildSwitchArea.h"
 #include "pt/AreaObj/WarpArea.h"
@@ -67,6 +68,7 @@ namespace {
 
     const CreateActorEntry cNewCreateNameObjTable[] = {
         // AreaObj
+        { "GCaptureBreakArea", createExtActor<pt::GCaptureBreakArea> },
         { "NumberedSwitchArea", createExtActor<pt::NumberedSwitchArea> },
         { "ChildSwitchArea", createExtActor<pt::ChildSwitchArea> },
         { "ExtraWallCheckCylinder", NameObjFactory::createBaseOriginCylinder<AreaObj> },
