@@ -20,7 +20,7 @@ namespace pt {
     	MR::connectToSceneAreaObj(this);
     }
     void GCaptureBreakArea::movement () {
-        if (isInVolume(*MR::getPlayerPos())) {
+        if (isInVolume(*MR::getPlayerPos()) && currentGC) {
             if (!mKeepPlayerMomentum) 
                 currentGC->requestCancelBind();
             currentGC->exeBreak();
