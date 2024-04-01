@@ -1,4 +1,4 @@
-#ifndef SEDT
+#if defined ALL || defined SMG63
 #include "syati.h"
 #include "pt/MapObj/WaterRiseSwitch.h"
 /*
@@ -23,7 +23,7 @@ extern "C" {
 
 void joinRailMoveWaterObjs (RailMoveObj *obj, JMapInfoIter &rIter) {
     init__11RailMoveObjFRC12JMapInfoIter(obj, rIter);
-    if (MR::isEqualString(obj->mName, "ƒŒ[ƒ‹ˆÚ“®…ƒIƒuƒWƒF")) { // RailMoveWaterObj
+    if (MR::isEqualString(obj->mName, "ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½F")) { // RailMoveWaterObj
         if (!pWaterRiseGroup) 
             pWaterRiseGroup = new LiveActorGroup("WaterRiseGroup", 16);
         pWaterRiseGroup->registerActor(obj);
@@ -56,7 +56,7 @@ namespace pt {
         pWaterRiseGroup->registerActor(this);
     }
     void WaterRiseSwitch::attackSensor(HitSensor *pReceiver, HitSensor *pSender) {
-        if (MR::isEqualString(pSender->mActor->mName, "ƒ}ƒŠƒIƒAƒNƒ^[")) {
+        if (MR::isEqualString(pSender->mActor->mName, "ï¿½}ï¿½ï¿½ï¿½Iï¿½Aï¿½Nï¿½^ï¿½[")) {
             if (!mIsRiseActive) {
                 MR::startSystemSE("SE_SY_READ_RIDDLE_SS", -1, -1);
                 MR::startAction(this, "WaterRiseSpin");

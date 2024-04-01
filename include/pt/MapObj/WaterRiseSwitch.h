@@ -1,3 +1,4 @@
+#if defined ALL || defined SMG63
 #pragma once
 
 #include "syati.h"
@@ -18,3 +19,5 @@ namespace pt {
 		
     };
 };
+
+#endif
