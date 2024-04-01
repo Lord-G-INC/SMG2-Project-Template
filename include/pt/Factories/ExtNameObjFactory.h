@@ -33,6 +33,7 @@
 #include "pt/AreaObj/ChildSwitchArea.h"
 #include "pt/AreaObj/WarpArea.h"
 #include "pt/MapObj/SwitchBox.h"
+#include "pt/MapObj/WaterRiseSwitch.h"
 #include "pt/MapObj/RedCoinSystem/RedCoin.h"
 #include "pt/MapObj/RedCoinSystem/RedCoinSwitch.h"
 #include "pt/AreaObj/SMG63Area.h"
@@ -128,6 +129,7 @@ namespace {
         { "ValveSwitch", createExtActor<pt::ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<pt::WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<pt::WaterLeakPipe>},
+        { "WaterRiseSwitch", createExtActor<pt::WaterRiseSwitch> },
 
         // MapObj PTD
         { "DisplayStar", createExtActor<DisplayStar> },
