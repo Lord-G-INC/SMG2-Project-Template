@@ -29,16 +29,16 @@ namespace StageEventDataTable {
 	//StageEventDataTable Parser
 	bool readTable(const char* value, const char* stageName) {
 
-		JMapInfo* StageDataTable = new JMapInfo();
-		StageDataTable->attach(gStageEventDataTableBCSV);
+		JMapInfo StageDataTable = JMapInfo();
+		StageDataTable.attach(gStageEventDataTableBCSV);
 
-		for (s32 i = 0; i < MR::getCsvDataElementNum(StageDataTable); i++) {
-			const char *exceptStage = 0;
+		for (s32 i = 0; i < MR::getCsvDataElementNum(&StageDataTable); i++) {
+			const char* exceptStage = 0;
 			s32 exceptScenario = 0;
 
-			MR::getCsvDataStr(&exceptStage, StageDataTable, "StageName", i);
-			MR::getCsvDataS32(&exceptScenario, StageDataTable, "ScenarioNo", i);
-			MR::getCsvDataStr(&flags, StageDataTable, "Flags", i);
+			MR::getCsvDataStr(&exceptStage, &StageDataTable, "StageName", i);
+			MR::getCsvDataS32(&exceptScenario, &StageDataTable, "ScenarioNo", i);
+			MR::getCsvDataStr(&flags, &StageDataTable, "Flags", i);
 
 			if (!flags)
 				OSReport("(StageEventDataTable) \"Flags\" is null.");
