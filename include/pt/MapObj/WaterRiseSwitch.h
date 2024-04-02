@@ -1,3 +1,4 @@
+#ifdef GLE
 #pragma once
 
 #include "syati.h"
@@ -15,6 +16,7 @@ namespace pt {
 		f32 mSpeed;
 		f32 mOffsetY;
 		bool mIsRiseActive;
-		
+		f32 mCurrentBckFrame;
     };
 };
+#endif

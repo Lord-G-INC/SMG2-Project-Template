@@ -129,7 +129,9 @@ namespace {
         { "ValveSwitch", createExtActor<pt::ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<pt::WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<pt::WaterLeakPipe>},
+        #ifdef GLE
         { "WaterRiseSwitch", createExtActor<pt::WaterRiseSwitch> },
+        #endif
 
         // MapObj PTD
         { "DisplayStar", createExtActor<DisplayStar> },
