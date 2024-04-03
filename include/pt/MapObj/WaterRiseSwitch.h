@@ -1,4 +1,4 @@
-#ifndef SEDT
+#ifdef GLE
 #pragma once
 
 #include "syati.h"
