@@ -129,7 +129,7 @@ namespace {
         { "ValveSwitch", createExtActor<pt::ValveSwitch> },
         { "WatchTowerRotateStep", createExtActor<pt::WatchTowerRotateStep>},
         { "WaterLeakPipe", createExtActor<pt::WaterLeakPipe>},
-        #ifdef SMG63
+        #ifdef GLE
         { "WaterRiseSwitch", createExtActor<pt::WaterRiseSwitch> },
         #endif
 

@@ -1,7 +1,9 @@
-#if defined ALL || defined SMG63
+#ifndef SEDT
 #include "syati.h"
 #include "pt/MapObj/WaterRiseSwitch.h"
 /*
+* NOTE: Due to a bug with StageEventDataTable, this object is currently only supported with it disabled.
+*
 * A bipyramid-shaped switch that can raise any RailMoveWaterObj's to its vertical position.
 * 
 * Obj_arg0 (f32): Speed
@@ -14,13 +16,15 @@
 * Todo:
 * - Allow movement on multiple axes, not just the Y axis
 * - Perhaps add a Group ID constraint so not all RailMoveWaterObj's are affected
+* 
+* Credit: Bavario, Alex SMG, MTLenz #2
 */
 
 LiveActorGroup *pWaterRiseGroup;
+
 extern "C" {
     void init__11RailMoveObjFRC12JMapInfoIter(RailMoveObj *, const JMapInfoIter &);
 }
-
 void joinRailMoveWaterObjs (RailMoveObj *obj, JMapInfoIter &rIter) {
     init__11RailMoveObjFRC12JMapInfoIter(obj, rIter);
     if (MR::isEqualString(obj->mName, "���[���ړ����I�u�W�F")) { // RailMoveWaterObj
@@ -30,12 +34,18 @@ void joinRailMoveWaterObjs (RailMoveObj *obj, JMapInfoIter &rIter) {
     }
 }
 kmCall(0x802EA394, joinRailMoveWaterObjs);
+void resetWaterRiseGroup () {
+    delete pWaterRiseGroup;
+    pWaterRiseGroup = NULL;
+}
+kmBranch(0x80451478, resetWaterRiseGroup);
 
 namespace pt {
     WaterRiseSwitch::WaterRiseSwitch(const char *pName) : LiveActor(pName) {
         mIsRiseActive = false;
         mSpeed = 1.0f;
-        mOffsetY = -280.0f;
+        mOffsetY = -350.0f;
+        mCurrentBckFrame = 0.0f;
     }
     void WaterRiseSwitch::init(const JMapInfoIter &rIter) {
         MR::initDefaultPos(this, rIter);
@@ -50,16 +60,13 @@ namespace pt {
         MR::addHitSensorMapObj(this, "WaterRise", 8, 10.0f, TVec3f(0));
         MR::validateHitSensor(getSensor("WaterRise"));
         makeActorAppeared();
-
-        if (!pWaterRiseGroup) 
-            pWaterRiseGroup = new LiveActorGroup("WaterRiseGroup", 16);
-        pWaterRiseGroup->registerActor(this);
     }
     void WaterRiseSwitch::attackSensor(HitSensor *pReceiver, HitSensor *pSender) {
         if (MR::isEqualString(pSender->mActor->mName, "�}���I�A�N�^�[")) {
             if (!mIsRiseActive) {
                 MR::startSystemSE("SE_SY_READ_RIDDLE_SS", -1, -1);
-                MR::startAction(this, "WaterRiseSpin");
+                MR::startBck(this, "WaterRiseSpin", NULL);
+                MR::setBckFrame(this, mCurrentBckFrame);
                 exeRiseWater(pWaterRiseGroup);
             }
         }
@@ -67,27 +74,32 @@ namespace pt {
     void WaterRiseSwitch::control() {
         if (mIsRiseActive) 
             exeRiseWater(pWaterRiseGroup);
-        else 
-            MR::setBckFrameAndStop(this, 0);
     }
     void WaterRiseSwitch::exeRiseWater(LiveActorGroup *waters) {
-        s32 numWaterAreas = waters->getLivingActorNum();
-        for (int i = 0; i < numWaterAreas; i++) {
-            if (!MR::isEqualString(waters->getActor(i)->mName, "WaterRiseSwitch")) {
-                mIsRiseActive = true;
-                f32 dist = this->mTranslation.y - waters->getActor(i)->mTranslation.y + mOffsetY;
-                OSReport("%f\n", dist);
-                if (dist < mSpeed && dist > -mSpeed) {
-                    mIsRiseActive = false;
-                    OSReport("Yaay!\n");
-                } else if (dist < 0.0f) {
-                    waters->getActor(i)->mTranslation.y -= mSpeed;
-                    OSReport("Fallin'\n");
-                } else {
-                    waters->getActor(i)->mTranslation.y += mSpeed;
-                    OSReport("Rising\n");
-                }
-            }
+        s32 numWaters = waters->getLivingActorNum();
+        for (int i = 0; i < numWaters; i++) {
+            mIsRiseActive = true;
+            f32 dist = this->mTranslation.y - waters->getActor(i)->mTranslation.y + mOffsetY;
+            if (dist < mSpeed && dist > -mSpeed) 
+                mIsRiseActive = false;
+            else if (dist < 0.0f) 
+                waters->getActor(i)->mTranslation.y -= mSpeed;
+            else 
+                waters->getActor(i)->mTranslation.y += mSpeed;
+        }
+        if (!mIsRiseActive) {
+            mCurrentBckFrame = MR::getBckFrame(this);
+            if (mCurrentBckFrame == 7.5f || mCurrentBckFrame == 15.0f || mCurrentBckFrame == 22.5f || mCurrentBckFrame == 0.0f) 
+                ;
+            else if (mCurrentBckFrame < 7.5f) 
+                mCurrentBckFrame = 7.5f;
+            else if (mCurrentBckFrame < 15.0f) 
+                mCurrentBckFrame = 15.0f;
+            else if (mCurrentBckFrame < 22.5f) 
+                mCurrentBckFrame = 22.5f;
+            else 
+                mCurrentBckFrame = 0.0f;
+            MR::setBckFrameAndStop(this, mCurrentBckFrame);
         }
     }
 }

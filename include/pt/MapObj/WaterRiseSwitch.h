@@ -1,4 +1,4 @@
-#if defined ALL || defined SMG63
+#ifndef SEDT
 #pragma once
 
 #include "syati.h"
@@ -16,8 +16,7 @@ namespace pt {
 		f32 mSpeed;
 		f32 mOffsetY;
 		bool mIsRiseActive;
-		
+		f32 mCurrentBckFrame;
     };
 };
-
 #endif
