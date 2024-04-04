@@ -27,7 +27,12 @@ extern "C" {
 }
 void joinRailMoveWaterObjs (RailMoveObj *obj, JMapInfoIter &rIter) {
     init__11RailMoveObjFRC12JMapInfoIter(obj, rIter);
+    #ifdef SMG63
+    if (MR::isEqualString(obj->mName, "CGWater")) {
+    #else
     if (MR::isEqualString(obj->mName, "レール移動水オブジェ")) { // RailMoveWaterObj
+    #endif
+        OSReport("Adding %s\n", obj->mName);
         if (!pWaterRiseGroup) 
             pWaterRiseGroup = new LiveActorGroup("WaterRiseGroup", 16);
         pWaterRiseGroup->registerActor(obj);
