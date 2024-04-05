@@ -66,7 +66,7 @@ compiler_flags = [
 # Compiler flag for building everything in this workspace
 if "--all" in sys.argv:
     print("Building with all flags true")
-    compiler_flags.append("-DALL -DWIP -DCA -DSMSS -DSMG63 -DNOGLE -DOPENGHOST -DGSTANDPAD")
+    compiler_flags.append("-DALL -DPMNB -DWIP -DCA -DSMSS -DSMG63 -DNOGLE -DOPENGHOST -DGSTANDPAD")
 
 # Compiler flag for NOT having SuperHackio's project "GalaxyLevelEngine" in your workspace
 if "--nogle" in sys.argv:
@@ -82,7 +82,7 @@ if "--gle" in sys.argv:
 if "--smss" in sys.argv:
     print("Building with flags SMSS and GLE true")
     print("This target build with the Blue Coin System.")
-    compiler_flags.append("-DSMSS -DGLE -DUSEBLUECOIN -DOPENGHOST -DGSTANDPAD")
+    compiler_flags.append("-DSMSS -DGLE -DPMNB -DUSEBLUECOIN -DOPENGHOST -DGSTANDPAD")
 
 # Compiler flag for mariokirby1703's project "SMG2: Collector's Anxiety"
 if "--ca" in sys.argv:
@@ -93,7 +93,7 @@ if "--ca" in sys.argv:
 if "--smg63" in sys.argv:
     print("Building with flags SMG63 and GLE true")
     print("This target build with the Blue Coin System.")
-    compiler_flags.append("-DSMG63 -DGLE -DUSEBLUECOIN")
+    compiler_flags.append("-DSMG63 -DGLE -DPMNB -DUSEBLUECOIN")
 
 # Compiler flag for alternating the behavior of the Blue Coin object
 if "--usebluecoin" in sys.argv:

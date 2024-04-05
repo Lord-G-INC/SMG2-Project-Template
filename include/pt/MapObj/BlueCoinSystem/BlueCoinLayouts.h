@@ -4,7 +4,7 @@
 #include "syati.h"
 #include "Game/Screen/CountUpPaneRumbler.h"
 #include "Game/Screen/SysInfoWindow.h"
-
+#include "Game/Screen/PauseMenu.h"
 const wchar_t counterPictureFonts[] = {
 0x000E, 0x0003, 0x0055, 0x0002, 0x005A, // Blue Coin Icon
 0x000E, 0x0003, 0x0010, 0x0002, 0x0010, // X Icon
@@ -50,4 +50,6 @@ namespace NrvBlueCoinCounter {
         NERVE(NrvAppearAndUpdate);
         NERVE(NrvShowTextBox);
 };
+
+void PauseMenuIDListControls(PauseMenu* pPauseMenu);
 #endif

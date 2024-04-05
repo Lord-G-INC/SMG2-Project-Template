@@ -29,7 +29,7 @@ namespace pt {
 
         #if defined USEBLUECOIN && !defined SM64BLUECOIN
             if (modelId == 25 && BlueCoinUtil::isBlueCoinGotCurrentFile(colorId))
-                modelId = 26;
+                modelId++;
         #endif
     
         JMapInfo table;

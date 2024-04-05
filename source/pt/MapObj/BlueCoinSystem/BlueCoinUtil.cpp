@@ -443,6 +443,4 @@ void onTitleScreenLoad(LiveActor* pActor) {
 }
 
 kmCall(0x8024F358, onTitleScreenLoad);
-
-// Misc blue coin patches
 #endif

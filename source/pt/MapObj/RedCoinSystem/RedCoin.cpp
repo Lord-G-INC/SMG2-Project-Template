@@ -55,7 +55,7 @@ RedCoin::RedCoin(const char* pName) : Coin(pName) {
 
 void RedCoin::init(const JMapInfoIter& rIter) {
     MR::processInitFunction(this, rIter, false);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 24);
+    MR::joinToGroupArray(this, rIter, "RedCoinGroup", 24);
     MR::calcGravity(this);
     MR::invalidateClipping(this);
 
@@ -79,7 +79,6 @@ void RedCoin::init(const JMapInfoIter& rIter) {
 }
 
 void RedCoin::initAfterPlacement() {
-
     if (MR::isValidSwitchB(this)) {
         MR::hideModel(this);
         MR::invalidateHitSensors(this);

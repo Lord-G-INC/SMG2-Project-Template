@@ -35,7 +35,7 @@ void RedCoinController::init(const JMapInfoIter& rIter) {
     MR::invalidateClipping(this);
     MR::registerDemoSimpleCastAll(this);
     MR::useStageSwitchWriteA(this, rIter);
-    MR::joinToGroupArray(this, rIter, "RedCoin", 24);
+    MR::joinToGroupArray(this, rIter, "RedCoinGroup", 24);
 
     // Get Obj_args
     s32 powerStarCheck = 0;

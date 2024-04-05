@@ -344,6 +344,46 @@ s32 setUpBlueCoinInfo(PauseMenu* pPauseMenu) {
 
 kmCall(0x80487090, setUpBlueCoinInfo);
 
+wchar_t* gStarIconIDList = new wchar_t[2];
+
+void PauseMenuIDListControls(PauseMenu* pPauseMenu) {
+    PauseMenuExt* pPauseMenuExt = (PauseMenuExt*)pPauseMenu;
+    if (MR::testCorePadTriggerB(0) && pPauseMenuExt->mDisplayMode != 3) {
+        if (pPauseMenuExt->mDisplayMode == 0) {
+            if (!MR::isStageNoPauseMenuStars()) {
+                MR::hidePaneRecursive(pPauseMenu, "Stars");
+                MR::hidePaneRecursive(pPauseMenu, "ScenarioTitle");
+            }
+            MR::showPaneRecursive(pPauseMenu, "ShaCoinListWin");
+            MR::showPaneRecursive(pPauseMenu, "TxtCoinComplete");
+            pPauseMenuExt->mDisplayMode = 1;
+        }
+        else if (pPauseMenuExt->mDisplayMode == 1 || pPauseMenuExt->mDisplayMode == 2) {
+            if (!MR::isStageNoPauseMenuStars()) {
+                MR::showPaneRecursive(pPauseMenu, "Stars");
+                MR::showPaneRecursive(pPauseMenu, "ScenarioTitle");
+            }
+            MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
+            MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
+            MR::hidePaneRecursive(pPauseMenu, "ShaCoinListFlags");
+            pPauseMenuExt->mDisplayMode = 0;  
+        }
+        if (MR::testSubPadButtonC(0)) {
+            if (!MR::isStageNoPauseMenuStars()) {
+                MR::hidePaneRecursive(pPauseMenu, "Stars");
+                MR::hidePaneRecursive(pPauseMenu, "ScenarioTitle");
+            }
+            MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
+            MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
+            MR::showPaneRecursive(pPauseMenu, "ShaCoinListFlags");
+            pPauseMenuExt->mDisplayMode = 2;
+        }
+
+        MR::addPictureFontCode(&gStarIconIDList[0], pPauseMenuExt->mDisplayMode > 0 ? 0xC2 : 0xC1);
+        MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", gStarIconIDList);
+    }
+}
+
 // FILE INFO
 
 void initBlueCoinCounterFileInfo(LayoutActor* pLayout) {

@@ -1,11 +1,9 @@
-#if defined ALL || defined SMSS || defined SMG63
-
 #include "syati.h"
 #include "pt/Game/Screen/PauseMenuExt.h"
 #include "pt/MapObj/BlueCoinSystem/BlueCoinUtil.h"
+#include "pt/MapObj/BlueCoinSystem/BlueCoinLayouts.h"
 
-//kmWrite32(0x804712C0, 0x38600070); // li r3, 0x70
-
+#if defined PMNB || (defined USEBLUECOIN && !defined SM64BLUECOIN)
 PauseMenuExt* createPauseMenuExt() {
     return new PauseMenuExt();
 }
@@ -13,14 +11,21 @@ PauseMenuExt* createPauseMenuExt() {
 kmCall(0x804712C0, createPauseMenuExt);
 kmWrite32(0x804712C4, 0x48000010);
 
-PauseMenuExt::PauseMenuExt() : PauseMenu() {}
+PauseMenuExt::PauseMenuExt() : PauseMenu() {
+    mButtonNew = 0;
+    mButtonNewFollowPos = TVec2f(0.0f, 0.0f);
+    mDisplayMode = 0;
+    mIsUsedNewButton = false;
+}
 // init hook
+#endif
+#ifdef PMNB
 
 #ifdef SMSS 
 #define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || (MR::isEqualStageName("YosshiHomeGalaxy") && MR::getCurrentScenarioNo() == 1) || MR::isEqualStageName("PrisonGalaxy")
-#else
+#else // SMSS
 #define STAGE_CHECK MR::isStageMarioFaceShipOrWorldMap() || MR::isEqualStageName("PeachCastleGalaxy")
-#endif
+#endif // PMNB
 
 void setButtonAnimNames(ButtonPaneController* pButton) {
     pButton->mAnimNameAppear = "ButtonAppear_restartbutton";
@@ -46,7 +51,8 @@ void PauseMenuInitNewButton(PauseMenuExt* pPauseMenu, const Nerve* pNerve) {
 
         MR::setFollowPos(&pPauseMenu->mButtonNewFollowPos, pPauseMenu, "NewButton");
         MR::setFollowTypeReplace(pPauseMenu, "NewButton");
-
+        MR::showPaneRecursive(pPauseMenu, "NewButton");
+        
         setButtonAnimNames(pPauseMenu->mButtonTop);
         setButtonAnimNames(pPauseMenu->mButtonBottom);
         setButtonAnimNames(pPauseMenu->mButtonNew);
@@ -95,56 +101,6 @@ void PauseMenuAppearNewButton(PauseMenuExt* pPauseMenu) {
 
 kmWrite32(0x80487560, 0x7FE3FB78); // mr r3, r31 (PauseMenuExt* into r3)
 kmCall(0x80487564, PauseMenuAppearNewButton); // Call
-
-wchar_t* gStarIconIDList = new wchar_t[2];
-bool PauseMenuIsNewButtonPointingTrigger(PauseMenuExt* pPauseMenu) {
-    // BLUE COIN CODE START
-    #if defined USEBLUECOIN && !defined SM64BLUECOIN
-        if (MR::testCorePadTriggerB(0) && pPauseMenu->mDisplayMode != 3) {
-            if (pPauseMenu->mDisplayMode == 0) {
-                if (!MR::isStageNoPauseMenuStars()) {
-                    MR::hidePaneRecursive(pPauseMenu, "Stars");
-                    MR::hidePaneRecursive(pPauseMenu, "ScenarioTitle");
-                }
-
-                MR::showPaneRecursive(pPauseMenu, "ShaCoinListWin");
-                MR::showPaneRecursive(pPauseMenu, "TxtCoinComplete");
-                pPauseMenu->mDisplayMode = 1;
-            }
-            else if (pPauseMenu->mDisplayMode == 1 || pPauseMenu->mDisplayMode == 2) {
-                if (!MR::isStageNoPauseMenuStars()) {
-                    MR::showPaneRecursive(pPauseMenu, "Stars");
-                    MR::showPaneRecursive(pPauseMenu, "ScenarioTitle");
-                }
-
-                MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
-                MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
-                MR::hidePaneRecursive(pPauseMenu, "ShaCoinListFlags");
-                pPauseMenu->mDisplayMode = 0;  
-            }
-
-            if (MR::testSubPadButtonC(0)) {
-                if (!MR::isStageNoPauseMenuStars()) {
-                    MR::hidePaneRecursive(pPauseMenu, "Stars");
-                    MR::hidePaneRecursive(pPauseMenu, "ScenarioTitle");
-                }
-
-                MR::hidePaneRecursive(pPauseMenu, "ShaCoinListWin");
-                MR::hidePaneRecursive(pPauseMenu, "TxtCoinComplete");
-                MR::showPaneRecursive(pPauseMenu, "ShaCoinListFlags");
-                pPauseMenu->mDisplayMode = 2;
-            }
-
-            MR::addPictureFontCode(&gStarIconIDList[0], pPauseMenu->mDisplayMode > 0 ? 0xC2 : 0xC1);
-            MR::setTextBoxFormatRecursive(pPauseMenu, "TxtCoinPage", gStarIconIDList);
-        }
-    #endif
-    // END BLUE COIN CODE
-    return (pPauseMenu->mButtonTop && pPauseMenu->mButtonTop->isPointingTrigger()) || (pPauseMenu->mButtonNew && pPauseMenu->mButtonNew->isPointingTrigger());
-}
-
-kmWrite32(0x80487714, 0x7F63DB78); // mr r3, r27 (PauseMenuExt* into r3)
-kmCall(0x80487720, PauseMenuIsNewButtonPointingTrigger);
 
 bool IsNewButtonPressed(PauseMenuExt* pPauseMenu) {
     bool isPressed = false;
@@ -226,36 +182,51 @@ kmWrite32(0x80487CA8, 0x7FE3FB78); // mr r3, r31 (PauseMenuExt* into r3)
 kmCall(0x80487CAC, DoNewButtonAction); // Call
 kmWrite32(0x80487CB0, 0x48000008); // b 0x8 (Skip useless instructions)
 
-#if defined (USA) || defined (PAL) || defined (JPN)
-void addStarPointerMovePositionNewButton(PauseMenuExt* pPauseMenu, const char* pStr, TVec2f* pOffsetVec) {
-    StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, pStr, pOffsetVec);
+    #if defined (USA) || defined (PAL) || defined (JPN)
+    void addStarPointerMovePositionNewButton(PauseMenuExt* pPauseMenu, const char* pStr, TVec2f* pOffsetVec) {
+        StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, pStr, pOffsetVec);
 
-    if (pPauseMenu->mButtonNew)
-        StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, "BoxButton4", pOffsetVec);
-}
-
-kmCall(0x804875F0, addStarPointerMovePositionNewButton);
-
-void setupNewConnection1to2(PauseMenuExt* pPauseMenu) {
-    if (pPauseMenu->mButtonNew)
-        StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton4", "BoxButton2");
-
-    StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton1", "BoxButton2");
-}
-
-kmWrite32(0x80487640, 0x60000000);
-kmWrite32(0x80487644, 0x7FC3F378);
-kmCall(0x80487648, setupNewConnection1to2);
-
-void setupButtonConnection(PauseMenuExt* pPauseMenu) {
-    StarPointerUtil::setDefaultAllMovePosition("BoxButton1");
-
-    if (pPauseMenu->mButtonTop && pPauseMenu->mButtonNew) {
-        StarPointerUtil::setConnectionMovePositionRight2Way("BoxButton1", "BoxButton4");
+        if (pPauseMenu->mButtonNew)
+            StarPointerUtil::addStarPointerMovePositionFromPane(pPauseMenu, "BoxButton4", pOffsetVec);
     }
+
+    kmCall(0x804875F0, addStarPointerMovePositionNewButton);
+
+    void setupNewConnection1to2(PauseMenuExt* pPauseMenu) {
+        if (pPauseMenu->mButtonNew)
+            StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton4", "BoxButton2");
+
+        StarPointerUtil::setConnectionMovePositionDown2Way("BoxButton1", "BoxButton2");
+    }
+
+    kmWrite32(0x80487640, 0x60000000);
+    kmWrite32(0x80487644, 0x7FC3F378);
+    kmCall(0x80487648, setupNewConnection1to2);
+
+    void setupButtonConnection(PauseMenuExt* pPauseMenu) {
+        StarPointerUtil::setDefaultAllMovePosition("BoxButton1");
+
+        if (pPauseMenu->mButtonTop && pPauseMenu->mButtonNew) {
+            StarPointerUtil::setConnectionMovePositionRight2Way("BoxButton1", "BoxButton4");
+        }
+    }
+
+    kmWrite32(0x804876C0, 0x7FC3F378); // mr r3, r30
+    kmCall(0x804876C4, setupButtonConnection);
+    #endif
+#endif
+
+bool PauseMenuIsNewButtonPointingTrigger(PauseMenuExt* pPauseMenu) {
+    #if defined USEBLUECOIN && !defined SM64BLUECOIN
+        PauseMenuIDListControls(pPauseMenu);
+    #endif
+
+    #ifdef PMNB
+        return (pPauseMenu->mButtonTop && pPauseMenu->mButtonTop->isPointingTrigger()) || (pPauseMenu->mButtonNew && pPauseMenu->mButtonNew->isPointingTrigger());
+    #else
+        return (pPauseMenu->mButtonTop && pPauseMenu->mButtonTop->isPointingTrigger());
+    #endif
 }
 
-kmWrite32(0x804876C0, 0x7FC3F378); // mr r3, r30
-kmCall(0x804876C4, setupButtonConnection);
-#endif
-#endif
+kmWrite32(0x80487714, 0x7F63DB78); // mr r3, r27 (PauseMenuExt* into r3)
+kmCall(0x80487720, PauseMenuIsNewButtonPointingTrigger);

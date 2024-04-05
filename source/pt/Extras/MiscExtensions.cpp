@@ -39,7 +39,7 @@ namespace pt {
 	void loadPTPictureFont() {
 		pt::loadArcAndFile("/SystemData/PictureFont.arc", "/PictureFont.brfnt");
 	}
-
+	
 	kmCall(0x804B8048, loadPTPictureFont);
 	#endif
 
@@ -234,7 +234,7 @@ namespace pt {
 
 	kmWrite32(0x802F1968, 0x809F009C);
 	kmCall(0x802F1978, restartObjActivateMessage);
-	#endif
+	#endif // WIP
 	
 	// Suggested by Xandog
 	const wchar_t* CustomGreenStarNames(GalaxyStatusAccessor accessor, const char* pStageName, s32 starid) {
