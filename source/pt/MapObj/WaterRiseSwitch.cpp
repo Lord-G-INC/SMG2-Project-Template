@@ -27,6 +27,7 @@ extern "C" {
 }
 void joinRailMoveWaterObjs (RailMoveObj *obj, JMapInfoIter &rIter) {
     init__11RailMoveObjFRC12JMapInfoIter(obj, rIter);
+    OSReport("%s\n", obj->mName);
     #ifdef SMG63
     if (MR::isEqualString(obj->mName, "CGWater")) {
     #else

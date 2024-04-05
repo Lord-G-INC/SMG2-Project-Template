@@ -62,12 +62,18 @@ namespace {
         #endif
         #ifdef SMSS
         gFileSelectDataTable = pt::loadArcAndFile("/ObjectData/FileSelectData.arc", "/FileSelectData.bcsv");
+        gBoardDataTable = pt::loadArcAndFile("/SystemData/BlueCoinBoardDataTable.arc", "/BlueCoinBoardDataTable.bcsv");
         #endif
         #if defined USEBLUECOIN && !defined SM64BLUECOIN
-        gBoardDataTable = pt::loadArcAndFile("/SystemData/BlueCoinBoardDataTable.arc", "/BlueCoinBoardDataTable.bcsv");
         gBlueCoinIDRangeTable = pt::loadArcAndFile("/SystemData/BlueCoinIDRangeTable.arc", "/BlueCoinIDRangeTable.bcsv");
         #endif
+
+        // Lord-G/Evan, fix this. Please.
+        #ifdef SMG63
+        gDummyDisplayModelTable = pt::loadArcAndFile("/SystemData/DummyDisplayModelTable.arc", "/DummyDisplayModelTable.bcsv");
+        #else
         gDummyDisplayModelTable = pt::loadArcAndFile("/SystemData/PTSystemData.arc", "/DummyDisplayModelTable.bcsv");
+        #endif
     }
 
     kmBranch(0x804B69F4, handleCustomArchiveLoads);
