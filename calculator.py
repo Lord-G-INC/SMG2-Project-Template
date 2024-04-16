@@ -9,7 +9,7 @@ class Symbol:
         return f".set {self.name}, 0x{self.address:X}"
     
 PAL = 0x807FCE98
-US = 0x807f7798
+US = 0x807F7798
 
 if len(sys.argv) < 1:
     exit(1)
