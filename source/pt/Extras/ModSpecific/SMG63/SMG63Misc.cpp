@@ -22,5 +22,4 @@ void onInitFileSelect () {
     gIsFileSelectUsable = false;
 }
 kmBranch(0x8024F480, onInitFileSelect);
-
 #endif
