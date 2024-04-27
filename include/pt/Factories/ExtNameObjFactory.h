@@ -47,6 +47,9 @@
 #include "pt/Syati/PadRecord.h"
 #include "pt/Extras/ModSpecific/SuperMarioStarshine/GhostPlayer.h"
 #include "pt/MapObj/CrystalBox.h"
+#include "pt/MapObj/CycleSystem/CycleController.h"
+#include "pt/MapObj/CycleSystem/CycleObj.h"
+#include "pt/MapObj/CycleSystem/CycleTransitionObj.h"
 
 class BlueStarCupsulePlanet;
 
@@ -145,6 +148,9 @@ namespace {
         { "SuperSpinDriverBlack", pt::createSuperSpinDriverCustomColor<7> },
         { "SuperSpinDriverWhite", pt::createSuperSpinDriverCustomColor<8> },
         { "SuperSpinDriverYellow", pt::createSuperSpinDriverCustomColor<9> },
+        { "CycleController", createExtActor<CycleController> },
+        { "CycleObj", createExtActor<CycleObj> },
+        { "CycleTransitionObj", createExtActor<CycleTransitionObj> },
         
         // Ride
         { "SwingRope", createExtActor<SwingRope> },

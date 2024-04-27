@@ -16,6 +16,7 @@ void* gFileSelectDataTable;
 void* gBoardDataTable;
 void* gBlueCoinIDRangeTable;
 void* gDummyDisplayModelTable;
+void* gStageBgmInfoBCSV;
 
 namespace {
 	// ----------------------------------------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ namespace {
         #endif // SMSS
         
         gDummyDisplayModelTable = pt::loadArcAndFile("/SystemData/DummyDisplayModelTable.arc", "/DummyDisplayModelTable.bcsv");
+        gStageBgmInfoBCSV = pt::loadArcAndFile("/AudioRes/Info/StageBgmInfo.arc", "/StageBgmInfo.bcsv");
     }
 
     kmBranch(0x804B69F4, handleCustomArchiveLoads);
