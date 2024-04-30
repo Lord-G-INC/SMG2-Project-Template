@@ -50,6 +50,20 @@ public:
   FileSelectModel *models[25];
 };
 
+class FileSelectNumber : public LayoutActor {
+public:
+  FileSelectNumber(const char *);
+  virtual void init(const JMapInfoIter &);
+  virtual void appear();
+  void disappear();
+  void setNumber(s32);
+  void onSelectIn();
+  void onSelectOut();
+  virtual void control();
+  u8 _0[0x38];
+  NerveExecutor *_38;
+};
+
 class FileSelectItem : public LiveActor
 {
 public:
