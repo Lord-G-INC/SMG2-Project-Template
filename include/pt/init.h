@@ -6,3 +6,4 @@ extern void* gFileSelectDataTable;
 extern void* gBoardDataTable;
 extern void* gBlueCoinIDRangeTable;
 extern void* gDummyDisplayModelTable;
+extern void* gStageBgmInfoBCSV;
